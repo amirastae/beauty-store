@@ -1,0 +1,21 @@
+.iran-trust-rail{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line);background:#f2e7df}
+.iran-trust-rail article{padding:24px 2.2vw;border-inline-start:1px solid var(--line);min-height:112px}
+.iran-trust-rail span{display:block;font:600 8px Arial,sans-serif;color:var(--muted);letter-spacing:.1em}
+.iran-trust-rail strong{display:block;margin-top:10px;font-size:12px;font-weight:650}
+.iran-trust-rail small{display:block;margin-top:7px;color:var(--muted);font-size:9px;line-height:1.7}
+.shop-refine-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.shop-toggle{height:38px;border:1px solid var(--line);border-radius:999px;background:transparent;padding:0 14px;cursor:pointer;font-size:10px}
+.shop-toggle.active{background:var(--berry);border-color:var(--berry);color:#fff}
+.product-price-stack{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.product-price-stack del{font-size:9px;color:var(--muted);font-weight:400}
+.sale-pill{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;background:#7b3949;color:#fff;font-size:8px;font-weight:700}
+.checkout-form select{display:block;width:100%;margin-top:8px;border:1px solid var(--line);border-radius:13px;background:#fff8f4;padding:14px;outline:0;color:var(--ink)}
+.checkout-field-error{display:block;margin-top:6px;color:#8a2f44;font-size:9px}
+.checkout-methods{grid-column:1/-1;border:1px solid var(--line);border-radius:16px;padding:15px;background:rgba(255,255,255,.28)}
+.checkout-methods legend{padding:0 6px;font-size:10px;color:var(--muted)}
+.checkout-methods label{display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--ink)}
+.checkout-methods input{width:auto;margin:0}
+.checkout-success{margin-top:18px;border:1px solid #8aa08a;background:#eef4ec;border-radius:14px;padding:14px;font-size:11px;line-height:1.8}
+.pdp-commerce-note{max-width:480px;margin-top:12px;font-size:9px;line-height:1.8;color:var(--muted)}
+@media(max-width:900px){.iran-trust-rail{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.iran-trust-rail{grid-template-columns:1fr}.iran-trust-rail article{padding:18px}.shop-refine-row{align-items:stretch}.shop-toggle{flex:1}}
