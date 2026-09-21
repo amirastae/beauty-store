@@ -9,6 +9,7 @@ import { inventory } from './routes/inventory'
 import { admin } from './routes/admin'
 import { media } from './routes/media'
 import { search } from './routes/search'
+import { compat } from './routes/compat'
 import { ensurePreviewDatabase } from './lib/bootstrap'
 
 const app = new Hono<AppBindings>()
@@ -42,6 +43,7 @@ app.route('/api/v1', inventory)
 app.route('/api/v1', checkout)
 app.route('/api/v1', media)
 app.route('/api/v1', search)
+app.route('/api/v1', compat)
 app.route('/api/v1/carts', carts)
 app.route('/api/v1/admin', admin)
 
