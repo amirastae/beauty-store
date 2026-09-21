@@ -63,3 +63,18 @@ Six locked scene frames are complete. Google Flow is now the approved final-moti
 ## Decode fallback hardening
 
 The canonical blob loader now falls back from WebM to MP4 not only when WebM fetch fails, but also when the browser fetches WebM successfully and then rejects it during media decode. This keeps the locked scroll-scrub experience alive across codec edge cases without adding a viewport-based disable.
+
+
+## Genjutsu candidate QA
+
+Candidate job: `92f918a9-2fe1-455d-a111-fe1517b46f0f` (`hf_mult_replace_object`).
+
+Verified media facts:
+- duration: 16.375s;
+- container stream: H.264 video only; no audio stream;
+- uploaded QA copy: `536c825d-c466-4df4-9da9-0ef98dac4ed9`;
+- scene analysis job: `f8ff872f-308b-4538-bcc7-b281f89f2912`.
+
+Automated scene QA flagged a continuity violation in the Impact section (around 00:08-00:11): **two dropper bottles** are visible instead of one locked signature bottle. The final Ritual section also changes hand/product staging from the requested exact continuity.
+
+Result: **REJECTED AS MASTER**. Keep the current verified scrub master. Do not replace production media with this Genjutsu candidate. Google Flow remains the approved final-motion lane using the six locked source frames and five Start+End transitions.
