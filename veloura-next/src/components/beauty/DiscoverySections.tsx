@@ -30,9 +30,9 @@ export default function DiscoverySections(){
     <section className="ugc-section">
       <div className="section-head"><div><p className="eyebrow">REAL RITUALS</p><h2>زیبایی در استفاده واقعی.</h2></div><span>COMMUNITY / 2026</span></div>
       <div className="ugc-grid">
-        <figure className="ugc-large"><Image src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=86" alt="میز آرایش و محصولات زیبایی" fill sizes="(max-width:900px) 100vw,50vw"/><figcaption>روتین صبح · پوست + رنگ</figcaption></figure>
-        <figure><Image src="https://images.unsplash.com/photo-1526045478516-99145907023c?auto=format&fit=crop&w=900&q=86" alt="محصولات آرایشی" fill sizes="(max-width:900px) 50vw,25vw"/><figcaption>ادیت روزانه</figcaption></figure>
-        <figure><Image src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=900&q=86" alt="مراقبت پوست" fill sizes="(max-width:900px) 50vw,25vw"/><figcaption>پوست، بدون شلوغی</figcaption></figure>
+        <figure className="ugc-large"><Image src="/ugc-ritual.jpg" alt="میز آرایش و محصولات زیبایی" fill sizes="(max-width:900px) 100vw,50vw"/><figcaption>روتین صبح · پوست + رنگ</figcaption></figure>
+        <figure><Image src="/ugc-mask.jpg" alt="محصولات آرایشی" fill sizes="(max-width:900px) 50vw,25vw"/><figcaption>ادیت روزانه</figcaption></figure>
+        <figure><Image src="/ugc-serum.jpg" alt="مراقبت پوست" fill sizes="(max-width:900px) 50vw,25vw"/><figcaption>پوست، بدون شلوغی</figcaption></figure>
       </div>
     </section>
 
