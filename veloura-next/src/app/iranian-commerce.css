@@ -76,3 +76,9 @@
 .skip-link:focus{transform:translateY(0)}
 :where(a,button,input,select,textarea):focus-visible{outline:2px solid currentColor;outline-offset:3px}
 #main-content:focus{outline:none}
+
+.commerce-footer{display:grid;grid-template-columns:1.3fr 1fr 1.2fr;gap:28px;padding:44px 4vw;border-top:1px solid var(--line);background:#eee1d8;align-items:start}
+.commerce-footer-brand p{max-width:330px;margin:14px 0 0;color:var(--muted);font-size:10px;line-height:1.8}.commerce-footer nav{display:flex;flex-direction:column;gap:11px}
+.commerce-footer nav a,.commerce-footer-support a{color:var(--ink);font-size:10px;text-underline-offset:4px}.commerce-footer-support span{display:block;margin-bottom:10px;color:var(--muted);font-size:9px}
+.commerce-footer-support a{word-break:break-all}.commerce-footer .brand{text-decoration:none;font-size:14px;letter-spacing:.12em}
+@media(max-width:760px){.commerce-footer{grid-template-columns:1fr;gap:26px;padding:34px 18px}}
