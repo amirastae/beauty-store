@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { useState } from "react";
 
 const morning = [
@@ -53,6 +54,7 @@ export default function RoutineGuide() {
           <Link className="button button-dark" href="/shop/?category=%D9%BE%D9%88%D8%B3%D8%AA">دیدن محصولات پوست</Link>
         </div>
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }

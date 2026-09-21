@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
 export default function ContactPage() {
@@ -30,6 +31,7 @@ export default function ContactPage() {
           این آدرس برای تماس با فروشگاه است و به‌جای ایمیل خریدار داخل سفارش ثبت نمی‌شود.
         </p>
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }
