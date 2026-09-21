@@ -171,6 +171,6 @@ The final Flow master is accepted only if all of these are true:
 - transition boundaries feel continuous;
 - MP4/WebM remain practical for web delivery;
 - desktop scroll scrub feels responsive;
-- mobile keeps the lightweight fallback unless a later mobile video is deliberately approved.
+- real-phone scroll scrub feels responsive and preserves the same cinematic behavior.
 
 Do not replace the current live cinematic media until the Flow master passes this visual review.

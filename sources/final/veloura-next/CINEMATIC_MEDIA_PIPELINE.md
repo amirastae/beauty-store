@@ -129,8 +129,8 @@ That creates all-I-frame H.264/VP9 output and should only be promoted if the fin
 
 ## Performance gates
 
-- Desktop hero video target: ideally under 25 MB.
-- Mobile below 768px: keep the current lightweight cinematic fallback rather than forcing the desktop video.
+- Hero video target: ideally under 25 MB.
+- Mobile viewport width alone must **never** disable the cinematic scrub. The same master remains eligible on phones/tablets.
 - `prefers-reduced-motion: reduce`: no video scrub.
 - Save-Data users: no video scrub.\n- 2G / very slow network users: fallback is allowed.
 - Video is muted + playsInline.
