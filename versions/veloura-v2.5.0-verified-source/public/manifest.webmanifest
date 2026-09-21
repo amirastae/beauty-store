@@ -1,0 +1,17 @@
+{
+  "name":"VELOURA — Persian Beauty Store",
+  "short_name":"VELOURA",
+  "description":"فروشگاه فارسی محصولات زیبایی، آرایش، مراقبت پوست، عطر و مو.",
+  "lang":"fa",
+  "dir":"rtl",
+  "start_url":"/",
+  "scope":"/",
+  "display":"standalone",
+  "background_color":"#f5eee8",
+  "theme_color":"#f4eee8",
+  "categories":["shopping","beauty","lifestyle"],
+  "icons":[
+    {"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"/maskable-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"maskable"}
+  ]
+}
