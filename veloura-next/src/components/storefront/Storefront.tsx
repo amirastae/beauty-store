@@ -25,7 +25,7 @@ export default function Storefront() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedShade, setSelectedShade] = useState<Record<string, string>>({});
-  const { lines, add, remove } = useCart();
+  const { lines, add, decrement, remove } = useCart();
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
 
@@ -223,7 +223,8 @@ export default function Storefront() {
                 <Image src={line.product.image} alt="" width={74} height={92} />
                 <div>
                   <strong>{line.product.nameFa}</strong>
-                  <span>{shade?.nameFa ?? line.product.category} · ×{toman.format(line.qty)}</span>
+                  <span>{shade?.nameFa ?? line.product.category}</span>
+                  <div className="drawer-qty"><button aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
                   <small>{price(line.product.price * line.qty)}</small>
                 </div>
                 <button onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
