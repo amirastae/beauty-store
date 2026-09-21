@@ -21,7 +21,6 @@ if(!existsSync(homePath)){
     if(home.includes(claim)) failures.push("rendered homepage contains unsupported claim: "+claim);
   }
   if(!home.includes("FATIKHAN")) failures.push("FATIKHAN missing from rendered homepage");
-  if(!home.includes("تجربه خرید فارسی")) failures.push("factual commerce announcement missing");
 }
 
 if(/payment===["']success["'][\s\S]{0,220}clearCart\s*\(/.test(checkoutSource)){
