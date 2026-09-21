@@ -1,0 +1,10 @@
+{
+  "name": "VELOURA Beauty Store",
+  "version": "1.4.1",
+  "status": "verified-checkpoint",
+  "quality": {"eslint": "pass", "typescript": "pass", "build": "pass"},
+  "build": {"routes": 95, "output_mb": 19, "sitemap_urls": 79},
+  "seo": {"indexable_missing_canonical": 0, "robots_hardened": true, "product_metadata": true, "category_metadata": true},
+  "integrity": {"missing_routes": 0, "missing_assets": 0},
+  "notes": ["Home canonical added", "Public route canonicals added", "Legacy product routes canonicalized to primary product URLs"]
+}
