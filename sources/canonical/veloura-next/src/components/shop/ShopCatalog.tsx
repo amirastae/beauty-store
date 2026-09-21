@@ -106,12 +106,12 @@ export default function ShopCatalog() {
   return (
     <main className="shop-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav><Link href="/wishlist/">علاقه‌مندی‌ها</Link><Link href="/cart/">سبد خرید</Link></nav>
       </header>
 
       <section className="shop-hero">
-        <p className="eyebrow">VELOURA SHOP · 56 OBJECTS</p>
+        <p className="eyebrow">FATIKHAN SHOP · 56 OBJECTS</p>
         <h1>انتخاب کن،<br/><em>دقیق‌تر.</em></h1>
         <p>آرایش، مراقبت پوست، عطر، مو و ست‌های منتخب؛ با فیلترهایی که واقعاً به انتخاب کمک می‌کنند.</p>
       </section>
@@ -169,7 +169,7 @@ export default function ShopCatalog() {
       <section className="shop-results">
         <div className="shop-result-head">
           <span>{fa.format(visible.length)} محصول</span>
-          <small>{activeCount ? fa.format(activeCount) + " فیلتر فعال" : "کل کاتالوگ ولورا"}</small>
+          <small>{activeCount ? fa.format(activeCount) + " فیلتر فعال" : "کل کاتالوگ FATIKHAN"}</small>
         </div>
 
         <div className="product-grid light-grid">

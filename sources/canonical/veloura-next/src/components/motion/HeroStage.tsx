@@ -23,7 +23,7 @@ export default function HeroStage() {
           <div className="cap" />
           <div className="bottle">
             <span className="bottle-shine" />
-            <b>VELOURA</b>
+            <b>FATIKHAN</b>
             <small>PEARL BARRIER SERUM</small>
           </div>
         </div>

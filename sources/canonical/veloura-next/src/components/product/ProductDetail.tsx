@@ -36,7 +36,7 @@ export default function ProductDetail({ product, related }: { product: Product; 
     const url = window.location.href;
     try {
       if (navigator.share) {
-        await navigator.share({ title: product.nameFa + " — VELOURA", text: product.nameEn, url });
+        await navigator.share({ title: product.nameFa + " — FATIKHAN", text: product.nameEn, url });
       } else {
         await navigator.clipboard.writeText(url);
         setShared(true);
@@ -54,7 +54,7 @@ export default function ProductDetail({ product, related }: { product: Product; 
   return (
     <main className="pdp">
       <header className="pdp-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav className="pdp-crumbs" aria-label="مسیر صفحه">
           <Link href="/shop/">فروشگاه</Link>
           <span>/</span>
@@ -96,7 +96,7 @@ export default function ProductDetail({ product, related }: { product: Product; 
           </div>
 
           <p className="pdp-description">
-            محصولی از کالکشن ولورا با تمرکز روی تجربه استفاده، انتخاب روشن و اطلاعات کاربردی؛
+            محصولی از کالکشن FATIKHAN با تمرکز روی تجربه استفاده، انتخاب روشن و اطلاعات کاربردی؛
             بدون شلوغی اضافه در مسیر خرید.
           </p>
 
@@ -207,7 +207,7 @@ export default function ProductDetail({ product, related }: { product: Product; 
       )}
 
       <section className="pdp-editorial">
-        <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
+        <div><p className="eyebrow">FATIKHAN OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
         <span>03 / PRODUCT STORY</span>
       </section>
 

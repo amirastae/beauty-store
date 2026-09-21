@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return {};
 
   return {
-    title: product.nameFa + " — VELOURA",
-    description: product.nameFa + " از " + product.brand + "؛ جزئیات، ترکیبات و خرید آنلاین در ولورا.",
+    title: product.nameFa + " — FATIKHAN",
+    description: product.nameFa + " از " + product.brand + "؛ جزئیات، ترکیبات و خرید آنلاین در FATIKHAN.",
     alternates: { canonical: "/product/" + product.slug + "/" },
     openGraph: {
-      title: product.nameFa + " — VELOURA",
+      title: product.nameFa + " — FATIKHAN",
       description: product.nameEn,
       images: [product.image],
       type: "website",

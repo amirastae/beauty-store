@@ -85,14 +85,14 @@ export default function RoutineBuilder(){
 
   return <main className="routine-page">
     <header className="shop-nav">
-      <Link href="/" className="brand">VELOURA</Link>
+      <Link href="/" className="brand">FATIKHAN</Link>
       <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید</Link></nav>
     </header>
 
     <section className="routine-hero">
       <p className="eyebrow">ROUTINE BUILDER · NO QUIZ FATIGUE</p>
       <h1>روتینت را<br/><em>سریع بچین.</em></h1>
-      <p>سه انتخاب کوتاه؛ بعد یک ادیت پیشنهادی از خود کاتالوگ ولورا. این ابزار تشخیص پزشکی یا پوستی نیست و فقط برای ساده‌کردن انتخاب محصول است.</p>
+      <p>سه انتخاب کوتاه؛ بعد یک ادیت پیشنهادی از خود کاتالوگ FATIKHAN. این ابزار تشخیص پزشکی یا پوستی نیست و فقط برای ساده‌کردن انتخاب محصول است.</p>
     </section>
 
     <section className="routine-controls" aria-label="تنظیم روتین">
@@ -124,7 +124,7 @@ export default function RoutineBuilder(){
     <section className="routine-result">
       <div className="routine-result-head">
         <div>
-          <p className="eyebrow">YOUR VELOURA EDIT</p>
+          <p className="eyebrow">YOUR FATIKHAN EDIT</p>
           <h2>{goals[goal].title} · {fa.format(routine.picked.length)} محصول</h2>
           <p>جمع تقریبی: <strong>{money(routine.total)}</strong></p>
         </div>
