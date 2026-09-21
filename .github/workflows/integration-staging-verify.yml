@@ -105,22 +105,14 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf .wrangler/state
-          npm run db:migrate:preview-local
-          npm run db:seed:preview-local
-          cat > .dev.vars <<'EOF'
-          PAYMENT_PROVIDER=zarinpal
-          ZARINPAL_MERCHANT_ID=test-merchant
-          PAYMENT_CALLBACK_BASE_URL=http://127.0.0.1:8787
-          ZARINPAL_API_BASE=http://127.0.0.1:8790
-          ZARINPAL_STARTPAY_BASE=http://127.0.0.1:8790/start
-          EOF
+          npx wrangler d1 migrations apply DB --config wrangler.payment-test.jsonc --local
+          npx wrangler d1 execute DB --config wrangler.payment-test.jsonc --local --file db/seed.sql
           node tests/mock-zarinpal.mjs > /tmp/mock-zarinpal.log 2>&1 &
           mock_pid=$!
-          npm run dev:preview > /tmp/veloura-commerce-payment-dev.log 2>&1 &
+          npx wrangler dev --config wrangler.payment-test.jsonc --local --ip 127.0.0.1 --port 8787 > /tmp/veloura-commerce-payment-dev.log 2>&1 &
           worker_pid=$!
           cleanup() {
             kill "$worker_pid" "$mock_pid" 2>/dev/null || true
-            rm -f .dev.vars
           }
           trap cleanup EXIT
           ready=0

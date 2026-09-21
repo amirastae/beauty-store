@@ -1,12 +1,16 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `93ad9a1fc577ffc4ed7fec013e6b2bd2c37be5c5`
+Source commit: `2d49273fc58562de6d0e355acc32ff80ff7f69f3`
 
-Latest release-critical verification:
-- authoritative receipt-status lookup + no-store + rate-limit binding;
-- reservation-first inventory;
-- abandoned order release;
-- payment lifecycle regression harness covering verified success, cancellation, provider request rejection, verification failure, duplicate callback and expiry release.
+Current regression coverage now includes an explicit local mock-Zarinpal Wrangler config, so provider configuration is deterministic in CI rather than relying on ambient dev vars.
 
-This service remains subordinate to the FATIKHAN Golestan-style canonical frontend.
+Tracked payment lifecycle cases:
+- verified payment success;
+- duplicate success callback;
+- user cancellation;
+- provider request rejection;
+- provider verify failure;
+- expired reservation release.
+
+All of this supports the single FATIKHAN Golestan-style canonical storefront.

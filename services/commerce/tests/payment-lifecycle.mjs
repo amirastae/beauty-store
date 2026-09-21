@@ -4,6 +4,7 @@ import { promisify } from 'node:util'
 const exec = promisify(execFile)
 const base = process.argv[2] || 'http://127.0.0.1:8787'
 const mockBase = process.argv[3] || 'http://127.0.0.1:8790'
+const wranglerConfig = process.env.PAYMENT_TEST_CONFIG || 'wrangler.payment-test.jsonc'
 const jsonHeaders = { 'content-type': 'application/json' }
 
 async function request(path, { method = 'GET', headers = {}, body, redirect = 'manual' } = {}) {
@@ -105,7 +106,7 @@ async function expireOrder(orderId) {
     orderId.replaceAll("'", "''") + "';"
   await exec('npx', [
     'wrangler', 'd1', 'execute', 'DB',
-    '--config', 'wrangler.preview.jsonc',
+    '--config', wranglerConfig,
     '--local',
     '--command', sql
   ], { maxBuffer: 4 * 1024 * 1024 })
