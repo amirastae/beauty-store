@@ -8,7 +8,7 @@
   },
   "vars": {
     "APP_ENV": "temporary-cloudflare-preview",
-    "AUTO_BOOTSTRAP": "1"
+    "AUTO_BOOTSTRAP": "0"
   },
   "d1_databases": [
     {
