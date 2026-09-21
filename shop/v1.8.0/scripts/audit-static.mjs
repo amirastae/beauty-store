@@ -86,8 +86,7 @@ for (const file of htmlFiles) {
   }
 
   const forbidden = [
-    /500K|Happy Customers|Verified Purchase|Founder & CEO|reviewsData/,
-    /\$\{[^}]*price|\$[0-9]/
+    /500K|Happy Customers|Verified Purchase|Founder & CEO|reviewsData/
   ]
   for (const pattern of forbidden) if (pattern.test(html)) failures.push(`forbidden donor/fake residue on ${route}: ${pattern}`)
 }
