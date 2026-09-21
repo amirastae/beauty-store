@@ -29,5 +29,15 @@
     "crons": [
       "*/5 * * * *"
     ]
-  }
+  },
+  "ratelimits": [
+    {
+      "name": "ORDER_STATUS_RATE_LIMITER",
+      "namespace_id": "41045",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
+  ]
 }

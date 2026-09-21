@@ -7,7 +7,7 @@ This document transfers the commerce/backend work into the FATIKHAN Golestan-sty
 ## Current source checkpoint
 
 - Commerce branch: `commerce-core-v1`
-- Current head: `ffccdebd769b5a77ac32800b1f2e09952ae3e6e7`
+- Current head: `a2a752eb4df43d04310505efb36db19346b635de`
 - Integration branch: `integration-staging`
 - Production branch: `cloudflare-site`
 - Visible brand: **FATIKHAN**
@@ -77,3 +77,14 @@ No checkout/catalog request may block the FATIKHAN cinematic hero from rendering
 - final mobile visual regression after commerce wiring.
 
 These are runtime/provider gates, not reasons to redesign the cinematic storefront.
+
+
+## Verified receipt-status checkpoint
+
+- Opaque 256-bit receipt tokens are issued with checkout responses.
+- Only the SHA-256 receipt hash is used for public lookup.
+- `POST /api/v1/orders/status` returns minimal non-PII order/payment state.
+- Response uses `Cache-Control: private, no-store`.
+- Preview config includes Cloudflare Workers Rate Limiting binding at 60 requests/minute for the lookup route.
+- Real Cloudflare temporary Worker + D1 integration test: **PASS**.
+- Canonical FATIKHAN checkout re-fetches this authoritative state after payment return and no longer trusts `?payment=success` as proof.

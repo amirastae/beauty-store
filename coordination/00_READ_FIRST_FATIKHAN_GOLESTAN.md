@@ -72,7 +72,7 @@ Keep checkout mutation disabled until backend readiness is fully verified.
 
 Track:
 - #42 — inventory/payment regression coverage;
-- #45 — authoritative public order/payment receipt/status lookup;
+- #45 — authoritative public order/payment receipt/status lookup — implemented and Cloudflare-tested;
 - runtime IRR shipping/payment provider configuration.
 
 The payment-return query string alone is never proof of successful payment.
@@ -117,7 +117,7 @@ The cinematic FATIKHAN experience is the presentation layer; commerce work must 
 Current release checkpoints:
 - production `cloudflare-site@9ddcd7cac16ec8dc8802c53e58279506cca05d9c`
 - integration `integration-staging@ff67d0ce0f674a068303686f020fc438d4138c38`
-- commerce `commerce-core-v1@ffccdebd769b5a77ac32800b1f2e09952ae3e6e7`
+- commerce `commerce-core-v1@a2a752eb4df43d04310505efb36db19346b635de`
 
 Visible brand remains **FATIKHAN**. Technical compatibility names such as `veloura-next`, `veloura-*` storage keys and `/api/v1/compat/veloura-v2/resolve` remain internal until an explicit migration is approved.
 

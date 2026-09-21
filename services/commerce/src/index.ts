@@ -11,6 +11,7 @@ import { media } from './routes/media'
 import { search } from './routes/search'
 import { compat } from './routes/compat'
 import { payments } from './routes/payments'
+import { orders } from './routes/orders'
 import { ensurePreviewDatabase } from './lib/bootstrap'
 import { releaseExpiredOrders } from './lib/order-inventory'
 
@@ -60,6 +61,7 @@ app.route('/api/v1', media)
 app.route('/api/v1', search)
 app.route('/api/v1', compat)
 app.route('/api/v1', payments)
+app.route('/api/v1', orders)
 app.route('/api/v1/carts', carts)
 app.route('/api/v1/admin', admin)
 
