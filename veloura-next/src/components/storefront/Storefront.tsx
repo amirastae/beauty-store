@@ -61,7 +61,7 @@ export default function Storefront() {
         </button>
         <nav className="nav-links" aria-label="ناوبری اصلی">
           <Link href="/shop/">فروشگاه</Link>
-          <a href="#story">داستان ولورا</a>
+          <a href="#story">داستان FATIKHAN</a>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
         <Link className="brand" href="/" aria-label="FATIKHAN">FATIKHAN</Link>
@@ -77,7 +77,7 @@ export default function Storefront() {
           </p>
           <div className="hero-actions">
             <a className="button button-dark" href="#products">خرید کالکشن</a>
-            <a className="text-link" href="#story">کشف دنیای ولورا ←</a>
+            <a className="text-link" href="#story">کشف دنیای FATIKHAN ←</a>
           </div>
           <div className="hero-metrics">
             <div><strong>۴.۹</strong><span>امتیاز جامعه</span></div>
@@ -101,7 +101,7 @@ export default function Storefront() {
         <div className="editorial-media">
           <Image
             src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1600&q=90"
-            alt="کمپین آرایشی ولورا"
+            alt="کمپین آرایشی FATIKHAN"
             fill
             sizes="(max-width: 900px) 100vw, 58vw"
           />
@@ -110,7 +110,7 @@ export default function Storefront() {
           <p className="eyebrow">CHAPTER 01 · TEXTURE</p>
           <h2>محصولی که فقط دیده نمی‌شود؛ <em>حس می‌شود.</em></h2>
           <p>
-            ولورا برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
+            FATIKHAN برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
             تصویر قوی، اطلاعات روشن و انتخابی سریع.
           </p>
           <a className="button button-light" href="#products">مشاهده انتخاب سردبیر</a>
@@ -121,7 +121,7 @@ export default function Storefront() {
         <div className="section-head">
           <div>
             <p className="eyebrow">CURATED FOR YOU</p>
-            <h2>انتخاب‌های ولورا</h2>
+            <h2>انتخاب‌های FATIKHAN</h2>
           </div>
           <div className="chips" role="group" aria-label="فیلتر دسته‌بندی">
             {categories.map((item) => (

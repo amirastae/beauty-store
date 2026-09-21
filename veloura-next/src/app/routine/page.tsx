@@ -3,7 +3,7 @@ import RoutineGuide from "@/components/beauty/RoutineGuide";
 
 export const metadata: Metadata = {
   title: "راهنمای روتین پوست — FATIKHAN",
-  description: "راهنمای عمومی و ساده روتین مراقبت پوست صبح و شب در ولورا.",
+  description: "راهنمای عمومی و ساده روتین مراقبت پوست صبح و شب در FATIKHAN.",
   alternates: { canonical: "/routine/" },
   openGraph: {
     title: "راهنمای روتین پوست — FATIKHAN",
