@@ -1,4 +1,4 @@
-name: Build FATIKHAN WebM
+name: Rebuild FATIKHAN Cinematic Preview
 
 on:
   push:
@@ -12,13 +12,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: fatikan-webm-build
+  group: fatikan-cinematic-preview
   cancel-in-progress: true
 
 jobs:
-  transcode:
+  rebuild:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - name: Checkout cinematic branch
         uses: actions/checkout@v5
@@ -35,31 +35,76 @@ jobs:
           fi
           ffmpeg -version | head -1
 
-      - name: Encode seekable VP9 WebM
+      - name: Fetch all six FATIKHAN AI frames
         run: |
           set -euo pipefail
           root="sources/canonical/veloura-next/public/cinematic"
-          input="$root/fatikhan-hero.mp4"
-          output="$root/fatikhan-hero.webm"
-          test -s "$input"
+          mkdir -p "$root/frames"
 
-          ffmpeg -y -i "$input" -an             -c:v libvpx-vp9 -crf 34 -b:v 0             -g 30 -row-mt 1 -threads 8 -deadline good -cpu-used 2             "$output"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_060051_ebf7faa1-1a35-4bdc-a139-5da7040723eb.png" -o "$root/frames/scene-01-descent.png"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_054207_f8d4586a-01ae-4e8f-9116-1ebd47de6aa4.png" -o "$root/frames/scene-02-reveal.png"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_054207_3623a698-bc8b-4f12-a794-84a099cc35a3.png" -o "$root/frames/scene-03-burst.png"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_054207_97e8da1a-59ca-408f-bf6b-1608f6afa0bc.png" -o "$root/frames/scene-04-impact.png"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_054207_32aba09d-400f-404b-951f-a2609847f534.png" -o "$root/frames/scene-05-formula.png"
+          curl -LfsS "https://d8j0ntlcm91z4.cloudfront.net/user_3JX8Mc7x0uX6AZWa8sdkGK4XtQu/hf_20260921_060051_a0335006-67af-42fe-9d4e-0c5640aafda9.png" -o "$root/frames/scene-06-ritual.png"
 
-          test -s "$output"
-          bytes="$(stat -c%s "$output")"
-          test "$bytes" -gt 300000
-          test "$bytes" -lt 26214400
-          echo "FATIKHAN_WEBM=PASS bytes=$bytes"
+          rm -f "$root/frames/scene-01-descent.jpg" "$root/frames/scene-06-ritual.jpg"
+          test "$(find "$root/frames" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq 6
 
-      - name: Commit WebM
+      - name: Build seekable MP4 master
+        run: |
+          set -euo pipefail
+          root="sources/canonical/veloura-next/public/cinematic"
+          f="$root/frames"
+
+          ffmpeg -y             -loop 1 -t 3 -i "$f/scene-01-descent.png"             -loop 1 -t 3 -i "$f/scene-02-reveal.png"             -loop 1 -t 3 -i "$f/scene-03-burst.png"             -loop 1 -t 3 -i "$f/scene-04-impact.png"             -loop 1 -t 3 -i "$f/scene-05-formula.png"             -loop 1 -t 3 -i "$f/scene-06-ritual.png"             -filter_complex "
+              [0:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0007,1.06)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v0];
+              [1:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0006,1.055)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v1];
+              [2:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0008,1.065)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v2];
+              [3:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0006,1.055)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v3];
+              [4:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0008,1.065)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v4];
+              [5:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,zoompan=z='min(zoom+0.0005,1.05)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=90:s=1280x720:fps=30,setsar=1[v5];
+              [v0][v1]xfade=transition=fade:duration=0.30:offset=2.70[x1];
+              [x1][v2]xfade=transition=fade:duration=0.30:offset=5.40[x2];
+              [x2][v3]xfade=transition=fade:duration=0.30:offset=8.10[x3];
+              [x3][v4]xfade=transition=fade:duration=0.30:offset=10.80[x4];
+              [x4][v5]xfade=transition=fade:duration=0.30:offset=13.50[outv]
+            "             -map "[outv]" -an -t 16.5 -r 30             -c:v libx264 -preset medium -crf 21             -g 30 -keyint_min 30 -sc_threshold 0             -pix_fmt yuv420p -movflags +faststart             "$root/fatikhan-hero.mp4"
+
+      - name: Build VP9 WebM and poster
+        run: |
+          set -euo pipefail
+          root="sources/canonical/veloura-next/public/cinematic"
+
+          ffmpeg -y -i "$root/fatikhan-hero.mp4" -an             -c:v libvpx-vp9 -crf 34 -b:v 0             -g 30 -row-mt 1 -threads 8 -deadline good -cpu-used 2             "$root/fatikhan-hero.webm"
+
+          ffmpeg -y -ss 0.15 -i "$root/fatikhan-hero.mp4"             -frames:v 1 -q:v 2 "$root/fatikhan-poster.jpg"
+
+      - name: Validate cinematic payload
+        run: |
+          set -euo pipefail
+          root="sources/canonical/veloura-next/public/cinematic"
+          mp4="$(stat -c%s "$root/fatikhan-hero.mp4")"
+          webm="$(stat -c%s "$root/fatikhan-hero.webm")"
+          poster="$(stat -c%s "$root/fatikhan-poster.jpg")"
+          frames="$(find "$root/frames" -maxdepth 1 -type f | wc -l | tr -d ' ')"
+          test "$frames" -eq 6
+          test "$mp4" -gt 500000
+          test "$mp4" -lt 26214400
+          test "$webm" -gt 300000
+          test "$webm" -lt 26214400
+          test "$poster" -gt 10000
+          echo "FATIKHAN_CINEMATIC_PREVIEW=PASS frames=$frames mp4=$mp4 webm=$webm poster=$poster"
+
+      - name: Commit upgraded preview
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sources/canonical/veloura-next/public/cinematic/fatikhan-hero.webm
+          git add sources/canonical/veloura-next/public/cinematic
           if git diff --cached --quiet; then
-            echo "WebM already current"
+            echo "Cinematic assets already current"
             exit 0
           fi
-          git commit -m "assets(cinema): add FATIKHAN VP9 WebM"
+          git commit -m "assets(cinema): rebuild FATIKHAN six-scene preview"
           git push origin HEAD:fatikan-cinematic-polish-v2
