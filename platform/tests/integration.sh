@@ -52,6 +52,7 @@ payload='{"email":"qa@example.com","shipping_address":{"full_name":"QA User","li
 
 first="$(curl -fsS -X POST "$BASE/api/v1/checkout/$cart_id"   -H 'content-type: application/json'   -H "Idempotency-Key: $idem"   -d "$payload")"
 printf '%s\n' "$first" | grep -q '"payment_status":"requires_provider"' || fail "checkout"
+printf '%s\n' "$first" | grep -q '"shipping_minor":0' || fail "USD shipping policy"
 
 second="$(curl -fsS -X POST "$BASE/api/v1/checkout/$cart_id"   -H 'content-type: application/json'   -H "Idempotency-Key: $idem"   -d "$payload")"
 [ "$first" = "$second" ] || fail "idempotent response mismatch"
@@ -71,6 +72,13 @@ curl -fsS -X POST "$BASE/api/v1/carts/$irr_cart_id/items"   -H 'content-type: ap
 irr_state="$(curl -fsS "$BASE/api/v1/carts/$irr_cart_id")"
 printf '%s\n' "$irr_state" | grep -q '"currency_code":"IRR"' || fail "IRR cart currency"
 printf '%s\n' "$irr_state" | grep -q '"unit_price_minor":18900000' || fail "IRR server price"
+
+irr_idem="it-irr-$(date +%s)-$RANDOM-$RANDOM"
+irr_payload='{"phone":"۰۹۱۲۱۲۳۴۵۶۷","shipping_address":{"full_name":"کاربر تست","line1":"خیابان تست","city":"تهران","postal_code":"1234567890","country_code":"IR"}}'
+irr_checkout="$(curl -fsS -X POST "$BASE/api/v1/checkout/$irr_cart_id"   -H 'content-type: application/json'   -H "Idempotency-Key: $irr_idem"   -d "$irr_payload")"
+printf '%s\n' "$irr_checkout" | grep -q '"payment_status":"requires_provider"' || fail "IRR phone-only checkout"
+printf '%s\n' "$irr_checkout" | grep -q '"shipping_minor":1200000' || fail "IRR shipping policy"
+printf '%s\n' "$irr_checkout" | grep -q '"total_minor":20100000' || fail "IRR checkout total"
 
 echo "INTEGRATION_PASS"
 echo "USD_CART=$cart_id"
