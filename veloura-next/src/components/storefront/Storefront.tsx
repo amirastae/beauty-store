@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
@@ -131,7 +132,7 @@ export default function Storefront() {
         <div className="product-grid">
           {visibleProducts.map((product) => (
             <article className="product-card" key={product.id}>
-              <div className="product-media">
+              <Link className="product-media" href={"/product/" + product.slug}>
                 <Image
                   src={product.image}
                   alt={product.imageAlt}
@@ -139,12 +140,12 @@ export default function Storefront() {
                   sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 25vw"
                 />
                 {product.badge && <span className="badge">{product.badge}</span>}
-                <button className="quick-add" onClick={() => addProduct(product)}>افزودن سریع</button>
-              </div>
+                <span className="quick-add" aria-hidden="true">مشاهده محصول</span>
+              </Link>
               <div className="product-info">
                 <div className="product-heading">
                   <div>
-                    <h3>{product.nameFa}</h3>
+                    <h3><Link href={"/product/" + product.slug}>{product.nameFa}</Link></h3>
                     <p>{product.nameEn}</p>
                   </div>
                   <strong>{price(product.price)}</strong>
