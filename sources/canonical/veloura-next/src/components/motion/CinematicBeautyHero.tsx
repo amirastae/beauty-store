@@ -10,7 +10,10 @@ import HeroStage from "@/components/motion/HeroStage";
 gsap.registerPlugin(ScrollTrigger);
 
 type NavigatorWithConnection = Navigator & {
-  connection?: { saveData?: boolean };
+  connection?: {
+    saveData?: boolean;
+    effectiveType?: "slow-2g" | "2g" | "3g" | "4g" | string;
+  };
 };
 
 const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO !== "0";
@@ -29,9 +32,11 @@ export default function CinematicBeautyHero() {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const compactViewport = window.matchMedia("(max-width: 767px)").matches;
-    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
+    const connection = (navigator as NavigatorWithConnection).connection;
+    const saveData = connection?.saveData === true;
+    const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
 
-    if (reducedMotion || compactViewport || saveData) return;
+    if (reducedMotion || compactViewport || saveData || slowNetwork) return;
 
     const onReady = () => {
       if (!Number.isFinite(media.duration) || media.duration <= 0 || media.readyState < 2) return;
@@ -81,7 +86,8 @@ export default function CinematicBeautyHero() {
             if (pendingFrame) return;
             pendingFrame = window.requestAnimationFrame(() => {
               pendingFrame = 0;
-              if (Math.abs(media.currentTime - targetTime) > 0.016) {
+              // The master is 30fps; seeking below one frame only adds decode work.
+              if (Math.abs(media.currentTime - targetTime) >= 1 / 30) {
                 media.currentTime = targetTime;
               }
             });
