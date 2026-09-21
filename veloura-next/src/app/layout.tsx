@@ -3,6 +3,7 @@ import "./globals.css";
 import MobileDock from "@/components/navigation/MobileDock";
 import SiteFooter from "@/components/navigation/SiteFooter";
 import PWARegister from "@/components/pwa/PWARegister";
+import CompareTray from "@/components/compare/CompareTray";
 
 export const metadata: Metadata = {
   title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
@@ -49,6 +50,7 @@ export default function RootLayout({
         />
         <div id="site-content">{children}</div>
         <SiteFooter />
+        <CompareTray />
         <MobileDock />
         <PWARegister />
       </body>

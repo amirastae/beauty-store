@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import { useCompare } from "@/store/compare";
+import { useRecent } from "@/store/recent";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -19,11 +20,30 @@ export default function ProductDetail({ product, related }: { product: Product; 
   const toggleWishlist = useWishlist((state) => state.toggle);
   const compareIds = useCompare((state) => state.ids);
   const toggleCompare = useCompare((state) => state.toggle);
+  const visitRecent = useRecent((state) => state.visit);
+  const [shared, setShared] = useState(false);
+
+  useEffect(() => {
+    visitRecent(product.id);
+  }, [product.id, visitRecent]);
 
   const shade = useMemo(
     () => product.shades?.find((item) => item.id === shadeId),
     [product.shades, shadeId]
   );
+
+  const shareProduct = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: product.nameFa + " — VELOURA", text: product.nameEn, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        window.setTimeout(() => setShared(false), 1600);
+      }
+    } catch {}
+  };
 
   const addToCart = () => {
     add(product, shadeId);
@@ -120,6 +140,9 @@ export default function ProductDetail({ product, related }: { product: Product; 
               aria-pressed={compareIds.includes(product.id)}
             >
               {compareIds.includes(product.id) ? "مقایسه ✓" : "مقایسه"}
+            </button>
+            <button className="button pdp-share" onClick={shareProduct}>
+              {shared ? "لینک کپی شد ✓" : "اشتراک‌گذاری"}
             </button>
           </div>
           {compareIds.length > 0 && <Link className="compare-inline-link" href="/compare/">مشاهده مقایسه ({fa.format(compareIds.length)}/۳) ←</Link>}
