@@ -5,7 +5,7 @@ const concerns=[
   ["آبرسانی","پوستی نرم‌تر و شاداب‌تر","/shop/?category=پوست"],
   ["درخشش","برای جلوه روشن و شفاف","/shop/?category=پوست"],
   ["سد دفاعی","تقویت روتین روزانه","/shop/?category=پوست"],
-  ["رنگ لب","از نود تا بری عمیق","/shop/?category=لب"]
+  ["رنگ لب","از نود تا بری عمیق","/shop/?category=آرایش"]
 ];
 
 export default function DiscoverySections(){
