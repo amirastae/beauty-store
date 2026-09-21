@@ -1,31 +1,27 @@
-# VELOURA Next — v2.2.0
+# VELOURA Next — v2.3.0
 
 Premium Persian RTL cosmetics storefront for fast static delivery on Cloudflare.
 
-## v2.2 highlights
-- 56 local beauty products and 56 static PDP routes
-- local editorial + UGC media; no Unsplash runtime dependency
-- richer PDP: benefits, localized usage guidance, ingredients, breadcrumbs and related products
-- product JSON-LD + BreadcrumbList schema
-- ingredient-aware catalog search
-- dedicated /search route
-- URL-backed category, budget, rating and shade filters
-- persistent wishlist, cart quantity controls and mobile commerce dock
-- checkout draft persistence on-device with no fake payment state
-- global premium footer
-- About + FAQ routes
-- adaptive R3F hero + GSAP signature product film + Shade Lab
-- reduced-motion / Save-Data / weak-device fallbacks
-- branded static 404
+## v2.3 highlights
+- persistent three-product comparison flow
+- compare page for price, rating, shades, ingredients, benefits and usage
+- compare controls on catalog cards and PDP
+- installable PWA manifest + custom Veloura icons
+- lightweight bounded service worker with versioned cache cleanup
+- offline fallback page
+- global skip navigation and stronger focus-visible states
+- all v2.2 capabilities retained: 56 local products, advanced filters, dedicated search, rich PDP, local media, About/FAQ, cart/wishlist and checkout draft
 
-## Verification baseline
+## Release verification gate
 Before production release:
-- TypeScript must pass
-- Next.js production build must pass
-- all static routes must generate
-- Cloudflare temporary preview must pass HTTP smoke
-- all sitemap URLs and local media must return 200
-- branded 404 must return 404 with custom content
+- TypeScript PASS
+- Next production build PASS
+- static export PASS
+- temporary Cloudflare preview PASS
+- compare / manifest / service worker / offline routes PASS
+- all sitemap URLs and local media HTTP 200
+- branded 404 PASS
+- no remote Unsplash dependency
 
 ## Release discipline
 Stable releases are copied under `/versions/` before the next development cycle.
