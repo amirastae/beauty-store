@@ -1,0 +1,23 @@
+{
+  "updated_at": "2026-09-21T05:31:00Z",
+  "sources": [
+    {
+      "name": "v2.5",
+      "branch": "veloura-v2.5-routine",
+      "commit": "41dc1339f8b3f946292be9e01c10bdb997660d73",
+      "tree": "f016db45a5b8de75a4486d93b90446cbac46e4e8"
+    },
+    {
+      "name": "iranian-ux",
+      "branch": "iranian-commerce-ux-v1",
+      "commit": "98d9654ffdee8b8169c8096df4ac4c49496af551",
+      "tree": "a1868ee2950136e3b68a01d1c84221dd230f5b00"
+    },
+    {
+      "name": "shop-latest",
+      "branch": "shop-v1.9.0-work",
+      "commit": "813e450f69336928481f4ec09b7cc071c048b62d",
+      "tree": "52ff958912d97cb536110ac55c826f282b9c2817"
+    }
+  ]
+}

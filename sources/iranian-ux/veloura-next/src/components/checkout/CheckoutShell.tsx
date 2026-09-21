@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import CommerceFooter from "@/components/commerce/CommerceFooter";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import {
   commerceVerificationConfigured,
@@ -10,7 +10,7 @@ import {
   type CommerceVerification,
   verifyCommerceCart
 } from "@/lib/commerce-verify";
-import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
+import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode, toFaDigits } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
@@ -42,6 +42,16 @@ export default function CheckoutShell(){
   const [checking,setChecking]=useState(false);
   const [verification,setVerification]=useState<CommerceVerification|null>(null);
   const [serverError,setServerError]=useState("");
+  const [paymentReturn,setPaymentReturn]=useState<{status:"success"|"failed"|"cancelled";order?:string}|null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    if (payment === "success" || payment === "failed" || payment === "cancelled") {
+      const order = (params.get("order") || "").replace(/[^0-9]/g, "").slice(0, 20);
+      setPaymentReturn({ status: payment, ...(order ? { order } : {}) });
+    }
+  }, []);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,6 +105,26 @@ export default function CheckoutShell(){
       <section>
         <p className="eyebrow">IRAN CHECKOUT · SECURE FLOW</p>
         <h1>تکمیل سفارش</h1>
+        {paymentReturn && (
+          <div
+            className={"payment-return " + paymentReturn.status}
+            role={paymentReturn.status === "success" ? "status" : "alert"}
+          >
+            <strong>
+              {paymentReturn.status === "success"
+                ? "پرداخت با موفقیت تأیید شد."
+                : paymentReturn.status === "cancelled"
+                  ? "پرداخت لغو شد."
+                  : "پرداخت تأیید نشد."}
+            </strong>
+            {paymentReturn.order && <span>شماره سفارش: {toFaDigits(paymentReturn.order)}</span>}
+            <small>
+              {paymentReturn.status === "success"
+                ? "این وضعیت فقط از callback تأییدشده هسته تجارت نمایش داده می‌شود."
+                : "در صورت کسر وجه یا ابهام، قبل از تلاش دوباره با پشتیبانی فروشگاه تماس بگیر."}
+            </small>
+          </div>
+        )}
         <form className="checkout-form" onSubmit={submit} onChange={()=>{done&&setDone(false);verification&&setVerification(null);serverError&&setServerError("")}}>
           <label>نام و نام خانوادگی<input name="fullName" required autoComplete="name"/></label>
           <label>

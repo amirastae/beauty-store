@@ -82,3 +82,6 @@
 .commerce-footer nav a,.commerce-footer-support a{color:var(--ink);font-size:10px;text-underline-offset:4px}.commerce-footer-support span{display:block;margin-bottom:10px;color:var(--muted);font-size:9px}
 .commerce-footer-support a{word-break:break-all}.commerce-footer .brand{text-decoration:none;font-size:14px;letter-spacing:.12em}
 @media(max-width:760px){.commerce-footer{grid-template-columns:1fr;gap:26px;padding:34px 18px}}
+
+.payment-return{margin:18px 0 24px;border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:7px;font-size:11px}
+.payment-return strong{font-size:12px}.payment-return span,.payment-return small{color:var(--muted)}.payment-return.success{background:#edf6ef;border-color:#a9c8b0}.payment-return.failed{background:#f9ecee;border-color:#d7a9b0}.payment-return.cancelled{background:#f5f0e8;border-color:#cfbea3}

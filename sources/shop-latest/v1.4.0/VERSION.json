@@ -1,0 +1,9 @@
+{
+  "name": "VELOURA Beauty Store",
+  "version": "1.4.0",
+  "status": "verified-checkpoint",
+  "quality": {"eslint": "pass", "typescript": "pass", "build": "pass"},
+  "build": {"routes": 95, "output_mb": 19, "files": 973, "sitemap_urls": 79},
+  "performance": {"public_mb": 9.3, "initial_static_kb": 824.0, "three_initial": false},
+  "features": ["server-rendered home shell", "deferred lower home sections", "dynamic Three.js", "per-product SEO metadata", "per-category SEO metadata", "expanded sitemap", "hardened robots", "lightweight wordmark and SVG icon", "fake social proof removed", "honest auth/checkout/support handoff"]
+}
