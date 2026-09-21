@@ -49,17 +49,24 @@ export class VelouraCommerceClient {
     return payload.data
   }
 
-  resolveVariant(productId: string, shadeId?: string) {
+  resolveVelouraV2Variant(productId: string, shadeId?: string) {
     return this.request<ResolvedVariant>('/api/v1/compat/veloura-v2/resolve', {
       method: 'POST',
       body: JSON.stringify({ product_id: productId, shade_id: shadeId })
     })
   }
 
-  createCart() {
+  resolveShopV1Variant(productId: number | string) {
+    return this.request<ResolvedVariant>('/api/v1/compat/shop-v1/resolve', {
+      method: 'POST',
+      body: JSON.stringify({ product_id: productId })
+    })
+  }
+
+  createCart(currencyCode: 'USD' | 'IRR' = 'USD') {
     return this.request<{ id: string; currency_code: string; status: string; total_minor: number }>(
       '/api/v1/carts',
-      { method: 'POST', body: '{}' }
+      { method: 'POST', body: JSON.stringify({ currency_code: currencyCode }) }
     )
   }
 
@@ -74,10 +81,21 @@ export class VelouraCommerceClient {
   }
 
   async createCartFromVelouraV2(lines: VelouraV2CartLine[]) {
-    const cart = await this.createCart()
+    const cart = await this.createCart('IRR')
 
     for (const line of lines) {
-      const resolved = await this.resolveVariant(line.product.id, line.shadeId)
+      const resolved = await this.resolveVelouraV2Variant(line.product.id, line.shadeId)
+      await this.addItem(cart.id, resolved.variant_id, line.qty)
+    }
+
+    return cart
+  }
+
+  async createCartFromShopV1(lines: Array<{ id: number | string; qty: number }>) {
+    const cart = await this.createCart('USD')
+
+    for (const line of lines) {
+      const resolved = await this.resolveShopV1Variant(line.id)
       await this.addItem(cart.id, resolved.variant_id, line.qty)
     }
 
