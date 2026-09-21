@@ -80,6 +80,11 @@ printf '%s\n' "$irr_checkout" | grep -q '"payment_status":"requires_provider"' |
 printf '%s\n' "$irr_checkout" | grep -q '"shipping_minor":1200000' || fail "IRR shipping policy"
 printf '%s\n' "$irr_checkout" | grep -q '"total_minor":20100000' || fail "IRR checkout total"
 
+irr_order_id="$(printf '%s' "$irr_checkout" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["order_id"])')"
+payment_code="$(curl -sS -o /tmp/payment-unconfigured.json -w '%{http_code}' -X POST "$BASE/api/v1/payments/$irr_order_id/start" -H 'content-type: application/json')"
+[ "$payment_code" = "503" ] || fail "disabled payment provider must return 503"
+grep -q 'PAYMENT_PROVIDER_NOT_CONFIGURED' /tmp/payment-unconfigured.json || fail "disabled payment provider code"
+
 echo "INTEGRATION_PASS"
 echo "USD_CART=$cart_id"
 echo "IRR_CART=$irr_cart_id"

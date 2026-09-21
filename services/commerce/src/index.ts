@@ -10,6 +10,7 @@ import { admin } from './routes/admin'
 import { media } from './routes/media'
 import { search } from './routes/search'
 import { compat } from './routes/compat'
+import { payments } from './routes/payments'
 import { ensurePreviewDatabase } from './lib/bootstrap'
 
 const app = new Hono<AppBindings>()
@@ -46,6 +47,7 @@ app.get('/api/v1/health', (c) => c.json({
     database_bound: Boolean(c.env.DB),
     media_bound: Boolean(c.env.MEDIA),
     admin_configured: Boolean(c.env.ADMIN_API_KEY),
+    payment_provider_configured: Boolean(c.env.PAYMENT_PROVIDER && c.env.ZARINPAL_MERCHANT_ID && c.env.PAYMENT_CALLBACK_BASE_URL),
     timestamp: new Date().toISOString()
   }
 }))
@@ -56,6 +58,7 @@ app.route('/api/v1', checkout)
 app.route('/api/v1', media)
 app.route('/api/v1', search)
 app.route('/api/v1', compat)
+app.route('/api/v1', payments)
 app.route('/api/v1/carts', carts)
 app.route('/api/v1/admin', admin)
 
