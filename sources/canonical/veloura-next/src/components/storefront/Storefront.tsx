@@ -25,6 +25,7 @@ export default function Storefront() {
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [navScrolled, setNavScrolled] = useState(false);
   const [selectedShade, setSelectedShade] = useState<Record<string, string>>({});
   const { lines, add, decrement, remove } = useCart();
   const wishlistIds = useWishlist((state) => state.ids);
@@ -44,6 +45,13 @@ export default function Storefront() {
 
   const cartCount = lines.reduce((sum, line) => sum + line.qty, 0);
   const cartTotal = lines.reduce((sum, line) => sum + line.product.price * line.qty, 0);
+
+  useEffect(() => {
+    const onScroll = () => setNavScrolled(window.scrollY > 28);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const opened = cartOpen || searchOpen;
@@ -73,9 +81,7 @@ export default function Storefront() {
 
   return (
     <main className="site-shell">
-      <div className="announcement">FATIKHAN · کالکشن زیبایی ۲۰۲۶</div>
-
-      <header className="nav">
+      <header className={navScrolled ? "nav nav-scrolled" : "nav"}>
         <button type="button" className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
           سبد <span className="cart-count">{toman.format(cartCount)}</span>
         </button>
