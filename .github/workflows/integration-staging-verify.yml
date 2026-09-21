@@ -72,3 +72,25 @@ jobs:
           assert variants >= 129, variants
           print(f"COMMERCE_DB_SMOKE=PASS products={products} variants={variants}")
           PY
+      - name: Local Cloudflare commerce integration
+        run: |
+          rm -rf .wrangler/state
+          npm run db:migrate:preview-local
+          npm run db:seed:preview-local
+          npm run dev:preview > /tmp/veloura-commerce-dev.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/veloura-commerce-health.json; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then
+            cat /tmp/veloura-commerce-dev.log
+            exit 1
+          fi
+          bash tests/integration.sh http://127.0.0.1:8787
+          node tests/concurrent-checkout.mjs http://127.0.0.1:8787
