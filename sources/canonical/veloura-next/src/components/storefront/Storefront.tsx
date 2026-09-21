@@ -81,10 +81,10 @@ export default function Storefront() {
         </button>
         <nav className="nav-links" aria-label="ناوبری اصلی">
           <Link href="/shop/">فروشگاه</Link>
-          <a href="#story">داستان ولورا</a>
+          <a href="#story">داستان FATIKHAN</a>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
-        <Link className="brand" href="/" aria-label="ولورا">VELOURA</Link>
+        <Link className="brand" href="/" aria-label="FATIKHAN">FATIKHAN</Link>
         <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
@@ -98,7 +98,7 @@ export default function Storefront() {
         <div className="editorial-media">
           <Image
             src="/editorial-hero.jpg"
-            alt="کمپین آرایشی ولورا"
+            alt="کمپین آرایشی FATIKHAN"
             fill
             sizes="(max-width: 900px) 100vw, 58vw"
           />
@@ -107,7 +107,7 @@ export default function Storefront() {
           <p className="eyebrow">CHAPTER 01 · TEXTURE</p>
           <h2>محصولی که فقط دیده نمی‌شود؛ <em>حس می‌شود.</em></h2>
           <p>
-            ولورا برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
+            FATIKHAN برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
             تصویر قوی، اطلاعات روشن و انتخابی سریع.
           </p>
           <a className="button button-light" href="#products">مشاهده انتخاب سردبیر</a>
@@ -118,7 +118,7 @@ export default function Storefront() {
         <div className="section-head">
           <div>
             <p className="eyebrow">CURATED FOR YOU</p>
-            <h2>انتخاب‌های ولورا</h2>
+            <h2>انتخاب‌های FATIKHAN</h2>
           </div>
           <div className="chips" role="group" aria-label="فیلتر دسته‌بندی">
             {categories.map((item) => (
@@ -188,7 +188,7 @@ export default function Storefront() {
       <DiscoverySections />
 
       <section className="club" id="club">
-        <p className="eyebrow">VELOURA PRIVATE LIST</p>
+        <p className="eyebrow">FATIKHAN PRIVATE LIST</p>
         <h2>اولین نفر باش.</h2>
         <p>دسترسی زودتر به کالکشن‌ها، رنگ‌های محدود و ادیت‌های جدید.</p>
         <form onSubmit={(event) => event.preventDefault()}>
@@ -231,7 +231,7 @@ export default function Storefront() {
       <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
         <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
-          <p className="eyebrow">SEARCH VELOURA</p>
+          <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
             autoFocus={searchOpen}
             value={query}
