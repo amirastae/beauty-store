@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import { useCompare } from "@/store/compare";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -16,6 +17,8 @@ export default function ProductDetail({ product, related }: { product: Product; 
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
+  const compareIds = useCompare((state) => state.ids);
+  const toggleCompare = useCompare((state) => state.toggle);
 
   const shade = useMemo(
     () => product.shades?.find((item) => item.id === shadeId),
@@ -111,7 +114,15 @@ export default function ProductDetail({ product, related }: { product: Product; 
             >
               {wishlistIds.includes(product.id) ? "♥ ذخیره شد" : "♡ علاقه‌مندی"}
             </button>
+            <button
+              className={compareIds.includes(product.id) ? "button pdp-compare active" : "button pdp-compare"}
+              onClick={() => toggleCompare(product.id)}
+              aria-pressed={compareIds.includes(product.id)}
+            >
+              {compareIds.includes(product.id) ? "مقایسه ✓" : "مقایسه"}
+            </button>
           </div>
+          {compareIds.length > 0 && <Link className="compare-inline-link" href="/compare/">مشاهده مقایسه ({fa.format(compareIds.length)}/۳) ←</Link>}
 
           <div className="pdp-trust">
             <span>ضمانت اصالت</span>
