@@ -58,3 +58,8 @@ Six locked scene frames are complete. Google Flow is now the approved final-moti
 - The blob-backed cinematic loader now prefers the smaller WebM master and falls back to MP4 only when needed.
 - Runtime CI now locks the WebM -> MP4 source order in addition to the existing mobile/desktop scroll-scrub invariant.
 - This changes transport efficiency only; the approved Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual choreography is unchanged.
+
+
+## Decode fallback hardening
+
+The canonical blob loader now falls back from WebM to MP4 not only when WebM fetch fails, but also when the browser fetches WebM successfully and then rejects it during media decode. This keeps the locked scroll-scrub experience alive across codec edge cases without adding a viewport-based disable.

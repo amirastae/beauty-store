@@ -44,6 +44,45 @@ export default function CinematicBeautyHero() {
 
     const controller = new AbortController();
     let objectUrl = "";
+    const sources = media.canPlayType("video/webm")
+      ? ["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]
+      : ["/cinematic/fatikhan-hero.mp4"];
+    let sourceIndex = 0;
+
+    const revokeObjectUrl = () => {
+      if (!objectUrl) return;
+      URL.revokeObjectURL(objectUrl);
+      objectUrl = "";
+    };
+
+    const loadSource = async (index: number): Promise<void> => {
+      const source = sources[index];
+      if (!source) {
+        setVideoReady(false);
+        setVideoFailed(true);
+        return;
+      }
+
+      try {
+        const response = await fetch(source, {
+          cache: "force-cache",
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error("cinematic master fetch failed");
+
+        const blob = await response.blob();
+        if (controller.signal.aborted) return;
+
+        revokeObjectUrl();
+        objectUrl = URL.createObjectURL(blob);
+        media.src = objectUrl;
+        media.load();
+      } catch {
+        if (controller.signal.aborted) return;
+        sourceIndex = index + 1;
+        await loadSource(sourceIndex);
+      }
+    };
 
     const onReady = () => {
       if (!Number.isFinite(media.duration) || media.duration <= 0 || media.readyState < 2) return;
@@ -53,6 +92,15 @@ export default function CinematicBeautyHero() {
     };
     const onError = () => {
       setVideoReady(false);
+      if (controller.signal.aborted) return;
+
+      if (sourceIndex + 1 < sources.length) {
+        sourceIndex += 1;
+        revokeObjectUrl();
+        void loadSource(sourceIndex);
+        return;
+      }
+
       setVideoFailed(true);
     };
 
@@ -60,42 +108,14 @@ export default function CinematicBeautyHero() {
     media.addEventListener("canplay", onReady);
     media.addEventListener("error", onError);
 
-    const loadScrubMaster = async () => {
-      const sources = media.canPlayType("video/webm")
-        ? ["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]
-        : ["/cinematic/fatikhan-hero.mp4"];
-
-      for (const source of sources) {
-        try {
-          const response = await fetch(source, {
-            cache: "force-cache",
-            signal: controller.signal
-          });
-          if (!response.ok) continue;
-
-          const blob = await response.blob();
-          if (controller.signal.aborted) return;
-
-          objectUrl = URL.createObjectURL(blob);
-          media.src = objectUrl;
-          media.load();
-          return;
-        } catch {
-          if (controller.signal.aborted) return;
-        }
-      }
-
-      onError();
-    };
-
-    void loadScrubMaster();
+    void loadSource(sourceIndex);
 
     return () => {
       controller.abort();
       media.removeEventListener("loadeddata", onReady);
       media.removeEventListener("canplay", onReady);
       media.removeEventListener("error", onError);
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      revokeObjectUrl();
     };
   }, [videoEligible]);
 
