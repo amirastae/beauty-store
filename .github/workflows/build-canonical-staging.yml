@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: integration-staging-build
@@ -63,16 +63,11 @@ jobs:
           test -s public/robots.txt
           test -s public/sitemap.xml
 
-      - name: Commit generated staging output
+      - name: Compare generated output with staged public
         run: |
-          git config user.name "veloura-integration-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add -A public
-          if git diff --cached --quiet; then
-            echo "No generated output changes."
-            exit 0
+          if diff -qr public sources/canonical/veloura-next/out >/tmp/veloura-public-diff.txt; then
+            echo "CANONICAL_PUBLIC_MATCH=PASS"
+          else
+            echo "CANONICAL_PUBLIC_MATCH=DIFF"
+            head -80 /tmp/veloura-public-diff.txt
           fi
-          git commit -m "build(staging): sync canonical VELOURA v2.2 export [generated]"
-          git fetch origin integration-staging
-          git rebase origin/integration-staging
-          git push origin HEAD:integration-staging
