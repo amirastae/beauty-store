@@ -280,3 +280,18 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   .ugc-grid{grid-template-columns:1fr}.ugc-grid .ugc-large{grid-column:auto;min-height:460px}.ugc-grid figure{min-height:360px}
   .trust-band{grid-template-columns:1fr}.trust-band>div{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.1)}
 }
+
+
+/* Mobile commerce dock + quantity controls */
+.qty-stepper,.drawer-qty{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;margin-top:8px}
+.qty-stepper button,.drawer-qty button{width:26px;height:26px;border:0;border-radius:50%;background:rgba(255,255,255,.58);cursor:pointer;color:var(--ink);font-size:16px;line-height:1}
+.qty-stepper span,.drawer-qty b{min-width:22px;text-align:center;font-size:10px;font-weight:600}
+.mobile-dock{display:none}
+@media(max-width:700px){
+  body{padding-bottom:76px}
+  .mobile-dock{position:fixed;z-index:120;left:12px;right:12px;bottom:max(10px,env(safe-area-inset-bottom));height:58px;border:1px solid rgba(255,255,255,.48);background:rgba(24,19,18,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:20px;padding:5px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 18px 50px rgba(25,13,10,.24)}
+  .dock-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:rgba(255,255,255,.58);font-size:8px;border-radius:15px;min-width:0}
+  .dock-item.active{background:rgba(255,255,255,.1);color:#fff}
+  .dock-icon{font:500 20px/1 Arial,sans-serif}
+  .dock-item b{position:absolute;top:4px;inset-inline-end:12%;min-width:17px;height:17px;border-radius:999px;background:#b65d70;color:#fff;font:700 8px/17px Arial,sans-serif;text-align:center;padding-inline:4px}
+}
