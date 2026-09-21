@@ -12,6 +12,7 @@ export default function ComparePage() {
   const remove = useCompare((state) => state.remove);
   const clear = useCompare((state) => state.clear);
   const add = useCart((state) => state.add);
+  const cartCount = useCart((state) => state.lines.reduce((sum, line) => sum + line.qty, 0));
   const items = ids
     .map((id) => products.find((product) => product.id === id))
     .filter((product): product is Product => Boolean(product));
@@ -20,7 +21,7 @@ export default function ComparePage() {
     <main className="utility-page compare-page">
       <header className="shop-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید</Link></nav>
+        <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
 
       <section className="utility-head">

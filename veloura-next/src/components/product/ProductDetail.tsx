@@ -15,6 +15,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const [shareLabel,setShareLabel]=useState("اشتراک‌گذاری محصول");
   const add = useCart((state) => state.add);
+  const cartCount = useCart((state) => state.lines.reduce((sum, line) => sum + line.qty, 0));
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
   const compareIds = useCompare((state) => state.ids);
@@ -59,6 +60,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         <Link href="/" className="brand">VELOURA</Link>
         <nav className="pdp-nav-links">
           <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
+          <Link href="/cart/">سبد <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link>
           <Link href="/shop/">بازگشت به فروشگاه ←</Link>
         </nav>
       </header>
@@ -116,7 +118,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           )}
 
           <div className="pdp-actions pdp-actions-commerce">
-            <button className="button button-dark pdp-add" onClick={addToCart}>
+            <button className="button button-dark pdp-add" onClick={addToCart} aria-live="polite">
               {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
             </button>
             <button
