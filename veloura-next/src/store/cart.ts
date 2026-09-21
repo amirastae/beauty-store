@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Product } from "@/data/products";
+import { products, type Product } from "@/data/products";
 
 export type CartLine = {
   product: Product;

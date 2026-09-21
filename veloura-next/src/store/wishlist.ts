@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { products } from "@/data/products";
 import { persist } from "zustand/middleware";
 
 type WishlistState = {
