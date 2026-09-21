@@ -1,0 +1,8 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/3df1344322fb4761.js","/_next/static/chunks/247eb132b7f7b574.js"],"ViewportBoundary"]
+4:I[97367,["/_next/static/chunks/3df1344322fb4761.js","/_next/static/chunks/247eb132b7f7b574.js"],"MetadataBoundary"]
+5:"$Sreact.suspense"
+7:I[27201,["/_next/static/chunks/3df1344322fb4761.js","/_next/static/chunks/247eb132b7f7b574.js"],"IconMark"]
+0:{"buildId":"-yf4b5VoWhYB9EkGhhCAm","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
+3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+6:[["$","title","0",{"children":"VELOURA | فروشگاه تخصصی زیبایی"}],["$","meta","1",{"name":"description","content":"فروشگاه آنلاین آرایش، مراقبت پوست، مو و عطر با تجربه‌ای لوکس و سریع."}],["$","link","2",{"rel":"author","href":"https://github.com/devsujandas"}],["$","meta","3",{"name":"author","content":"Sujan Das"}],["$","link","4",{"rel":"icon","href":"/logo.png"}],["$","link","5",{"rel":"apple-touch-icon","href":"/logo.png"}],["$","$L7","6",{}]]
