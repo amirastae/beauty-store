@@ -23,10 +23,13 @@ for (const header of [
   check(text.includes(header), "missing security header: " + header);
 }
 
+check(text.includes("/_next/static/*"), "immutable cache rule path missing");
+check(text.includes("Cache-Control: public, max-age=31536000, immutable"), "immutable cache header missing");
+
 if (failures.length) {
   console.error("Security smoke failed:");
   for (const failure of failures) console.error("- " + failure);
   process.exit(1);
 }
 
-console.log("Security smoke PASS: Cloudflare static asset headers present");
+console.log("Security smoke PASS: Cloudflare security and immutable asset headers present");
