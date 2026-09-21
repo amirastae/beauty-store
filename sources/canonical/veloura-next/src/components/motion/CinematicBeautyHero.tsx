@@ -34,7 +34,7 @@ export default function CinematicBeautyHero() {
     const saveData = connection?.saveData === true;
     const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
 
-    setVideoEligible(!(reducedMotion || compactViewport || saveData || slowNetwork));
+    setVideoEligible(!(reducedMotion || saveData || slowNetwork));
   }, []);
 
   useEffect(() => {
