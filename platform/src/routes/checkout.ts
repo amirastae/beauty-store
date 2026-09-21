@@ -33,6 +33,34 @@ function orderNumber() {
   return 100000000 + (bytes[0] % 900000000)
 }
 
+function normalizePhone(input: unknown) {
+  const fa = '۰۱۲۳۴۵۶۷۸۹'
+  const ar = '٠١٢٣٤٥٦٧٨٩'
+  return String(input ?? '')
+    .replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String(ar.indexOf(d)))
+    .replace(/[^0-9+]/g, '')
+}
+
+function shippingPolicy(env: AppBindings['Bindings'], currency: string, subtotal: number) {
+  const flatRaw = currency === 'IRR'
+    ? env.SHIPPING_FLAT_MINOR_IRR
+    : currency === 'USD'
+      ? env.SHIPPING_FLAT_MINOR_USD
+      : undefined
+  const thresholdRaw = currency === 'IRR'
+    ? env.SHIPPING_FREE_THRESHOLD_MINOR_IRR
+    : currency === 'USD'
+      ? env.SHIPPING_FREE_THRESHOLD_MINOR_USD
+      : undefined
+
+  const flat = Number(flatRaw)
+  const threshold = Number(thresholdRaw)
+  if (!Number.isFinite(flat) || flat < 0 || !Number.isFinite(threshold) || threshold < 0) return null
+
+  return { flat, threshold, amount: subtotal >= threshold ? 0 : flat }
+}
+
 async function sha256Hex(input: string) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('')
@@ -88,16 +116,21 @@ checkout.post('/checkout/:cartId', async (c) => {
 
   const body = await c.req.json<{
     email?: string
+    phone?: string
     shipping_address?: Record<string, unknown>
     billing_address?: Record<string, unknown>
   }>().catch(() => ({} as {
     email?: string
+    phone?: string
     shipping_address?: Record<string, unknown>
     billing_address?: Record<string, unknown>
   }))
 
   const email = String(body.email ?? cart.email ?? '').trim().toLowerCase()
-  if (!email || !email.includes('@')) return fail('EMAIL_REQUIRED', 'A valid email is required.', 400)
+  const phone = normalizePhone(body.phone)
+  if (email && !email.includes('@')) return fail('EMAIL_INVALID', 'Email is invalid.', 400)
+  if (phone && phone.replace(/\D/g, '').length < 7) return fail('PHONE_INVALID', 'Phone number is invalid.', 400)
+  if (!email && !phone) return fail('CONTACT_REQUIRED', 'Email or phone is required.', 400)
   if (!body.shipping_address || typeof body.shipping_address !== 'object') {
     return fail('SHIPPING_ADDRESS_REQUIRED', 'Shipping address is required.', 400)
   }
@@ -105,6 +138,7 @@ checkout.post('/checkout/:cartId', async (c) => {
   const requestHash = await sha256Hex(JSON.stringify({
     cart_id: cartId,
     email,
+    phone,
     shipping_address: body.shipping_address,
     billing_address: body.billing_address ?? null
   }))
@@ -208,7 +242,14 @@ checkout.post('/checkout/:cartId', async (c) => {
 
   try {
     const subtotal = lines.reduce((sum, line) => sum + line.line_total_minor, 0)
-    const shipping = subtotal >= 7500 ? 0 : 800
+    const shippingRule = shippingPolicy(c.env, cart.currency_code, subtotal)
+    if (!shippingRule) {
+      await releaseReservations(db, reserved)
+      await releaseCheckoutClaim(db, cartId, idem)
+      await releaseIdempotencyLock(db, idem)
+      return fail('SHIPPING_POLICY_NOT_CONFIGURED', 'Shipping policy is not configured for this currency.', 503)
+    }
+    const shipping = shippingRule.amount
     const discount = 0
     const tax = 0
     const total = subtotal - discount + shipping + tax
@@ -234,12 +275,12 @@ checkout.post('/checkout/:cartId', async (c) => {
     const statements: D1PreparedStatement[] = [
       db.prepare(
         `INSERT INTO orders
-         (id, order_number, customer_id, email, currency_code, status, payment_status,
+         (id, order_number, customer_id, email, phone, currency_code, status, payment_status,
           fulfillment_status, subtotal_minor, discount_minor, shipping_minor, tax_minor,
           total_minor, shipping_address_json, billing_address_json, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, 'pending', 'unpaid', 'unfulfilled', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         VALUES (?, ?, ?, ?, ?, ?, 'pending', 'unpaid', 'unfulfilled', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
-        orderId, orderNo, cart.customer_id, email, cart.currency_code,
+        orderId, orderNo, cart.customer_id, email, phone || null, cart.currency_code,
         subtotal, discount, shipping, tax, total,
         JSON.stringify(body.shipping_address),
         body.billing_address ? JSON.stringify(body.billing_address) : null,
@@ -289,8 +330,8 @@ checkout.post('/checkout/:cartId', async (c) => {
     }
 
     statements.push(
-      db.prepare(`UPDATE carts SET status = 'completed', email = ?, updated_at = ? WHERE id = ?`)
-        .bind(email, now, cartId)
+      db.prepare(`UPDATE carts SET status = 'completed', email = ?, phone = ?, updated_at = ? WHERE id = ?`)
+        .bind(email || null, phone || null, now, cartId)
     )
 
     statements.push(
