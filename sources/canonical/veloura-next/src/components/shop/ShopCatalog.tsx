@@ -7,6 +7,7 @@ import { categories, products } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import { useCompare } from "@/store/compare";
+import { normalizePersianSearch } from "@/lib/locale";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -49,7 +50,7 @@ export default function ShopCatalog() {
   }, [category, query, priceBand, shadeOnly]);
 
   const visible = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("fa");
+    const q = normalizePersianSearch(query);
     const filtered = products.filter((product) => {
       const byCategory = category === "همه" || product.category === category;
       const haystack = (
@@ -58,8 +59,9 @@ export default function ShopCatalog() {
         product.brand + " " +
         product.category + " " +
         product.ingredients.join(" ")
-      ).toLocaleLowerCase("fa");
-      const byQuery = !q || haystack.includes(q);
+      );
+      const normalizedHaystack = normalizePersianSearch(haystack);
+      const byQuery = !q || normalizedHaystack.includes(q);
       const byShade = !shadeOnly || Boolean(product.shades?.length);
       const byPrice =
         priceBand === "all" ||
@@ -140,7 +142,7 @@ export default function ShopCatalog() {
 
         <div className="chips">
           {categories.map((item)=>(
-            <button key={item} className={category===item?"chip active":"chip"} onClick={()=>setCategory(item)}>{item}</button>
+            <button type="button" key={item} className={category===item?"chip active":"chip"} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>
           ))}
         </div>
       </section>
@@ -168,8 +170,8 @@ export default function ShopCatalog() {
                 </div>
                 <div className="card-actions">
                   <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
-                  <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label="علاقه‌مندی" onClick={()=>toggleWishlist(product.id)}>♡</button>
-                  <button className={compareIds.includes(product.id)?"compare-toggle active":"compare-toggle"} onClick={()=>toggleCompare(product.id)}>{compareIds.includes(product.id)?"مقایسه ✓":"مقایسه"}</button>
+                  <button type="button" className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"} aria-pressed={wishlistIds.includes(product.id)} onClick={()=>toggleWishlist(product.id)}>♡</button>
+                  <button type="button" className={compareIds.includes(product.id)?"compare-toggle active":"compare-toggle"} aria-pressed={compareIds.includes(product.id)} onClick={()=>toggleCompare(product.id)}>{compareIds.includes(product.id)?"مقایسه ✓":"مقایسه"}</button>
                 </div>
               </div>
             </article>
