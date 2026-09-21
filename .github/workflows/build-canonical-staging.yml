@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - integration-staging
+    paths:
+      - "sources/polish/veloura-next/**"
+      - ".github/workflows/build-canonical-staging.yml"
   workflow_dispatch:
 
 permissions:
