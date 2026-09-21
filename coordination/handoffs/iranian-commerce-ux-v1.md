@@ -1,10 +1,10 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `5268f3eb1852e8219625ffce5bb80fe77f123f07`
-- Verification run: `35566012580`
+- Tested code commit: `0fcb9445119752fb0af933516137767ea4e6f2bb`
+- Verification run: `35566394716`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
-- Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial logic remains untouched; only authoritative brand literals were aligned to FATIKHAN. Production deployment remains untouched.
+- Scope: Persian/Iran commerce UX, trust, SEO, accessibility, recovery UX, static-response security and low-risk performance hardening. Homepage motion/editorial structure remains untouched; only brand identity, trust copy, accessibility and PRIVATE LIST behavior were changed. Production deployment remains untouched.
 
 ## Brand identity
 
@@ -58,6 +58,15 @@
 - If Commerce API is absent, UI explicitly states that no order/payment was created.
 - Payment return UI safely handles backend callback redirects for `success`, `failed`, and `cancelled`, including sanitized order-number display; it does not itself mutate payment/order state.
 
+### Homepage trust / recovery
+- Removed seeded homepage rating/review/badge output and unsupported claims such as free-shipping, 24H and cruelty-free claims that did not have a verified source.
+- Replaced hero proof metrics with factual storefront capabilities (RTL, Toman display, comparison).
+- PRIVATE LIST is no longer a dead form; it transparently prepares a membership request through the official support email.
+- Added FATIKHAN custom not-found recovery page.
+- Added client error boundary with retry/shop/home recovery actions.
+- Closed cart/search overlays are inert and cannot retain hidden keyboard focus; open overlays expose dialog semantics.
+- External browser QA PASS: 10 routes × 2 viewports (390×844 and 1440×900), no horizontal overflow/page errors, one H1 per route, search/cart overlay state verified.
+
 ### Product/trust
 - Toman and compare-at display.
 - Shade selection.
@@ -101,7 +110,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-GitHub Actions verification on tested code commit `5268f3eb1852e8219625ffce5bb80fe77f123f07`:
+GitHub Actions verification on tested code commit `0fcb9445119752fb0af933516137767ea4e6f2bb`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -113,8 +122,13 @@ GitHub Actions verification on tested code commit `5268f3eb1852e8219625ffce5bb80
 - `npm run performance:check`: PASS — baseline guard for total output, JS, largest JS chunk, CSS and HTML page size
 - `npm run mutation-safety:check`: PASS — frontend cannot call cart/order/payment mutation endpoints while production-readiness blockers remain open
 - `npm run brand:check`: PASS — FATIKHAN visible identity locked; legacy VELOURA/ولورا display strings absent
+- `npm run trust:check`: PASS — rendered homepage cannot reintroduce seeded rating/badge or unsupported marketing claims
 
 CI itself is bounded with a 10-minute timeout, read-only repository permission and concurrency cancellation for stale runs. Manual `workflow_dispatch` verification is also available.
+
+Browser QA checkpoint:
+- `BROWSER_QA_PASS routes=10 viewports=2 overlays=search,cart`
+- tested on mobile 390×844 and desktop 1440×900 against a clean static build.
 
 The custom gates cover:
 - canonical/noindex/robots/sitemap/JSON-LD expectations,
@@ -129,9 +143,10 @@ The custom gates cover:
 - `.github/workflows/iranian-commerce-ux-verify.yml`
 - `veloura-next/.env.example`
 - `veloura-next/public/_headers`
-- `veloura-next/scripts/{seo-smoke,link-smoke,catalog-smoke,a11y-smoke,security-smoke}.mjs`
+- `veloura-next/scripts/{seo-smoke,link-smoke,catalog-smoke,a11y-smoke,security-smoke,performance-smoke,mutation-safety-smoke,brand-smoke,trust-smoke}.mjs`
 - `veloura-next/src/app/{compare,routine}/...`
 - `veloura-next/src/app/iranian-commerce.css`
+- `veloura-next/src/app/{error,not-found}.tsx`
 - `veloura-next/src/components/beauty/RoutineGuide.tsx`
 - `veloura-next/src/components/commerce/{IranianTrustRail,StoreHydrator}.tsx`
 - `veloura-next/src/components/compare/ComparePage.tsx`
