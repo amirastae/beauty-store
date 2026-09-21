@@ -98,7 +98,7 @@ export default function CinematicBeautyHero() {
         <div className="cinematic-copy">
           <article className="cinematic-chapter chapter-one">
             <span className="cinematic-kicker">01 · ORIGIN</span>
-            <h1 id="cinematic-title">VELOURA</h1>
+            <h1 id="cinematic-title">FATIKHAN</h1>
             <p className="cinematic-subtitle">زیبایی، وقتی دقیق می‌شود.</p>
             <small>نور · پوست · بافت · حضور</small>
           </article>
@@ -118,7 +118,7 @@ export default function CinematicBeautyHero() {
           <article className="cinematic-chapter chapter-four">
             <span className="cinematic-kicker">04 · INVITATION</span>
             <h2>انتخاب کن.<br/><em>نزدیک شو. بدرخش.</em></h2>
-            <p>کالکشن ولورا را بر اساس پوست، آرایش، عطر و مو کشف کن.</p>
+            <p>کالکشن FATIKHAN را بر اساس پوست، آرایش، عطر و مو کشف کن.</p>
             <div className="cinematic-actions">
               <a href="#products">کشف کالکشن</a>
               <a href="/shop/">ورود به فروشگاه ↗</a>
