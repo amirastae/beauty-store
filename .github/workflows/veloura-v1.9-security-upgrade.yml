@@ -1,0 +1,55 @@
+name: VELOURA v1.9 security dependency updater
+
+on:
+  push:
+    branches: [shop-v1.9.0-work]
+    paths:
+      - "shop/v1.9.0/SECURITY_UPGRADE_REQUEST"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: veloura-v1.9-security-updater
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: shop/v1.9.0
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          ref: shop-v1.9.0-work
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: shop/v1.9.0/package-lock.json
+
+      - name: Upgrade patched framework dependencies
+        run: npm install --save-exact next@16.3.3 react@19.2.8 react-dom@19.2.8
+
+      - name: Verify resolved versions
+        run: |
+          node -e "const p=require('./package.json'); if(p.version!=='1.9.0'||p.dependencies.next!=='16.3.3'||p.dependencies.react!=='19.2.8'||p.dependencies['react-dom']!=='19.2.8') process.exit(1)"
+          node -e "const l=require('./package-lock.json'); if(l.packages[''].version!=='1.9.0') process.exit(1)"
+
+      - name: Commit generated lockfile
+        run: |
+          git config user.name "VELOURA Security Updater"
+          git config user.email "noreply@github.com"
+          git add shop/v1.9.0/package.json shop/v1.9.0/package-lock.json
+          if git diff --cached --quiet; then
+            echo "No dependency changes to commit"
+          else
+            git commit -m "Upgrade VELOURA framework security dependencies"
+            git push origin HEAD:shop-v1.9.0-work
+          fi
