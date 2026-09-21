@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { products, type Product } from "@/data/products";
 import { formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { useCompare } from "@/store/compare";
@@ -12,7 +12,9 @@ export default function ComparePage() {
   const remove = useCompare((state) => state.remove);
   const clear = useCompare((state) => state.clear);
   const add = useCart((state) => state.add);
-  const items = ids.map((id) => products.find((product) => product.id === id)).filter(Boolean);
+  const items = ids
+    .map((id) => products.find((product) => product.id === id))
+    .filter((product): product is Product => Boolean(product));
 
   return (
     <main className="utility-page compare-page">
@@ -45,7 +47,7 @@ export default function ComparePage() {
                 <thead>
                   <tr>
                     <th aria-label="ویژگی" />
-                    {items.map((product) => product && (
+                    {items.map((product) => (
                       <th key={product.id}>
                         <button className="compare-remove" type="button" onClick={() => remove(product.id)} aria-label={"حذف " + product.nameFa}>×</button>
                         <Link href={"/product/" + product.slug}>
@@ -58,13 +60,13 @@ export default function ComparePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><th>قیمت</th>{items.map((product)=>product&&<td key={product.id}>{formatToman(product.price)}</td>)}</tr>
-                  <tr><th>امتیاز</th>{items.map((product)=>product&&<td key={product.id}>★ {product.rating} <small>({formatFaNumber(product.reviewCount)})</small></td>)}</tr>
-                  <tr><th>دسته</th>{items.map((product)=>product&&<td key={product.id}>{product.category}</td>)}</tr>
-                  <tr><th>برند</th>{items.map((product)=>product&&<td key={product.id}>{product.brand}</td>)}</tr>
+                  <tr><th>قیمت</th>{items.map((product)=><td key={product.id}>{formatToman(product.price)}</td>)}</tr>
+                  <tr><th>امتیاز</th>{items.map((product)=><td key={product.id}>★ {product.rating} <small>({formatFaNumber(product.reviewCount)})</small></td>)}</tr>
+                  <tr><th>دسته</th>{items.map((product)=><td key={product.id}>{product.category}</td>)}</tr>
+                  <tr><th>برند</th>{items.map((product)=><td key={product.id}>{product.brand}</td>)}</tr>
                   <tr>
                     <th>رنگ‌ها</th>
-                    {items.map((product)=>product&&(
+                    {items.map((product)=>(
                       <td key={product.id}>
                         {product.shades?.length ? (
                           <div className="compare-swatches">
@@ -76,7 +78,7 @@ export default function ComparePage() {
                   </tr>
                   <tr>
                     <th />
-                    {items.map((product)=>product&&(
+                    {items.map((product)=>(
                       <td key={product.id}>
                         <button className="button button-dark compare-add" onClick={()=>add(product,product.shades?.[0]?.id)}>افزودن به سبد</button>
                       </td>
