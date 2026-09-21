@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-09-21T03:04:00Z",
+  "release_train": {
+    "production_branch": "cloudflare-site",
+    "production_sha": "a535a06b7a96595a10c9d0b06b4f4e800757932c",
+    "staging_branch": "integration-staging",
+    "staging_sha": "5911550f63a67788842f43823544e74982b6e36e",
+    "production_pr": 31,
+    "production_pr_state": "draft",
+    "production_pr_mergeable": true
+  },
+  "staging_verification": {
+    "workflow": "Integration Staging Verify",
+    "sha": "5911550f63a67788842f43823544e74982b6e36e",
+    "conclusion": "success"
+  },
+  "canonical_frontend": {
+    "source": "sources/polish/veloura-next",
+    "source_branch": "veloura-v2.1-polish",
+    "source_sha": "46c6612c85c902de679dcf10cb4a6be1db91434d",
+    "local_build": "PASS",
+    "staging_build": "PASS"
+  },
+  "commerce": {
+    "branch": "commerce-core-v1",
+    "sha": "cf9edc4060c4cfa5db51c725735067eca5e95268",
+    "d1_migrations": 6,
+    "aggregate_products": 120,
+    "aggregate_variants": 129,
+    "veloura_v21_refs": 133,
+    "shop_v11_refs": 112,
+    "typecheck": "PASS",
+    "migration_smoke": "PASS",
+    "wrangler_dry_run": "PASS",
+    "live_cloudflare_preview": "BLOCKED_AUTH"
+  },
+  "remaining_gate": [
+    "authenticated Cloudflare commerce preview",
+    "real D1/R2 binding verification",
+    "browser-to-preview checkout smoke",
+    "payment provider + signed webhook",
+    "final mobile regression after API wiring"
+  ]
+}
