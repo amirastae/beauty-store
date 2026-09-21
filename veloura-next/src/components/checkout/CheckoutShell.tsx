@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { FormEvent, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import {
@@ -164,5 +165,6 @@ export default function CheckoutShell(){
         </small>
       </aside>
     </div>
-  </main>;
+    <CommerceFooter />
+</main>;
 }

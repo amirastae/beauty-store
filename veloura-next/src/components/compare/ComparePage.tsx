@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { products, type Product } from "@/data/products";
 import { formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
@@ -90,6 +91,7 @@ export default function ComparePage() {
           </>
         )}
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }
