@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./iranian-commerce.css";
+import StoreHydrator from "@/components/commerce/StoreHydrator";
 
 export const metadata: Metadata = {
   title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
@@ -19,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body><StoreHydrator />{children}</body>
     </html>
   );
 }

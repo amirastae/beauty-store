@@ -56,7 +56,8 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "veloura-cart-v1",
-      version: 1
+      version: 1,
+          skipHydration: true
     }
   )
 );

@@ -31,6 +31,6 @@ export const useCompare = create<CompareState>()(
       has: (id) => get().ids.includes(id),
       isFull: () => get().ids.length >= MAX_COMPARE_ITEMS
     }),
-    { name: "veloura-compare-v1", version: 1 }
+    { name: "veloura-compare-v1", version: 1,       skipHydration: true }
   )
 );

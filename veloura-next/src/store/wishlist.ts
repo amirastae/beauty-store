@@ -23,6 +23,6 @@ export const useWishlist = create<WishlistState>()(
       has: (id) => get().ids.includes(id),
       clear: () => set({ ids: [] })
     }),
-    { name: "veloura-wishlist-v1", version: 1 }
+    { name: "veloura-wishlist-v1", version: 1,       skipHydration: true }
   )
 );
