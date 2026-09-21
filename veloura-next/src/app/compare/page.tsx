@@ -3,7 +3,8 @@ import ComparePage from "@/components/compare/ComparePage";
 
 export const metadata: Metadata = {
   title: "مقایسه محصولات — VELOURA",
-  description: "مقایسه کنارهم محصولات آرایشی، مراقبت پوست و عطر ولورا."
+  description: "مقایسه کنارهم محصولات آرایشی، مراقبت پوست و عطر ولورا.",
+  robots: { index: false, follow: false }
 };
 
 export default function Page() {
