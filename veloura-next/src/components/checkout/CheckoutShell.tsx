@@ -99,7 +99,7 @@ export default function CheckoutShell(){
   const displayTotal=verification?.serverSubtotalToman ?? total;
 
   return <main className="checkout-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
     <IranianTrustRail />
     <div className="checkout-layout">
       <section>

@@ -71,7 +71,7 @@ export default function ShopCatalog() {
   return (
     <main className="shop-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav>
           <Link href="/contact/">پشتیبانی</Link>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
@@ -81,7 +81,7 @@ export default function ShopCatalog() {
       </header>
 
       <section className="shop-hero">
-        <p className="eyebrow">VELOURA SHOP · IRAN EDIT</p>
+        <p className="eyebrow">FATIKHAN SHOP · IRAN EDIT</p>
         <h1>انتخاب کن،<br/><em>دقیق‌تر.</em></h1>
         <p>کالکشن‌های آرایشی، مراقبت پوست و عطر با جستجوی فارسی، قیمت تومان و مسیر خرید سازگار با بازار ایران.</p>
         <Link className="routine-entry" href="/routine/">راهنمای روتین پوست ←</Link>

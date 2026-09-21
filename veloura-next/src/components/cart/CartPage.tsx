@@ -19,7 +19,7 @@ export default function CartPage(){
 
   return <main className="utility-page">
     <header className="shop-nav">
-      <Link href="/" className="brand">VELOURA</Link>
+      <Link href="/" className="brand">FATIKHAN</Link>
       <nav><Link href="/shop/">ادامه خرید</Link><Link href="/compare/">مقایسه</Link></nav>
     </header>
     <section className="utility-head">
