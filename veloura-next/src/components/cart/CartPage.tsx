@@ -12,6 +12,8 @@ export default function CartPage(){
   const setQuantity=useCart((state)=>state.setQuantity);
   const clear=useCart((state)=>state.clear);
   const total=lines.reduce((sum,line)=>sum+line.product.price*line.qty,0);
+  const originalTotal=lines.reduce((sum,line)=>sum+(line.product.compareAtPrice??line.product.price)*line.qty,0);
+  const savings=Math.max(0,originalTotal-total);
   const itemCount=lines.reduce((sum,line)=>sum+line.qty,0);
 
   return <main className="utility-page">
@@ -50,6 +52,7 @@ export default function CartPage(){
       <aside className="order-summary">
         <h2>خلاصه سفارش</h2>
         <div><span>جمع کالاها</span><strong>{formatToman(total)}</strong></div>
+        {savings>0 && <div className="order-saving"><span>صرفه‌جویی شما</span><strong>{formatToman(savings)}</strong></div>}
         <div><span>ارسال</span><strong>{total?"پس از ثبت مقصد":"—"}</strong></div>
         <hr/>
         <div><span>جمع فعلی</span><strong>{formatToman(total)}</strong></div>

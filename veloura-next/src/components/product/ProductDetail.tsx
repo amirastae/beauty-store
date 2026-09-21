@@ -13,6 +13,7 @@ import { useWishlist } from "@/store/wishlist";
 export default function ProductDetail({ product }: { product: Product }) {
   const [shadeId, setShadeId] = useState(product.shades?.[0]?.id);
   const [added, setAdded] = useState(false);
+  const [shareLabel,setShareLabel]=useState("اشتراک‌گذاری محصول");
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
@@ -31,6 +32,25 @@ export default function ProductDetail({ product }: { product: Product }) {
     add(product, shadeId);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);
+  };
+
+  const shareProduct=async()=>{
+    const url=window.location.href;
+    try{
+      if(navigator.share){
+        await navigator.share({title:product.nameFa,text:product.nameEn,url});
+        setShareLabel("اشتراک انجام شد ✓");
+      }else if(navigator.clipboard){
+        await navigator.clipboard.writeText(url);
+        setShareLabel("لینک کپی شد ✓");
+      }else{
+        setShareLabel("امکان کپی لینک در این مرورگر نیست");
+      }
+    }catch(error){
+      if(error instanceof DOMException && error.name==="AbortError") return;
+      setShareLabel("اشتراک ناموفق بود");
+    }
+    window.setTimeout(()=>setShareLabel("اشتراک‌گذاری محصول"),1800);
   };
 
   return (
@@ -120,6 +140,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             </button>
           </div>
 
+          <button type="button" className="pdp-share" onClick={shareProduct} aria-live="polite">{shareLabel}</button>
           <p className="pdp-commerce-note">
             هزینه و زمان نهایی ارسال در مرحله ثبت آدرس و پس از اتصال سرویس واقعی ارسال محاسبه می‌شود.
           </p>

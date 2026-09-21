@@ -40,3 +40,6 @@
 .compare-add{width:100%;min-width:130px}
 @media(max-width:900px){.pdp-actions-commerce{grid-template-columns:1fr 1fr}.pdp-actions-commerce .pdp-add{grid-column:1/-1}.pdp-nav-links{gap:10px}}
 @media(max-width:560px){.pdp-nav-links a:first-child{display:none}.commerce-card-actions .compare-toggle{flex:1}.compare-table{min-width:680px}.compare-table th,.compare-table td{padding:14px 10px}.compare-image{width:105px}}
+
+.order-summary .order-saving{color:#356247}.order-summary .order-saving strong{font-weight:700}
+.pdp-share{margin-top:12px;border:0;background:transparent;padding:0;text-decoration:underline;text-underline-offset:5px;cursor:pointer;font-size:9px;color:var(--muted)}
