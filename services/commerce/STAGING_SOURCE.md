@@ -1,14 +1,13 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `75e1aef5da05bd80bf725981da514cee38f3cabb`
+Source commit: `3a5cfbaa03797ee0fb06778b5a8f8802bf1a138a`
 
-Latest verified source includes:
-- migrations 0001-0005
-- VELOURA v2.1 compatibility
-- Shop v1.1.0 compatibility for 56 products
-- currency-safe carts
-- hardened idempotent checkout
-- expanded integration regression script
+Status:
+- TypeScript typecheck: PASS
+- Wrangler preview dry-run bundle: PASS
+- local `wrangler dev`: blocked on this server by workerd/ProxyWorker startup failure
+- production is not affected
+- real Cloudflare preview still requires account-side authenticated deployment
 
-This is still isolated under `services/commerce/` and does not replace the storefront runtime.
+The API-only preview config is `wrangler.preview.jsonc`.
