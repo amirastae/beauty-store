@@ -80,6 +80,18 @@ printf '%s\n' "$irr_checkout" | grep -q '"payment_status":"requires_provider"' |
 printf '%s\n' "$irr_checkout" | grep -q '"shipping_minor":1200000' || fail "IRR shipping policy"
 printf '%s\n' "$irr_checkout" | grep -q '"total_minor":20100000' || fail "IRR checkout total"
 
+receipt="$(printf '%s' "$irr_checkout" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["receipt_token"])')"
+[ "${#receipt}" -eq 64 ] || fail "opaque order receipt token"
+
+status_json="$(curl -fsS -X POST "$BASE/api/v1/orders/status" -H 'content-type: application/json' -d "{\"receipt\":\"$receipt\"}")"
+printf '%s\n' "$status_json" | grep -q '"payment_status":"unpaid"' || fail "authoritative order status"
+printf '%s\n' "$status_json" | grep -q '"order_status":"pending"' || fail "authoritative order state"
+if printf '%s\n' "$status_json" | grep -Eq '"(email|phone|shipping_address|billing_address)"'; then fail "order status leaks PII"; fi
+
+bad_receipt="$(printf '0%.0s' {1..64})"
+bad_status="$(curl -sS -o /tmp/bad-receipt.json -w '%{http_code}' -X POST "$BASE/api/v1/orders/status" -H 'content-type: application/json' -d "{\"receipt\":\"$bad_receipt\"}")"
+[ "$bad_status" = "404" ] || fail "unknown order receipt must be hidden"
+
 irr_order_id="$(printf '%s' "$irr_checkout" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["order_id"])')"
 payment_code="$(curl -sS -o /tmp/payment-unconfigured.json -w '%{http_code}' -X POST "$BASE/api/v1/payments/$irr_order_id/start" -H 'content-type: application/json')"
 [ "$payment_code" = "503" ] || fail "disabled payment provider must return 503"
