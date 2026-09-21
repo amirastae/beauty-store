@@ -12,7 +12,7 @@ import { useWishlist } from "@/store/wishlist";
 
 export default function ShopCatalog() {
   const [category, setCategory] = useState<(typeof categories)[number]>("همه");
-  const [sort, setSort] = useState("popular");
+  const [sort, setSort] = useState("featured");
   const [query, setQuery] = useState("");
   const [saleOnly, setSaleOnly] = useState(false);
   const add = useCart((state) => state.add);
@@ -55,9 +55,8 @@ export default function ShopCatalog() {
     return [...filtered].sort((a, b) => {
       if (sort === "cheap") return a.price - b.price;
       if (sort === "expensive") return b.price - a.price;
-      if (sort === "rating") return b.rating - a.rating;
       if (sort === "discount") return discountPercent(b.price, b.compareAtPrice) - discountPercent(a.price, a.compareAtPrice);
-      return b.reviewCount - a.reviewCount;
+      return 0;
     });
   }, [category, query, saleOnly, sort]);
 
@@ -65,7 +64,7 @@ export default function ShopCatalog() {
     setQuery("");
     setCategory("همه");
     setSaleOnly(false);
-    setSort("popular");
+    setSort("featured");
   };
 
   return (
@@ -96,8 +95,7 @@ export default function ShopCatalog() {
         <div className="shop-sort">
           <label htmlFor="sort">مرتب‌سازی</label>
           <select id="sort" value={sort} onChange={(e)=>setSort(e.target.value)}>
-            <option value="popular">محبوب‌ترین</option>
-            <option value="rating">بالاترین امتیاز</option>
+            <option value="featured">پیشنهادی</option>
             <option value="discount">بیشترین تخفیف</option>
             <option value="cheap">ارزان‌ترین</option>
             <option value="expensive">گران‌ترین</option>
@@ -134,7 +132,6 @@ export default function ShopCatalog() {
               <article className="product-card" key={product.id}>
                 <Link className="product-media" href={"/product/" + product.slug}>
                   <Image src={product.image} alt={product.imageAlt} fill sizes="(max-width:600px) 50vw,25vw" />
-                  {product.badge && <span className="badge">{product.badge}</span>}
                   {discount > 0 && <span className="sale-pill">٪{formatFaNumber(discount)} تخفیف</span>}
                 </Link>
                 <div className="product-info">
@@ -145,7 +142,6 @@ export default function ShopCatalog() {
                       {product.compareAtPrice && <del>{formatToman(product.compareAtPrice)}</del>}
                     </div>
                   </div>
-                  <div className="rating">★ {product.rating} <span>({formatFaNumber(product.reviewCount)})</span></div>
                   <div className="card-actions commerce-card-actions">
                     <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
                     <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label="علاقه‌مندی" onClick={()=>toggleWishlist(product.id)}>♡</button>

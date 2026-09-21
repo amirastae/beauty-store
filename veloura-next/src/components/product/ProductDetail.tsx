@@ -73,7 +73,6 @@ export default function ProductDetail({ product }: { product: Product }) {
               priority
               sizes="(max-width: 900px) 100vw, 58vw"
             />
-            {product.badge && <span className="badge">{product.badge}</span>}
           </div>
           <div className="pdp-thumb-row" aria-hidden="true">
             <span className="active" />
@@ -86,8 +85,6 @@ export default function ProductDetail({ product }: { product: Product }) {
           <p className="eyebrow">{product.brand} · {product.category}</p>
           <h1>{product.nameFa}</h1>
           <p className="pdp-en">{product.nameEn}</p>
-
-          <div className="pdp-rating">★ {product.rating} <span>{formatFaNumber(product.reviewCount)} دیدگاه</span></div>
 
           <div className="pdp-price">
             <strong>{formatToman(product.price)}</strong>

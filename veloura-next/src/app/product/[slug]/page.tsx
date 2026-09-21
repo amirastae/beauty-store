@@ -58,11 +58,6 @@ export default async function ProductPage({ params }: Props) {
       url: productUrl,
       priceCurrency: "IRR",
       price: product.price * 10
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount
     }
   };
 

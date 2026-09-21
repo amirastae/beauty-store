@@ -46,10 +46,7 @@ for (const entry of dirs) {
   check(Number(product.offers?.price) > 0, `price must be positive: ${entry.name}`);
   check(product.offers?.availability === undefined, `availability must not be asserted without inventory truth: ${entry.name}`);
 
-  const rating = Number(product.aggregateRating?.ratingValue);
-  const reviews = Number(product.aggregateRating?.reviewCount);
-  check(Number.isFinite(rating) && rating >= 0 && rating <= 5, `rating out of range: ${entry.name}`);
-  check(Number.isInteger(reviews) && reviews >= 0, `reviewCount invalid: ${entry.name}`);
+  check(product.aggregateRating === undefined, `aggregateRating must not be asserted without a verified reviews source: ${entry.name}`);
 }
 
 check(checked > 0, "no product pages checked");

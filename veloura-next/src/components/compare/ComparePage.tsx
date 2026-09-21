@@ -33,7 +33,7 @@ export default function ComparePage() {
         {!items.length ? (
           <div className="empty-state">
             <h2>هنوز محصولی برای مقایسه انتخاب نکردی.</h2>
-            <p>از فروشگاه حداکثر ۴ محصول را انتخاب کن و تفاوت قیمت، امتیاز، دسته و رنگ‌ها را کنار هم ببین.</p>
+            <p>از فروشگاه حداکثر ۴ محصول را انتخاب کن و تفاوت قیمت، دسته و رنگ‌ها را کنار هم ببین.</p>
             <Link className="button button-dark" href="/shop/">انتخاب محصولات</Link>
           </div>
         ) : (
@@ -61,7 +61,6 @@ export default function ComparePage() {
                 </thead>
                 <tbody>
                   <tr><th>قیمت</th>{items.map((product)=><td key={product.id}>{formatToman(product.price)}</td>)}</tr>
-                  <tr><th>امتیاز</th>{items.map((product)=><td key={product.id}>★ {product.rating} <small>({formatFaNumber(product.reviewCount)})</small></td>)}</tr>
                   <tr><th>دسته</th>{items.map((product)=><td key={product.id}>{product.category}</td>)}</tr>
                   <tr><th>برند</th>{items.map((product)=><td key={product.id}>{product.brand}</td>)}</tr>
                   <tr>
