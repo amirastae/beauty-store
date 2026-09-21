@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
-import HeroStage from "@/components/motion/HeroStage";
+import CinematicBeautyHero from "@/components/motion/CinematicBeautyHero";
 import ShadeLab from "@/components/beauty/ShadeLab";
 import DiscoverySections from "@/components/beauty/DiscoverySections";
 
@@ -88,30 +88,7 @@ export default function Storefront() {
         <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <p className="eyebrow">THE NEW BEAUTY EDIT · 2026</p>
-          <h1 id="hero-title">زیبایی،<br/><em>در دقیق‌ترین حالتش.</em></h1>
-          <p className="hero-lead">
-            ترکیبی از بافت‌های لوکس، رنگ‌های هوشمند و فرمول‌هایی که برای حضور واقعی ساخته شده‌اند.
-          </p>
-          <div className="hero-actions">
-            <a className="button button-dark" href="#products">خرید کالکشن</a>
-            <a className="text-link" href="#story">کشف دنیای ولورا ←</a>
-          </div>
-          <div className="hero-metrics">
-            <div><strong>۴.۹</strong><span>امتیاز جامعه</span></div>
-            <div><strong>۲۴H</strong><span>راحتی و ماندگاری</span></div>
-            <div><strong>100%</strong><span>بدون تست حیوانی</span></div>
-          </div>
-        </div>
-
-        <HeroStage />
-
-        <span className="scroll-cue">برای کشف بیشتر اسکرول کن ↓</span>
-      </section>
-
-      <section className="category-strip" aria-label="دسته‌بندی">
+      <CinematicBeautyHero />\n\n      <section className="category-strip" aria-label="دسته‌بندی">
         {["پوست", "آرایش", "عطر", "مو"].map((item, index) => (
           <Link href={"/shop/?category=" + encodeURIComponent(item)} key={item}><span>0{index + 1}</span>{item}</Link>
         ))}
