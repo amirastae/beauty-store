@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
@@ -44,6 +44,26 @@ export default function Storefront() {
 
   const cartCount = lines.reduce((sum, line) => sum + line.qty, 0);
   const cartTotal = lines.reduce((sum, line) => sum + line.product.price * line.qty, 0);
+
+  useEffect(() => {
+    const opened = cartOpen || searchOpen;
+    if (!opened) return;
+
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setCartOpen(false);
+      setSearchOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [cartOpen, searchOpen]);
 
   const addProduct = (product: Product) => {
     const shadeId = selectedShade[product.id] ?? product.shades?.[0]?.id;
@@ -208,7 +228,7 @@ export default function Storefront() {
         </div>
       </footer>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen}>
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
         <div className="drawer-head">
           <h2>سبد خرید</h2>
           <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
@@ -239,7 +259,7 @@ export default function Storefront() {
       </aside>
       {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen}>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
         <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
           <p className="eyebrow">SEARCH VELOURA</p>
