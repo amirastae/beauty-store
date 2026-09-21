@@ -12,16 +12,20 @@ const [hero, css] = await Promise.all([
 
 const required = [
   ["ScrollTrigger.create(", "ScrollTrigger scrub driver"],
+  ["window.requestAnimationFrame(", "frame-synced scrub scheduling"],
   ["media.currentTime = targetTime", "video currentTime scrub mapping"],
-  ["setVideoEligible(!(reducedMotion || saveData || slowNetwork))", "mobile-safe eligibility rule"],
-  ['["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]', "WebM-first scrub source order"],
-  ["sourceIndex + 1 < sources.length", "decode failure fallback from WebM to MP4"],
+  ['<source src="/cinematic/fatikhan-hero.webm" type="video/webm" />', "WebM scrub source"],
+  ['<source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />', "MP4 scrub fallback source"],
+  ["if (reducedMotion || saveData) return;", "accessibility/data-saver fallback"],
+  ['data-cinematic-runtime="healthy-scroll-v1"', "healthy runtime release marker"],
 ];
 
 for (const [needle, label] of required) {
-  if (!hero.includes(needle)) {
-    throw new Error(`Locked cinematic invariant missing: ${label}`);
-  }
+  if (!hero.includes(needle)) throw new Error(`Locked cinematic invariant missing: ${label}`);
+}
+
+if (hero.includes("compactViewport") || /max-width:\s*767px/.test(hero)) {
+  throw new Error("Locked cinematic invariant violated: viewport width disables scrub video");
 }
 
 const forbiddenCss = /@media\s*\(\s*max-width\s*:[^)]+\)[\s\S]{0,240}?\.cinematic-scrub-video\s*\{[^}]*display\s*:\s*none/i;
