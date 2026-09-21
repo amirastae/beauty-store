@@ -220,14 +220,6 @@ export default function Storefront() {
         </form>
       </section>
 
-      <footer>
-        <div className="footer-word">VELOURA</div>
-        <div className="footer-row">
-          <span>BEAUTY / 2026</span>
-          <span>فارسی · RTL · PREMIUM COMMERCE</span>
-        </div>
-      </footer>
-
       <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
         <div className="drawer-head">
           <h2>سبد خرید</h2>
