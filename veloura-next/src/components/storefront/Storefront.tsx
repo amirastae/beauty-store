@@ -3,13 +3,14 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import HeroStage from "@/components/motion/HeroStage";
 import ShadeLab from "@/components/beauty/ShadeLab";
 import DiscoverySections from "@/components/beauty/DiscoverySections";
+import { STORE_SUPPORT_EMAIL } from "@/config/store";
 
 const SignatureStory = dynamic(() => import("@/components/motion/SignatureStory"), { ssr: false });
 
@@ -25,6 +26,8 @@ export default function Storefront() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedShade, setSelectedShade] = useState<Record<string, string>>({});
+  const [clubEmail, setClubEmail] = useState("");
+  const [clubStatus, setClubStatus] = useState("");
   const { lines, add, remove } = useCart();
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
@@ -51,9 +54,19 @@ export default function Storefront() {
     setCartOpen(true);
   };
 
+  const requestPrivateList = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const email = clubEmail.trim();
+    if (!email) return;
+    const subject = encodeURIComponent("درخواست عضویت FATIKHAN PRIVATE LIST");
+    const body = encodeURIComponent("ایمیل درخواست‌کننده: " + email);
+    window.location.href = "mailto:" + STORE_SUPPORT_EMAIL + "?subject=" + subject + "&body=" + body;
+    setClubStatus("درخواست در برنامه ایمیل شما آماده شد؛ برای ثبت نهایی آن را ارسال کن.");
+  };
+
   return (
     <main className="site-shell">
-      <div className="announcement">ارسال رایگان برای سفارش‌های منتخب · کالکشن ۲۰۲۶</div>
+      <div className="announcement">کالکشن ۲۰۲۶ · تجربه خرید فارسی · قیمت‌گذاری تومان</div>
 
       <header className="nav">
         <button className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
@@ -80,9 +93,9 @@ export default function Storefront() {
             <a className="text-link" href="#story">کشف دنیای FATIKHAN ←</a>
           </div>
           <div className="hero-metrics">
-            <div><strong>۴.۹</strong><span>امتیاز جامعه</span></div>
-            <div><strong>۲۴H</strong><span>راحتی و ماندگاری</span></div>
-            <div><strong>100%</strong><span>بدون تست حیوانی</span></div>
+            <div><strong>RTL</strong><span>تجربه فارسی</span></div>
+            <div><strong>تومان</strong><span>نمایش قیمت</span></div>
+            <div><strong>COMPARE</strong><span>مقایسه محصول</span></div>
           </div>
         </div>
 
@@ -146,7 +159,6 @@ export default function Storefront() {
                   fill
                   sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 25vw"
                 />
-                {product.badge && <span className="badge">{product.badge}</span>}
                 <span className="quick-add" aria-hidden="true">مشاهده محصول</span>
               </Link>
               <div className="product-info">
@@ -157,12 +169,13 @@ export default function Storefront() {
                   </div>
                   <strong>{price(product.price)}</strong>
                 </div>
-                <div className="rating">★ {product.rating} <span>({toman.format(product.reviewCount)})</span></div>
                 <div className="card-actions home-card-actions">
                   <button onClick={() => addProduct(product)}>+ سبد</button>
                   <button
+                    type="button"
                     className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
-                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+                    aria-pressed={wishlistIds.includes(product.id)}
                     onClick={() => toggleWishlist(product.id)}
                   >♡</button>
                 </div>
@@ -194,10 +207,23 @@ export default function Storefront() {
         <p className="eyebrow">FATIKHAN PRIVATE LIST</p>
         <h2>اولین نفر باش.</h2>
         <p>دسترسی زودتر به کالکشن‌ها، رنگ‌های محدود و ادیت‌های جدید.</p>
-        <form onSubmit={(event) => event.preventDefault()}>
-          <input type="email" inputMode="email" placeholder="ایمیل شما" aria-label="ایمیل" />
-          <button type="submit">عضویت ←</button>
+        <form onSubmit={requestPrivateList}>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            required
+            value={clubEmail}
+            onChange={(event) => {
+              setClubEmail(event.target.value);
+              if (clubStatus) setClubStatus("");
+            }}
+            placeholder="ایمیل شما"
+            aria-label="ایمیل عضویت در لیست خصوصی"
+          />
+          <button type="submit">درخواست عضویت ←</button>
         </form>
+        {clubStatus && <p className="club-status" role="status">{clubStatus}</p>}
       </section>
 
       <footer>

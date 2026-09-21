@@ -280,3 +280,5 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   .ugc-grid{grid-template-columns:1fr}.ugc-grid .ugc-large{grid-column:auto;min-height:460px}.ugc-grid figure{min-height:360px}
   .trust-band{grid-template-columns:1fr}.trust-band>div{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.1)}
 }
+
+.club-status{margin:12px auto 0;max-width:560px;font-size:10px;line-height:1.8;opacity:.72}
