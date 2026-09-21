@@ -82,6 +82,7 @@ export default function ShopCatalog() {
         <p className="eyebrow">VELOURA SHOP · IRAN EDIT</p>
         <h1>انتخاب کن،<br/><em>دقیق‌تر.</em></h1>
         <p>کالکشن‌های آرایشی، مراقبت پوست و عطر با جستجوی فارسی، قیمت تومان و مسیر خرید سازگار با بازار ایران.</p>
+        <Link className="routine-entry" href="/routine/">راهنمای روتین پوست ←</Link>
       </section>
 
       <IranianTrustRail />

@@ -20,6 +20,10 @@ const home = read("index.html");
 check(home.includes('lang="fa"'), "home must declare lang=fa");
 check(home.includes('dir="rtl"'), "home must declare dir=rtl");
 
+const routine = read("routine/index.html");
+check(routine.includes('rel="canonical"'), "routine canonical missing");
+check(routine.toLowerCase().includes('name="description"'), "routine meta description missing");
+
 const shop = read("shop/index.html");
 check(shop.includes('rel="canonical"'), "shop canonical missing");
 check(shop.includes("/shop/"), "shop canonical target missing");
