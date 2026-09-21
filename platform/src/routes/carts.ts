@@ -4,6 +4,8 @@ import { fail } from '../lib/response'
 
 export const carts = new Hono<AppBindings>()
 
+const allowedCurrencies = new Set(['USD','IRR'])
+
 function randomId(prefix: string) {
   return prefix + '_' + crypto.randomUUID().replaceAll('-', '')
 }
@@ -23,15 +25,21 @@ carts.post('/', async (c) => {
   const db = c.env.DB
   if (!db) return fail('DB_NOT_BOUND', 'Cart database is not bound in this environment.', 503)
 
+  const body = await c.req.json<{ currency_code?: string }>().catch(
+    (): { currency_code?: string } => ({})
+  )
+  const currency = String(body.currency_code || 'USD').toUpperCase()
+  if (!allowedCurrencies.has(currency)) return fail('UNSUPPORTED_CURRENCY', 'Unsupported cart currency.', 400)
+
   const id = randomId('cart')
   const now = new Date().toISOString()
 
   await db.prepare(
     `INSERT INTO carts (id, currency_code, status, subtotal_minor, discount_minor, shipping_minor, tax_minor, total_minor, created_at, updated_at)
-     VALUES (?, 'USD', 'open', 0, 0, 0, 0, 0, ?, ?)`
-  ).bind(id, now, now).run()
+     VALUES (?, ?, 'open', 0, 0, 0, 0, 0, ?, ?)`
+  ).bind(id, currency, now, now).run()
 
-  return c.json({ ok: true, data: { id, currency_code: 'USD', status: 'open', total_minor: 0 } }, 201)
+  return c.json({ ok: true, data: { id, currency_code: currency, status: 'open', total_minor: 0 } }, 201)
 })
 
 carts.get('/:id', async (c) => {
@@ -43,7 +51,8 @@ carts.get('/:id', async (c) => {
 
   const lines = await db.prepare(
     `SELECT ci.id, ci.variant_id, ci.quantity, ci.unit_price_minor, ci.line_total_minor,
-            pv.title AS variant_title, p.title AS product_title, p.thumbnail_url
+            pv.title AS variant_title, pv.currency_code,
+            p.title AS product_title, p.thumbnail_url
      FROM cart_items ci
      JOIN product_variants pv ON pv.id = ci.variant_id
      JOIN products p ON p.id = pv.product_id
@@ -68,7 +77,8 @@ carts.post('/:id/items', async (c) => {
   }
 
   const cartId = c.req.param('id')
-  const cart = await db.prepare(`SELECT id, status FROM carts WHERE id = ? LIMIT 1`).bind(cartId).first()
+  const cart = await db.prepare(`SELECT id, status, currency_code FROM carts WHERE id = ? LIMIT 1`)
+    .bind(cartId).first<{ id: string; status: string; currency_code: string }>()
   if (!cart || cart.status !== 'open') return fail('CART_NOT_OPEN', 'Cart is not open.', 409)
 
   const variant = await db.prepare(
@@ -76,6 +86,9 @@ carts.post('/:id/items', async (c) => {
   ).bind(variantId).first<{ id: string; price_minor: number; currency_code: string }>()
 
   if (!variant) return fail('VARIANT_NOT_FOUND', 'Variant not found.', 404)
+  if (variant.currency_code !== cart.currency_code) {
+    return fail('CURRENCY_MISMATCH', 'Variant currency does not match cart currency.', 409)
+  }
 
   const existing = await db.prepare(
     `SELECT id, quantity FROM cart_items WHERE cart_id = ? AND variant_id = ? LIMIT 1`
