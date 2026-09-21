@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
   icons: { icon: '/icon.svg' },
+  manifest: '/manifest.webmanifest',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
