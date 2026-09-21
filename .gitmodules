@@ -1,0 +1,9 @@
+[submodule "shop/iranian-ready/01-kirely"]
+	path = shop/iranian-ready/01-kirely
+	url = https://github.com/OptimizaPro/Kirely.git
+[submodule "shop/iranian-ready/02-atlas-shop"]
+	path = shop/iranian-ready/02-atlas-shop
+	url = https://github.com/Hordekiller/Atlas-Shop.git
+[submodule "shop/iranian-ready/03-responsive-shop"]
+	path = shop/iranian-ready/03-responsive-shop
+	url = https://github.com/irania9O/Responsive-Shop-Template.git
