@@ -10,7 +10,8 @@ import {
   verifyCommerceCart
 } from "@/lib/commerce-verify";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
-import { useCart } from "@/store/cart";\nimport { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
+import { useCart } from "@/store/cart";
+import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
 const provinces = [
   "آذربایجان شرقی","آذربایجان غربی","اردبیل","اصفهان","البرز","ایلام","بوشهر","تهران",
@@ -139,7 +140,8 @@ export default function CheckoutShell(){
           اطلاعات فرم معتبر است، اما Commerce API در این build تنظیم نشده؛ سفارش و پرداختی ساخته نشده است.
         </div>}
 
-        {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}\n        <p className="checkout-support">پشتیبانی فروشگاه: <a href={STORE_SUPPORT_MAILTO}>{STORE_SUPPORT_EMAIL}</a></p>
+        {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}
+        <p className="checkout-support">پشتیبانی فروشگاه: <a href={STORE_SUPPORT_MAILTO}>{STORE_SUPPORT_EMAIL}</a></p>
       </section>
 
       <aside className="order-summary">

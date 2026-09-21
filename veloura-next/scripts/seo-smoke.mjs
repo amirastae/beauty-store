@@ -56,7 +56,8 @@ for (const entry of productDirs) {
 }
 
 const sitemap = read("sitemap.xml");
-check(sitemap.includes("/shop/"), "sitemap must include shop");\ncheck(sitemap.includes("/contact/"), "sitemap must include contact");
+check(sitemap.includes("/shop/"), "sitemap must include shop");
+check(sitemap.includes("/contact/"), "sitemap must include contact");
 for (const blocked of ["/cart/", "/checkout/", "/wishlist/", "/compare/"]) {
   check(!sitemap.includes(blocked), `sitemap must exclude ${blocked}`);
 }

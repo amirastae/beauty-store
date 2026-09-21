@@ -72,7 +72,8 @@ export default function ShopCatalog() {
       <header className="shop-nav">
         <Link href="/" className="brand">VELOURA</Link>
         <nav>
-          <Link href="/contact/">پشتیبانی</Link>\n          <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
+          <Link href="/contact/">پشتیبانی</Link>
+          <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
           <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
           <Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link>
         </nav>
