@@ -11,7 +11,7 @@ function serializeJsonLd(value: unknown) {
 const organizationLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "VELOURA",
+  name: "FATIKHAN",
   url: "https://beauty-store.nayererohalamini.workers.dev/",
   email: STORE_SUPPORT_EMAIL,
   contactPoint: {
@@ -23,11 +23,11 @@ const organizationLd = {
 };
 
 export const metadata: Metadata = {
-  title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
+  title: "FATIKHAN — زیبایی، در دقیق‌ترین حالتش",
   description: "فروشگاه پریمیوم فارسی لوازم آرایشی، مراقبت پوست و عطر ولورا.",
   metadataBase: new URL("https://beauty-store.nayererohalamini.workers.dev"),
   openGraph: {
-    title: "VELOURA",
+    title: "FATIKHAN",
     description: "زیبایی، در دقیق‌ترین حالتش",
     type: "website",
     locale: "fa_IR"

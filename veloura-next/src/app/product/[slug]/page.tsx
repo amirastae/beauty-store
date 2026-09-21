@@ -23,11 +23,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonical = "/product/" + product.slug + "/";
 
   return {
-    title: product.nameFa + " — VELOURA",
+    title: product.nameFa + " — FATIKHAN",
     description: product.nameFa + " از " + product.brand + "؛ خرید آنلاین با تجربه پریمیوم ولورا.",
     alternates: { canonical },
     openGraph: {
-      title: product.nameFa + " — VELOURA",
+      title: product.nameFa + " — FATIKHAN",
       description: product.nameEn,
       images: [product.image],
       url: canonical,
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: product.nameFa + " — VELOURA",
+      title: product.nameFa + " — FATIKHAN",
       description: product.nameEn,
       images: [product.image]
     }
