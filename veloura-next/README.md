@@ -1,27 +1,23 @@
-# VELOURA Next — v2.4.0
+# VELOURA Next — v2.5.0
 
-Premium Persian RTL cosmetics storefront for fast static delivery on Cloudflare.
+Premium Persian RTL cosmetics storefront.
 
-## v2.4 highlights
-- persistent recently viewed history on-device
-- dedicated /recent route
-- product page auto-tracking for recent views
-- product sharing through Web Share API with clipboard fallback
-- global compare tray so selected products are never lost in navigation
-- existing three-product comparison retained
-- PWA cache version bumped to v2.4.0
-- all v2.3 capabilities retained: installable PWA, offline fallback, local media, advanced search/filters, rich PDP, wishlist/cart, checkout draft and accessibility fallbacks
+## v2.5 highlights
+- deterministic Routine Builder with 4 goals, budget selection and 3/5-step routines
+- recommendations are derived from the local catalog, categories, ingredients, ratings and price
+- one-click add-all-to-cart
+- no medical diagnosis or fake AI claims
+- routine route added to homepage CTA, footer and sitemap
+- all v2.4 capabilities retained: recent history, sharing, compare tray, compare page, PWA/offline, advanced search, rich PDP, wishlist/cart and checkout draft
 
-## Release verification gate
+## Verification gate
 Before production release:
 - TypeScript PASS
 - Next production build PASS
 - static export PASS
+- routine route + sitemap + client recommendation markers PASS
 - temporary Cloudflare preview PASS
-- recent / compare / share / manifest / service worker / offline routes PASS
-- all sitemap URLs and local media HTTP 200
 - branded 404 PASS
 
 ## Release discipline
-Stable releases are copied under `/versions/` before the next development cycle.
-Do not edit archived version folders in place.
+Stable releases are copied under `/versions/` after production verification.
