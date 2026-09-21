@@ -1,0 +1,19 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "veloura-commerce-temp",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-21",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "temporary-cloudflare-preview",
+    "AUTO_BOOTSTRAP": "1"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "migrations_dir": "db/migrations"
+    }
+  ]
+}
