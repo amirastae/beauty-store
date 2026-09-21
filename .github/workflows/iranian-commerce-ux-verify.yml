@@ -26,3 +26,4 @@ jobs:
       - run: npm run links:check
       - run: npm run catalog:check
       - run: npm run a11y:check
+      - run: npm run security:check

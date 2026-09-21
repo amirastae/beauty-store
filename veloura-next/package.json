@@ -11,7 +11,8 @@
     "links:check": "node scripts/link-smoke.mjs",
     "catalog:check": "node scripts/catalog-smoke.mjs",
     "deploy": "npm run build && wrangler deploy --config wrangler.jsonc",
-    "a11y:check": "node scripts/a11y-smoke.mjs"
+    "a11y:check": "node scripts/a11y-smoke.mjs",
+    "security:check": "node scripts/security-smoke.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
