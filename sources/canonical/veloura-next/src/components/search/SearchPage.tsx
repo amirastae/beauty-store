@@ -37,7 +37,7 @@ export default function SearchPage(){
     return products.filter((product)=>{
       const text=(product.nameFa+" "+product.nameEn+" "+product.category+" "+product.ingredients.join(" ")).toLocaleLowerCase("fa");
       return text.includes(q);
-    }).sort((a,b)=>b.rating-a.rating || b.reviewCount-a.reviewCount);
+    });
   },[query]);
 
   return <main className="search-page">
@@ -72,7 +72,7 @@ export default function SearchPage(){
               <span>{product.category} · {product.brand}</span>
               <h2><Link href={"/product/"+product.slug}>{product.nameFa}</Link></h2>
               <p>{product.nameEn}</p>
-              <div className="search-product-meta"><b>★ {product.rating}</b><span>{product.ingredients.slice(0,2).join(" · ")}</span></div>
+              <div className="search-product-meta"><b>{product.category}</b><span>{product.ingredients.slice(0,2).join(" · ")}</span></div>
             </div>
             <div className="search-product-buy">
               <strong>{money(product.price)}</strong>
