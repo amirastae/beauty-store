@@ -29,7 +29,6 @@ export default function CinematicBeautyHero() {
     if (!VIDEO_SCRUB_ENABLED) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const compactViewport = window.matchMedia("(max-width: 767px)").matches;
     const connection = (navigator as NavigatorWithConnection).connection;
     const saveData = connection?.saveData === true;
     const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
