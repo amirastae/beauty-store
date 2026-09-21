@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import MobileDock from "@/components/navigation/MobileDock";
+import SiteFooter from "@/components/navigation/SiteFooter";
 
 export const metadata: Metadata = {
   title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
@@ -43,6 +44,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
         />
         {children}
+        <SiteFooter />
         <MobileDock />
       </body>
     </html>
