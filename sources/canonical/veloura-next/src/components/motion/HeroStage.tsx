@@ -8,9 +8,9 @@ const HeroProductScene = dynamic(() => import("@/scenes/HeroProductScene"), {
   loading: () => null
 });
 
-export default function HeroStage() {
+export default function HeroStage({ allow3D = true }: { allow3D?: boolean }) {
   const tier = useCapabilityTier();
-  const enable3D = tier !== "C";
+  const enable3D = allow3D && tier !== "C";
 
   return (
     <div className="hero-object" aria-label="نمایش سینمایی محصول">
