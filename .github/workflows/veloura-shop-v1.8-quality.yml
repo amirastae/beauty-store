@@ -1,0 +1,60 @@
+name: VELOURA shop v1.8 quality
+
+on:
+  push:
+    branches: [shop-v1.8.0-work]
+    paths:
+      - "shop/v1.8.0/**"
+      - ".github/workflows/veloura-shop-v1.8-quality.yml"
+  pull_request:
+    branches: [shop-v1.8.0-work]
+    paths:
+      - "shop/v1.8.0/**"
+      - ".github/workflows/veloura-shop-v1.8-quality.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veloura-v1.8-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: shop/v1.8.0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: shop/v1.8.0/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Lint
+        run: npm run lint
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: Source integrity audit
+        run: npm run audit:source
+
+      - name: Production build
+        run: npm run build
+
+      - name: Static output audit
+        run: npm run audit:static
+
+      - name: Cloudflare config dry-run
+        run: npx wrangler deploy --dry-run
