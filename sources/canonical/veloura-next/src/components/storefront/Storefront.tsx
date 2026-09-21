@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import { normalizePersianSearch } from "@/lib/locale";
 import CinematicBeautyHero from "@/components/motion/CinematicBeautyHero";
 import ShadeLab from "@/components/beauty/ShadeLab";
 import DiscoverySections from "@/components/beauty/DiscoverySections";
@@ -30,13 +31,12 @@ export default function Storefront() {
   const toggleWishlist = useWishlist((state) => state.toggle);
 
   const visibleProducts = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("fa");
+    const q = normalizePersianSearch(query);
     return products.filter((product) => {
       const categoryMatch = category === "همه" || product.category === category;
       const queryMatch =
         !q ||
-        `${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`
-          .toLocaleLowerCase("fa")
+        normalizePersianSearch(`${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`)
           .includes(q);
       return categoryMatch && queryMatch;
     }).slice(0, 8);
@@ -124,7 +124,9 @@ export default function Storefront() {
             {categories.map((item) => (
               <button
                 key={item}
+                type="button"
                 className={category === item ? "chip active" : "chip"}
+                aria-pressed={category === item}
                 onClick={() => setCategory(item)}
               >
                 {item}
@@ -156,8 +158,10 @@ export default function Storefront() {
                 <div className="card-actions home-card-actions">
                   <button onClick={() => addProduct(product)}>+ سبد</button>
                   <button
+                    type="button"
                     className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
-                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+                    aria-pressed={wishlistIds.includes(product.id)}
                     onClick={() => toggleWishlist(product.id)}
                   >♡</button>
                 </div>
@@ -192,7 +196,7 @@ export default function Storefront() {
         <a className="button button-dark" href="mailto:fatmhkhan121@gmail.com">تماس با FATIKHAN ←</a>
       </section>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal={cartOpen || undefined} aria-label="سبد خرید" inert={!cartOpen}>
         <div className="drawer-head">
           <h2>سبد خرید</h2>
           <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
@@ -223,8 +227,8 @@ export default function Storefront() {
       </aside>
       {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
-        <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal={searchOpen || undefined} aria-label="جستجوی محصولات" inert={!searchOpen}>
+        <button type="button" className="search-close" aria-label="بستن جستجو" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
           <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
