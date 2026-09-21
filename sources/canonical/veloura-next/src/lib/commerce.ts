@@ -87,6 +87,7 @@ export async function createCommerceOrder(
     shipping_minor: number
     total_minor: number
     payment_expires_at: string
+    receipt_token: string
   }>("/api/v1/checkout/" + encodeURIComponent(cart.id), {
     method: "POST",
     headers: { "Idempotency-Key": idempotencyKey },
@@ -104,6 +105,22 @@ export async function createCommerceOrder(
         note: customer.note || undefined
       }
     })
+  })
+}
+
+export function getCommerceOrderStatus(receipt: string) {
+  return request<{
+    order_number: number
+    order_status: string
+    payment_status: string
+    fulfillment_status: string
+    currency_code: string
+    total_minor: number
+    payment_expires_at: string | null
+    updated_at: string
+  }>("/api/v1/orders/status", {
+    method: "POST",
+    body: JSON.stringify({ receipt })
   })
 }
 

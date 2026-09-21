@@ -26,6 +26,7 @@ This document transfers the commerce/backend work into the FATIKHAN Golestan-sty
 - Zarinpal adapter wired but disabled unless real merchant/runtime credentials exist.
 - Payment callbacks verify with the provider before accepting success.
 - Payment-return query parameters are presentation state only; they are never proof of payment.
+- Checkout now receives a server-issued opaque receipt token and re-fetches minimal authoritative order/payment status after provider return.
 
 ## Mandatory integration direction
 
@@ -72,6 +73,7 @@ No checkout/catalog request may block the FATIKHAN cinematic hero from rendering
 - real payment merchant credentials;
 - production callback URL and provider verification;
 - final browser end-to-end checkout on production-like preview;
+- edge rate-limit policy for the public receipt-status endpoint;
 - final mobile visual regression after commerce wiring.
 
 These are runtime/provider gates, not reasons to redesign the cinematic storefront.

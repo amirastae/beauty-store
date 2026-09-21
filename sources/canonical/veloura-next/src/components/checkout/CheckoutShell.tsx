@@ -11,7 +11,8 @@ import {
   commerceHealth,
   createCommerceOrder,
   irrMinorToToman,
-  startCommercePayment
+  startCommercePayment,
+  getCommerceOrderStatus
 } from "@/lib/commerce";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
 
@@ -37,6 +38,7 @@ type PendingOrder={
   orderId:string;
   orderNumber:number;
   expiresAt:string;
+  receiptToken?:string;
 };
 
 const emptyDraft:Draft={name:"",phone:"",email:"",province:"",address:"",city:"",postal:"",note:""};
@@ -71,25 +73,67 @@ export default function CheckoutShell(){
   const [serverTotal,setServerTotal]=useState<number|null>(null);
   const [serverShipping,setServerShipping]=useState<number|null>(null);
   const [pending,setPending]=useState<PendingOrder|null>(null);
-  const [paymentReturn,setPaymentReturn]=useState<"success"|"failed"|"cancelled"|null>(null);
+  const [paymentReturn,setPaymentReturn]=useState<"success"|"failed"|"cancelled"|"pending"|"unverified"|null>(null);
 
   useEffect(()=>{
+    let savedPending:PendingOrder|null=null;
     try{
       const raw=localStorage.getItem(storageKey);
       if(raw) setDraft({...emptyDraft,...JSON.parse(raw)});
       const pendingRaw=sessionStorage.getItem(pendingKey);
-      if(pendingRaw) setPending(JSON.parse(pendingRaw));
+      if(pendingRaw){
+        savedPending=JSON.parse(pendingRaw) as PendingOrder;
+        setPending(savedPending);
+      }
     }catch{}
 
     const params=new URLSearchParams(window.location.search);
-    const payment=params.get("payment");
-    if(payment==="success"||payment==="failed"||payment==="cancelled"){
-      setPaymentReturn(payment);
-      clearCheckoutIdempotency();
-      try{sessionStorage.removeItem(pendingKey)}catch{}
-      setPending(null);
-      if(payment==="success") clearCart();
+    const returned=params.get("payment");
+    if(returned!=="success"&&returned!=="failed"&&returned!=="cancelled") return;
+
+    if(!commerceEnabled||!savedPending?.receiptToken){
+      setPaymentReturn("unverified");
+      return;
     }
+
+    let cancelled=false;
+    void (async()=>{
+      try{
+        const status=await getCommerceOrderStatus(savedPending!.receiptToken!);
+        if(cancelled) return;
+
+        if(status.payment_status==="paid"){
+          setPaymentReturn("success");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          clearCart();
+          return;
+        }
+
+        if(status.payment_status==="cancelled"){
+          setPaymentReturn("cancelled");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        if(status.payment_status==="failed"||status.payment_status==="expired"){
+          setPaymentReturn("failed");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        setPaymentReturn("pending");
+      }catch{
+        if(!cancelled) setPaymentReturn("unverified");
+      }
+    })();
+
+    return()=>{cancelled=true};
   },[clearCart]);
 
   const update=(key:keyof Draft,value:string)=>{
@@ -171,7 +215,8 @@ export default function CheckoutShell(){
       const pendingOrder:PendingOrder={
         orderId:order.order_id,
         orderNumber:order.order_number,
-        expiresAt:order.payment_expires_at
+        expiresAt:order.payment_expires_at,
+        receiptToken:order.receipt_token
       };
       setPending(pendingOrder);
       try{sessionStorage.setItem(pendingKey,JSON.stringify(pendingOrder))}catch{}
@@ -201,8 +246,19 @@ export default function CheckoutShell(){
         <p className="checkout-intro">{commerceEnabled?"قیمت، موجودی، ارسال و سفارش توسط هسته واقعی فروشگاه پردازش می‌شود و پرداخت فقط از درگاه متصل ادامه پیدا می‌کند.":"اطلاعات فعلاً فقط روی مرورگر ذخیره می‌شود؛ هیچ سفارش یا پرداختی ساخته نمی‌شود."}</p>
 
         {paymentReturn&&<div className={"payment-return "+paymentReturn} role={paymentReturn==="success"?"status":"alert"}>
-          <strong>{paymentReturn==="success"?"پرداخت با موفقیت تأیید شد.":paymentReturn==="cancelled"?"پرداخت لغو شد.":"پرداخت تأیید نشد."}</strong>
-          <span>{paymentReturn==="success"?"سبد خرید پاک شد و سفارش برای پردازش ثبت شده است.":"موجودی رزروشده آزاد شده و می‌توانی سفارش جدید بسازی."}</span>
+          <strong>{
+            paymentReturn==="success"?"پرداخت از سرور تأیید شد.":
+            paymentReturn==="cancelled"?"لغو پرداخت از سرور تأیید شد.":
+            paymentReturn==="failed"?"عدم موفقیت پرداخت از سرور تأیید شد.":
+            paymentReturn==="pending"?"وضعیت پرداخت هنوز نهایی نشده است.":
+            "نتیجه برگشت درگاه هنوز از سرور قابل تأیید نیست."
+          }</strong>
+          <span>{
+            paymentReturn==="success"?"سبد خرید فقط بعد از تأیید واقعی پرداخت پاک شد و سفارش برای پردازش ثبت شده است.":
+            paymentReturn==="cancelled"||paymentReturn==="failed"?"وضعیت نمایش‌داده‌شده از رکورد معتبر سفارش خوانده شده است.":
+            paymentReturn==="pending"?"سفارش هنوز در حالت انتظار است؛ نتیجه URL به‌تنهایی اثبات پرداخت نیست.":
+            "برای امنیت، پارامترهای آدرس صفحه به‌تنهایی به‌عنوان موفقیت پرداخت پذیرفته نمی‌شوند."
+          }</span>
         </div>}
 
         {pending&&<div className="checkout-resume">
