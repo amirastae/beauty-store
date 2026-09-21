@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
+import {
+  commerceVerificationConfigured,
+  CommerceVerificationError,
+  type CommerceVerification,
+  verifyCommerceCart
+} from "@/lib/commerce-verify";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 
@@ -13,6 +19,16 @@ const provinces = [
   "گلستان","گیلان","لرستان","مازندران","مرکزی","هرمزگان","همدان","یزد"
 ];
 
+function verificationErrorMessage(error: unknown) {
+  if (!(error instanceof CommerceVerificationError)) {
+    return "بررسی سرور انجام نشد. سفارش ساخته نشده و می‌توانی دوباره تلاش کنی.";
+  }
+  if (error.code === "FRONTEND_VARIANT_NOT_FOUND") return "یکی از محصولات با کاتالوگ سرور هماهنگ نیست. سفارش ساخته نشد.";
+  if (error.code === "INVENTORY_NOT_FOUND") return "اطلاعات موجودی یکی از محصولات در سرور کامل نیست.";
+  if (error.code === "DB_NOT_BOUND") return "دیتابیس فروشگاه در این محیط متصل نیست.";
+  return "ارتباط با هسته تجارت برقرار نشد. سفارش ساخته نشده است.";
+}
+
 export default function CheckoutShell(){
   const lines=useCart((state)=>state.lines);
   const total=lines.reduce((s,l)=>s+l.product.price*l.qty,0);
@@ -21,13 +37,19 @@ export default function CheckoutShell(){
   const [done,setDone]=useState(false);
   const [mobileError,setMobileError]=useState("");
   const [postalError,setPostalError]=useState("");
+  const [checking,setChecking]=useState(false);
+  const [verification,setVerification]=useState<CommerceVerification|null>(null);
+  const [serverError,setServerError]=useState("");
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form=event.currentTarget;
+    setServerError("");
+    setVerification(null);
+    setDone(false);
+
     if (!form.checkValidity()) {
       form.reportValidity();
-      setDone(false);
       return;
     }
 
@@ -39,8 +61,30 @@ export default function CheckoutShell(){
 
     setMobileError(mobileValid ? "" : "شماره موبایل معتبر ایران وارد کن.");
     setPostalError(postalValid ? "" : "کد پستی باید ۱۰ رقم باشد.");
-    setDone(mobileValid && postalValid && lines.length > 0);
+    if (!mobileValid || !postalValid || !lines.length) return;
+
+    if (!commerceVerificationConfigured) {
+      setDone(true);
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const result=await verifyCommerceCart(lines);
+      setVerification(result);
+      if (result.issues.length) {
+        setServerError(result.issues.map((issue)=>issue.message).join(" "));
+        return;
+      }
+      setDone(true);
+    } catch (error) {
+      setServerError(verificationErrorMessage(error));
+    } finally {
+      setChecking(false);
+    }
   };
+
+  const displayTotal=verification?.serverSubtotalToman ?? total;
 
   return <main className="checkout-page">
     <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
@@ -49,7 +93,7 @@ export default function CheckoutShell(){
       <section>
         <p className="eyebrow">IRAN CHECKOUT · SECURE FLOW</p>
         <h1>تکمیل سفارش</h1>
-        <form className="checkout-form" onSubmit={submit} onChange={()=>done&&setDone(false)}>
+        <form className="checkout-form" onSubmit={submit} onChange={()=>{done&&setDone(false);verification&&setVerification(null);serverError&&setServerError("")}}>
           <label>نام و نام خانوادگی<input name="fullName" required autoComplete="name"/></label>
           <label>
             شماره موبایل
@@ -78,20 +122,37 @@ export default function CheckoutShell(){
             <label><input type="radio" name="payment" value="online" defaultChecked/> پرداخت آنلاین از درگاه فروشگاه</label>
           </fieldset>
 
-          <button className="button button-dark wide" disabled={!lines.length}>تأیید اطلاعات سفارش</button>
+          <button className="button button-dark wide" disabled={!lines.length||checking}>
+            {checking?"در حال بررسی قیمت و موجودی…":"تأیید اطلاعات سفارش"}
+          </button>
         </form>
-        {done && <div className="checkout-success" role="status">
-          اطلاعات سفارش معتبر است و برای مرحله اتصال به درگاه واقعی آماده شد. هیچ پرداخت نمایشی یا موفقیت جعلی ثبت نمی‌شود.
+
+        {serverError && <div className="checkout-error" role="alert">{serverError}</div>}
+
+        {done && commerceVerificationConfigured && verification && <div className="checkout-success" role="status">
+          قیمت و موجودی توسط هسته تجارت تأیید شد.
+          {verification.stalePriceLines>0 && <> قیمت نمایش‌داده‌شده محلی قدیمی بود؛ مبلغ معتبر سرور {formatToman(verification.serverSubtotalToman)} است.</>}
+          {" "}هنوز هیچ سفارش یا پرداختی ساخته نشده؛ فعال‌سازی نهایی بعد از رفع gate ارسال و اتصال درگاه واقعی انجام می‌شود.
         </div>}
+
+        {done && !commerceVerificationConfigured && <div className="checkout-note" role="status">
+          اطلاعات فرم معتبر است، اما Commerce API در این build تنظیم نشده؛ سفارش و پرداختی ساخته نشده است.
+        </div>}
+
         {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}
       </section>
+
       <aside className="order-summary">
         <h2>سفارش شما</h2>
         {lines.map((line)=><div key={line.product.id+"-"+(line.shadeId||"default")}><span>{line.product.nameFa} × {formatFaNumber(line.qty)}</span><strong>{formatToman(line.product.price*line.qty)}</strong></div>)}
         <hr/>
-        <div><span>جمع کالاها</span><strong>{formatToman(total)}</strong></div>
-        {savings>0 && <div className="order-saving"><span>صرفه‌جویی شما</span><strong>{formatToman(savings)}</strong></div>}
-        <small className="pdp-commerce-note">هزینه ارسال بعد از اتصال سرویس ارسال و بر اساس مقصد محاسبه می‌شود.</small>
+        <div><span>{verification?"جمع تأییدشده سرور":"جمع کالاها"}</span><strong>{formatToman(displayTotal)}</strong></div>
+        {!verification&&savings>0 && <div className="order-saving"><span>صرفه‌جویی شما</span><strong>{formatToman(savings)}</strong></div>}
+        <small className="pdp-commerce-note">
+          {commerceVerificationConfigured
+            ?"در این مرحله فقط قیمت و موجودی از سرور بررسی می‌شود؛ هیچ سفارش یا پرداختی ایجاد نمی‌شود."
+            :"برای بررسی server-side، NEXT_PUBLIC_COMMERCE_API_BASE باید در build تنظیم شود."}
+        </small>
       </aside>
     </div>
   </main>;

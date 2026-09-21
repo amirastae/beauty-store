@@ -55,3 +55,5 @@
 .routine-note{margin-top:30px;border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}.routine-note p{margin:0;color:var(--muted);font-size:10px;line-height:1.9}
 @media(max-width:900px){.routine-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.routine-hero{padding:62px 20px 50px}.routine-hero h1{font-size:58px}.routine-shell{padding:38px 18px 80px}.routine-grid{grid-template-columns:1fr}.routine-step{min-height:210px}.routine-note{grid-template-columns:1fr}}
+
+.checkout-error{margin-top:18px;border:1px solid #b46d78;background:#f8e8eb;color:#7a2638;border-radius:14px;padding:14px;font-size:11px;line-height:1.8}
