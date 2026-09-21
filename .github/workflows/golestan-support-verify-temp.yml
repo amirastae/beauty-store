@@ -1,0 +1,38 @@
+name: FATIKHAN Golestan Support Verify Temp
+
+on:
+  push:
+    branches:
+      - golestan-support-hardening-v3-20260921
+
+permissions:
+  contents: read
+
+concurrency:
+  group: golestan-support-hardening-v3
+  cancel-in-progress: true
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: sources/canonical/veloura-next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Verify support/recovery routes
+        run: |
+          test -s out/contact/index.html
+          test -s out/index.html
+          test -s out/checkout/index.html
+          test -s out/_headers
+          grep -q "FATIKHAN" out/index.html
+          grep -q "fatmhkhan121@gmail.com" out/contact/index.html
+          echo "GOLESTAN_SUPPORT_VERIFY=PASS"
