@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: product.nameFa + " — VELOURA",
-    description: product.nameFa + " از " + product.brand + "؛ خرید آنلاین با تجربه پریمیوم ولورا.",
+    description: product.nameFa + " از " + product.brand + "؛ جزئیات، ترکیبات و خرید آنلاین در ولورا.",
     alternates: { canonical: "/product/" + product.slug + "/" },
     openGraph: {
       title: product.nameFa + " — VELOURA",
@@ -35,33 +35,58 @@ export default async function ProductPage({ params }: Props) {
   const product = products.find((item) => item.slug === slug);
   if (!product) notFound();
 
-  const jsonLd = {
+  const related = products
+    .filter((item) => item.category === product.category && item.id !== product.id)
+    .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
+    .slice(0, 4);
+
+  const schema = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.nameFa,
-    alternateName: product.nameEn,
-    image: [product.image],
-    brand: { "@type": "Brand", name: product.brand },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "IRR",
-      price: product.price * 10,
-      availability: "https://schema.org/InStock"
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount
-    }
+    "@graph": [
+      {
+        "@type": "Product",
+        name: product.nameFa,
+        alternateName: product.nameEn,
+        image: [product.image],
+        brand: { "@type": "Brand", name: product.brand },
+        category: product.category,
+        description: product.benefitsFa.join("، "),
+        additionalProperty: product.ingredients.map((ingredient) => ({
+          "@type": "PropertyValue",
+          name: "ingredient",
+          value: ingredient
+        })),
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "IRR",
+          price: product.price * 10,
+          availability: "https://schema.org/InStock",
+          url: "https://beauty-store.nayererohalamini.workers.dev/product/" + product.slug + "/"
+        },
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: product.rating,
+          reviewCount: product.reviewCount
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "خانه", item: "https://beauty-store.nayererohalamini.workers.dev/" },
+          { "@type": "ListItem", position: 2, name: "فروشگاه", item: "https://beauty-store.nayererohalamini.workers.dev/shop/" },
+          { "@type": "ListItem", position: 3, name: product.nameFa, item: "https://beauty-store.nayererohalamini.workers.dev/product/" + product.slug + "/" }
+        ]
+      }
+    ]
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
-      <ProductDetail product={product} />
+      <ProductDetail product={product} related={related} />
     </>
   );
 }
