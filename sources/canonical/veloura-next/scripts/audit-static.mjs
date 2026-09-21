@@ -90,12 +90,15 @@ function hasNoIndex(html){
 }
 
 const homeCanonical=canonicalHref(home);
-if(!homeCanonical.endsWith("/")) failures.push("home canonical missing or invalid");
-if(homeCanonical.endsWith("/shop/")) failures.push("home canonical incorrectly points to shop");
+let homeCanonicalPath="";
+try{homeCanonicalPath=new URL(homeCanonical,"https://fatikhan.invalid").pathname;}catch{}
+if(homeCanonicalPath!=="/") failures.push("home canonical missing or does not point to /");
 
 const shopHtml=fs.readFileSync(path.join(root,"shop/index.html"),"utf8");
 const shopCanonical=canonicalHref(shopHtml);
-if(!shopCanonical.endsWith("/shop/")) failures.push("shop canonical missing or does not point to /shop/");
+let shopCanonicalPath="";
+try{shopCanonicalPath=new URL(shopCanonical,"https://fatikhan.invalid").pathname;}catch{}
+if(shopCanonicalPath!=="/shop/") failures.push("shop canonical missing or does not point to /shop/");
 
 for(const route of ["cart","checkout","wishlist","compare","recent","search","offline"]){
   const html=fs.readFileSync(path.join(root,route,"index.html"),"utf8");
