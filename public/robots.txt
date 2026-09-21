@@ -1,5 +1,11 @@
 User-Agent: *
 Allow: /
+Disallow: /cart/
 Disallow: /checkout/
+Disallow: /wishlist/
+Disallow: /compare/
+Disallow: /recent/
+Disallow: /search/
+Disallow: /offline/
 
 Sitemap: https://beauty-store.nayererohalamini.workers.dev/sitemap.xml
