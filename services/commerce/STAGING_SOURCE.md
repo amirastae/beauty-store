@@ -1,8 +1,19 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `fb1b5a18ce7c971a21a0fd73623adba82d683519`
+Source commit: `829bfe37e104e5298ef3d581f0296cf53dba3cc4`
 
-Payment lifecycle regression now runs on an isolated Worker port (8788), separate from the base commerce integration Worker (8787). This prevents a surviving prior dev process from masking mock-provider configuration.
+Latest production-readiness changes:
+- monotonic database-backed order number sequence;
+- successful checkout claims are removed after idempotent response persistence;
+- expired opaque order receipts are cleaned during scheduled maintenance;
+- reservation-first payment lifecycle remains unchanged;
+- authoritative receipt-based payment status remains no-store and rate-limited.
 
-FATIKHAN/Golestan remains the only canonical storefront; this service is backend support only.
+Verification before staging sync:
+- TypeScript PASS
+- 11 migrations apply cleanly
+- SQLite foreign-key check PASS
+- order sequence returned 100000000 then 100000001
+
+FATIKHAN/Golestan remains the only canonical storefront. This service is backend support only.

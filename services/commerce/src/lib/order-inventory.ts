@@ -141,5 +141,14 @@ export async function releaseExpiredOrders(env: Env) {
     if (await expireOrder(db, row.id)) released++
   }
 
-  return { scanned: result.results.length, released }
+  const receiptCleanup = await db.prepare(
+    `DELETE FROM order_receipts
+     WHERE expires_at IS NOT NULL AND expires_at <= ?`
+  ).bind(now).run()
+
+  return {
+    scanned: result.results.length,
+    released,
+    receipts_cleaned: receiptCleanup.meta.changes ?? 0
+  }
 }

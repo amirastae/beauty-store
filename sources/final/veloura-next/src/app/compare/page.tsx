@@ -3,7 +3,7 @@ import ComparePage from "@/components/compare/ComparePage";
 
 export const metadata: Metadata={
   title:"مقایسه محصولات — FATIKHAN",
-  description:"مقایسه محصولات زیبایی FATIKHAN بر اساس قیمت، امتیاز، رنگ و ترکیبات.",
+  description:"مقایسه محصولات زیبایی FATIKHAN بر اساس قیمت، رنگ، ترکیبات، مزیت‌ها و روش استفاده.",
   robots:{index:false,follow:true}
 };
 

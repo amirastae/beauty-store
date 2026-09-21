@@ -4,6 +4,7 @@
 
 ## قبل از هر کار
 هر چت/ورکر باید اول این‌ها را بخواند:
+0. `coordination/ZERO_HANG_EXECUTION.md`
 1. `coordination/00_READ_FIRST_FATIKHAN_GOLESTAN.md`
 2. `coordination/ACTIVE_WORKSTREAMS.md`
 3. handoff همان حوزه
@@ -34,3 +35,7 @@ SHAها را از پیام‌های قدیمی کپی نکن. درست قبل ا
 قبل از شروع هر قابلیت، `coordination/DONOR_RECONCILIATION.md` و `coordination/SINGLE_SITE_STATE.md` را بخوان. اگر قابلیت قبلاً روی canonical آمده، دوباره ساخته نشود.
 
 آخرین قاعده: **هر کاری که انجام می‌شود باید همین سایت اصلی را بهتر کند؛ اگر خروجی فقط روی branch جانبی بماند، کار تمام‌شده محسوب نمی‌شود.**
+
+
+## Anti-Hang اجباری
+تمام چت‌ها باید طبق `coordination/ZERO_HANG_EXECUTION.md` کوتاه، اتمیک، checkpoint-based و قابل بازیابی کار کنند؛ هیچ زنجیره طولانی ابزار یا توقف خاموش مجاز نیست.

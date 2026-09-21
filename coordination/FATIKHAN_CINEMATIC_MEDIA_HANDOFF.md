@@ -10,9 +10,9 @@
 
 ## Implemented
 
-- Real `video.currentTime` scroll scrubbing is active on desktop.
+- Real `video.currentTime` scroll scrubbing is active on eligible desktop **and mobile** devices.
 - GSAP/image/3D remains the automatic fallback.
-- Video activation is skipped for mobile <768px, Save-Data, reduced-motion, or media failure.
+- Mobile viewport width alone does not disable video. Fallback is reserved for Save-Data, reduced-motion, 2G/very slow network, or genuine media failure.
 - Browser source order is WebM -> MP4.
 - Hero waits for decoded video data before hiding the fallback, reducing blank-frame risk.
 - Poster now uses `/cinematic/fatikhan-poster.jpg`.
@@ -31,18 +31,18 @@
 Scenes 01-06 are now all generated specifically for the FATIKHAN cinematic sequence:
 Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual.
 
-The current video is a deterministic AI-still cinematic preview, not the final Kling motion master.
+The current video is a deterministic AI-still cinematic preview, not the final Google Flow motion master.
 
 ## Remaining final-media gate
 
-1. Generate five Start+End Frame transitions with Kling 3.0.
+1. Generate five Start+End Frame transitions in Google Flow using the six locked source frames.
 2. Assemble the five clips using the included script.
 3. Replace the current preview MP4/WebM.
 4. Run desktop/mobile real-device visual regression before production promotion.
 
 ## Generation constraint
 
-The connected Higgsfield workspace currently has 9.1 credits on the Free plan. Six scene frames are complete. A full five-transition Kling 3.0 set still exceeds the available balance, so no partial Kling set was promoted.
+Six locked scene frames are complete. Google Flow is now the approved final-motion lane; Higgsfield generations remain QA/reference candidates and must not replace the master without visual review.
 
 ## Conflict / safety
 
@@ -50,3 +50,31 @@ The connected Higgsfield workspace currently has 9.1 credits on the Free plan. S
 - The staging commerce workstream does not overlap these paths.
 - Temporary one-shot media workflows were removed after the assets were committed.
 - Promotion still goes through `integration-staging` verification only.
+
+
+## Latest canonical runtime hardening
+
+- Removed the stale mobile viewport probe from the canonical hero so the locked mobile scrub invariant is unambiguous.
+- The blob-backed cinematic loader now prefers the smaller WebM master and falls back to MP4 only when needed.
+- Runtime CI now locks the WebM -> MP4 source order in addition to the existing mobile/desktop scroll-scrub invariant.
+- This changes transport efficiency only; the approved Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual choreography is unchanged.
+
+
+## Decode fallback hardening
+
+The canonical blob loader now falls back from WebM to MP4 not only when WebM fetch fails, but also when the browser fetches WebM successfully and then rejects it during media decode. This keeps the locked scroll-scrub experience alive across codec edge cases without adding a viewport-based disable.
+
+
+## Genjutsu candidate QA
+
+Candidate job: `92f918a9-2fe1-455d-a111-fe1517b46f0f` (`hf_mult_replace_object`).
+
+Verified media facts:
+- duration: 16.375s;
+- container stream: H.264 video only; no audio stream;
+- uploaded QA copy: `536c825d-c466-4df4-9da9-0ef98dac4ed9`;
+- scene analysis job: `f8ff872f-308b-4538-bcc7-b281f89f2912`.
+
+Automated scene QA flagged a continuity violation in the Impact section (around 00:08-00:11): **two dropper bottles** are visible instead of one locked signature bottle. The final Ritual section also changes hand/product staging from the requested exact continuity.
+
+Result: **REJECTED AS MASTER**. Keep the current verified scrub master. Do not replace production media with this Genjutsu candidate. Google Flow remains the approved final-motion lane using the six locked source frames and five Start+End transitions.

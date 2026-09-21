@@ -3,9 +3,9 @@
 This package is the final media handoff for the canonical FATIKHAN homepage cinematic.
 
 The website runtime is already finished:
-- desktop scroll progress drives `video.currentTime`;
-- WebM -> MP4 source fallback;
-- image/3D fallback remains for mobile, Save-Data, reduced-motion and media failure;
+- eligible desktop **and mobile** scroll progress drives `video.currentTime`;
+- WebM -> MP4 source fallback;\n- mobile viewport width alone must never disable cinematic scrub;
+- image/3D fallback remains for Save-Data, reduced-motion, 2G/very slow network and genuine media failure; mobile viewport width alone never disables the scrub;
 - the public site expects the final files at:
   - `public/cinematic/fatikhan-hero.mp4`
   - `public/cinematic/fatikhan-hero.webm`
@@ -171,6 +171,6 @@ The final Flow master is accepted only if all of these are true:
 - transition boundaries feel continuous;
 - MP4/WebM remain practical for web delivery;
 - desktop scroll scrub feels responsive;
-- mobile keeps the lightweight fallback unless a later mobile video is deliberately approved.
+- real-phone scroll scrub feels responsive and preserves the same cinematic behavior.
 
 Do not replace the current live cinematic media until the Flow master passes this visual review.
