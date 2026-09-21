@@ -73,7 +73,7 @@ export default function Storefront() {
 
   return (
     <main className="site-shell">
-      <div className="announcement">ارسال رایگان برای سفارش‌های منتخب · کالکشن ۲۰۲۶</div>
+      <div className="announcement">FATIKHAN · کالکشن زیبایی ۲۰۲۶</div>
 
       <header className="nav">
         <button className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
@@ -143,7 +143,6 @@ export default function Storefront() {
                   fill
                   sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 25vw"
                 />
-                {product.badge && <span className="badge">{product.badge}</span>}
                 <span className="quick-add" aria-hidden="true">مشاهده محصول</span>
               </Link>
               <div className="product-info">
@@ -154,7 +153,6 @@ export default function Storefront() {
                   </div>
                   <strong>{price(product.price)}</strong>
                 </div>
-                <div className="rating">★ {product.rating} <span>({toman.format(product.reviewCount)})</span></div>
                 <div className="card-actions home-card-actions">
                   <button onClick={() => addProduct(product)}>+ سبد</button>
                   <button
@@ -188,13 +186,10 @@ export default function Storefront() {
       <DiscoverySections />
 
       <section className="club" id="club">
-        <p className="eyebrow">FATIKHAN PRIVATE LIST</p>
-        <h2>اولین نفر باش.</h2>
-        <p>دسترسی زودتر به کالکشن‌ها، رنگ‌های محدود و ادیت‌های جدید.</p>
-        <form onSubmit={(event) => event.preventDefault()}>
-          <input type="email" inputMode="email" placeholder="ایمیل شما" aria-label="ایمیل" />
-          <button type="submit">عضویت ←</button>
-        </form>
+        <p className="eyebrow">FATIKHAN · CONTACT</p>
+        <h2>در ارتباط باش.</h2>
+        <p>برای پرسش درباره محصولات، همکاری یا اطلاع از عرضه‌های جدید مستقیم با FATIKHAN در تماس باش.</p>
+        <a className="button button-dark" href="mailto:fatmhkhan121@gmail.com">تماس با FATIKHAN ←</a>
       </section>
 
       <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">

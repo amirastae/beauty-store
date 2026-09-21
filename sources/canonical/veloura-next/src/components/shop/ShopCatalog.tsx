@@ -12,14 +12,12 @@ const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
 
 type PriceBand = "all" | "under2" | "2to4" | "over4";
-type RatingBand = "all" | "4.7" | "4.8" | "4.9";
 
 export default function ShopCatalog() {
   const [category, setCategory] = useState<(typeof categories)[number]>("همه");
-  const [sort, setSort] = useState("popular");
+  const [sort, setSort] = useState("catalog");
   const [query, setQuery] = useState("");
   const [priceBand, setPriceBand] = useState<PriceBand>("all");
-  const [ratingBand, setRatingBand] = useState<RatingBand>("all");
   const [shadeOnly, setShadeOnly] = useState(false);
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
@@ -32,13 +30,11 @@ export default function ShopCatalog() {
     const cat = params.get("category");
     const q = params.get("q") || "";
     const price = params.get("price") as PriceBand | null;
-    const rating = params.get("rating") as RatingBand | null;
     if (cat && categories.includes(cat as (typeof categories)[number])) {
       setCategory(cat as (typeof categories)[number]);
     }
     setQuery(q);
     if (price && ["all","under2","2to4","over4"].includes(price)) setPriceBand(price);
-    if (rating && ["all","4.7","4.8","4.9"].includes(rating)) setRatingBand(rating);
     setShadeOnly(params.get("shade") === "1");
   }, []);
 
@@ -47,16 +43,13 @@ export default function ShopCatalog() {
     if (category === "همه") params.delete("category"); else params.set("category", category);
     if (query.trim()) params.set("q", query.trim()); else params.delete("q");
     if (priceBand === "all") params.delete("price"); else params.set("price", priceBand);
-    if (ratingBand === "all") params.delete("rating"); else params.set("rating", ratingBand);
     if (shadeOnly) params.set("shade", "1"); else params.delete("shade");
     const qs = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
-  }, [category, query, priceBand, ratingBand, shadeOnly]);
+  }, [category, query, priceBand, shadeOnly]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("fa");
-    const minRating = ratingBand === "all" ? 0 : Number(ratingBand);
-
     const filtered = products.filter((product) => {
       const byCategory = category === "همه" || product.category === category;
       const haystack = (
@@ -67,7 +60,6 @@ export default function ShopCatalog() {
         product.ingredients.join(" ")
       ).toLocaleLowerCase("fa");
       const byQuery = !q || haystack.includes(q);
-      const byRating = product.rating >= minRating;
       const byShade = !shadeOnly || Boolean(product.shades?.length);
       const byPrice =
         priceBand === "all" ||
@@ -75,32 +67,29 @@ export default function ShopCatalog() {
         (priceBand === "2to4" && product.price >= 2000000 && product.price <= 4000000) ||
         (priceBand === "over4" && product.price > 4000000);
 
-      return byCategory && byQuery && byRating && byShade && byPrice;
+      return byCategory && byQuery && byShade && byPrice;
     });
 
     return [...filtered].sort((a, b) => {
       if (sort === "cheap") return a.price - b.price;
       if (sort === "expensive") return b.price - a.price;
-      if (sort === "rating") return b.rating - a.rating || b.reviewCount - a.reviewCount;
       if (sort === "new") return Number(b.id.split("-")[1]) - Number(a.id.split("-")[1]);
-      return b.reviewCount - a.reviewCount;
+      return 0;
     });
-  }, [category, query, sort, priceBand, ratingBand, shadeOnly]);
+  }, [category, query, sort, priceBand, shadeOnly]);
 
   const reset = () => {
     setCategory("همه");
     setQuery("");
     setPriceBand("all");
-    setRatingBand("all");
     setShadeOnly(false);
-    setSort("popular");
+    setSort("catalog");
   };
 
   const activeCount =
     Number(category !== "همه") +
     Number(Boolean(query.trim())) +
     Number(priceBand !== "all") +
-    Number(ratingBand !== "all") +
     Number(shadeOnly);
 
   return (
@@ -125,8 +114,7 @@ export default function ShopCatalog() {
         <div className="shop-sort">
           <label htmlFor="sort">مرتب‌سازی</label>
           <select id="sort" value={sort} onChange={(e)=>setSort(e.target.value)}>
-            <option value="popular">محبوب‌ترین</option>
-            <option value="rating">بالاترین امتیاز</option>
+            <option value="catalog">ترتیب کاتالوگ</option>
             <option value="new">جدیدترین کاتالوگ</option>
             <option value="cheap">ارزان‌ترین</option>
             <option value="expensive">گران‌ترین</option>
@@ -141,15 +129,6 @@ export default function ShopCatalog() {
               <option value="under2">زیر ۲ میلیون</option>
               <option value="2to4">۲ تا ۴ میلیون</option>
               <option value="over4">بیشتر از ۴ میلیون</option>
-            </select>
-          </label>
-          <label>
-            <span>حداقل امتیاز</span>
-            <select value={ratingBand} onChange={(e)=>setRatingBand(e.target.value as RatingBand)}>
-              <option value="all">همه</option>
-              <option value="4.7">۴.۷+</option>
-              <option value="4.8">۴.۸+</option>
-              <option value="4.9">۴.۹</option>
             </select>
           </label>
           <label className="toggle-filter">
@@ -177,14 +156,12 @@ export default function ShopCatalog() {
             <article className="product-card" key={product.id}>
               <Link className="product-media" href={"/product/" + product.slug}>
                 <Image src={product.image} alt={product.imageAlt} fill sizes="(max-width:600px) 50vw,25vw" />
-                {product.badge && <span className="badge">{product.badge}</span>}
               </Link>
               <div className="product-info">
                 <div className="product-heading">
                   <div><h3><Link href={"/product/" + product.slug}>{product.nameFa}</Link></h3><p>{product.nameEn}</p></div>
                   <strong>{money(product.price)}</strong>
                 </div>
-                <div className="rating">★ {product.rating} <span>({fa.format(product.reviewCount)})</span></div>
                 <div className="product-mini-meta">
                   <span>{product.category}</span>
                   {product.ingredients[0] && <span>{product.ingredients[0]}</span>}
