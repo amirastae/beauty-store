@@ -17,13 +17,13 @@ Current staging already contains the FATIKHAN six-scene cinematic pipeline:
 `Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual`
 
 Current implementation:
-- desktop scroll-scrub drives `video.currentTime`;
+- desktop **and mobile** scroll-scrub drive `video.currentTime`;
 - browser source preference: WebM -> MP4;
 - current preview master: 16.5s / 1280×720 / 30fps;
 - MP4 ≈ 2.72 MB;
 - WebM ≈ 1.28 MB;
 - cross-dissolve ≈ 0.30s;
-- fallback stays available for mobile, Save-Data, reduced-motion and media failure;
+- fallback is allowed for reduced-motion, Save-Data, 2G/slow network, or media failure; **mobile viewport alone must never disable cinematic video scrub**;
 - poster/fallback must prevent blank hero states;
 - final media gate is five Kling 3.0 Start+End Frame transitions, then final MP4/WebM assembly and real-device visual regression.
 
@@ -137,3 +137,18 @@ All chats must treat side branches as donor lanes only. Never keep a second visu
 ## Cross-chat anti-duplication rule
 
 Before overlapping work: fetch live `integration-staging`, read `coordination/ACTIVE_WORKSTREAMS.md`, read `coordination/DONOR_RECONCILIATION.md`, compare donor vs canonical, and port only missing behavior. If canonical already has it, do not rebuild it.
+
+
+## LOCKED cinematic scroll invariant
+
+This behavior is user-approved and locked. It must not be weakened, disabled, replaced, or converted to a static/image-only mobile experience without explicit user approval.
+
+Mandatory invariant:
+- FATIKHAN cinematic scroll-scrub remains active on desktop and mobile when motion is allowed and media can load.
+- Viewport width/phone/tablet detection must never be used by itself to disable the scrub video.
+- The hero must continue mapping ScrollTrigger progress to video `currentTime`.
+- Reduced Motion, Save-Data, 2G/slow network and genuine media failure may use the existing graceful fallback.
+- Any performance optimization must preserve this invariant first; if it cannot, stop and request approval instead of silently degrading the experience.
+- CI/build must fail if a mobile viewport gate or mobile CSS `display:none` is reintroduced for `.cinematic-scrub-video`.
+
+Regression origin: runtime-v3 introduced an unapproved `max-width: 767px` eligibility gate plus mobile CSS hiding the scrub video. That class of change is forbidden going forward.
