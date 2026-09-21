@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T04:45:00Z",
+  "generated_at": "2026-09-21T04:55:00Z",
   "production": {
     "branch": "cloudflare-site",
     "sha": "f133f7e2ad82d442107b0aa9d8ad0cf610e273d0",
@@ -32,13 +32,14 @@
   ],
   "commerce": {
     "branch": "commerce-core-v1",
-    "sha": "8873c1897755de57ae3472d4bf15848bdab09927",
+    "sha": "2da6c3876e6170de97e4f23f586172f4c560c486",
     "path": "services/commerce",
     "verified": {
       "local_typecheck": true,
       "local_migrations_1_8": true,
       "temporary_cloudflare_d1_checkout": true,
       "temporary_cloudflare_phone_only_irr_checkout": true,
+      "shipping_policy_preview": true,
       "r2_preview": "blocked_by_temporary_token_permission"
     }
   }
