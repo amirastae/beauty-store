@@ -71,9 +71,9 @@ Do not rename technical compatibility identifiers unless a separate migration is
 Keep checkout mutation disabled until backend readiness is fully verified.
 
 Track:
-- #42 — inventory/payment regression coverage;
-- #45 — authoritative public order/payment receipt/status lookup — implemented and Cloudflare-tested;
-- runtime IRR shipping/payment provider configuration.
+- #42 — inventory/payment regression coverage — **completed and CI verified**;
+- #45 — authoritative public order/payment receipt/status lookup — **completed and Cloudflare-tested**;
+- runtime production D1/R2/payment credentials and final real-provider verification.
 
 The payment-return query string alone is never proof of successful payment.
 
@@ -115,9 +115,9 @@ Mandatory current handoffs:
 The cinematic FATIKHAN experience is the presentation layer; commerce work must fit underneath it without weakening scroll-scrub performance, mobile fallbacks, accessibility, or brand consistency.
 
 Current release checkpoints:
-- production `cloudflare-site@9ddcd7cac16ec8dc8802c53e58279506cca05d9c`
-- integration `integration-staging@ff67d0ce0f674a068303686f020fc438d4138c38`
-- commerce `commerce-core-v1@a2a752eb4df43d04310505efb36db19346b635de`
+- production `cloudflare-site@1276b6448e470179523b8c12887ef46f30400668`
+- integration `integration-staging@725624bd540bba6ab1bcca31e7e7e40bd20b8111`
+- commerce `commerce-core-v1@fb1b5a18ce7c971a21a0fd73623adba82d683519`
 
 Visible brand remains **FATIKHAN**. Technical compatibility names such as `veloura-next`, `veloura-*` storage keys and `/api/v1/compat/veloura-v2/resolve` remain internal until an explicit migration is approved.
 
@@ -129,3 +129,10 @@ Before touching canonical frontend reliability, SEO, accessibility, security hea
 - `coordination/CANONICAL_QUALITY_HANDOFF.md`
 
 The old `shop/v1.x` experiments are reference-only and must never become a parallel storefront or replace the FATIKHAN Golestan cinematic system.
+
+
+## One-site completion rule
+
+A workstream is **not complete** merely because its branch works. A feature is complete only after its smallest compatible patch is integrated into `sources/canonical/veloura-next` or `services/commerce`, the canonical build/quality gates pass, and the handoff is updated.
+
+All chats must treat side branches as donor lanes only. Never keep a second visual/storefront direction alive beside FATIKHAN Golestan.
