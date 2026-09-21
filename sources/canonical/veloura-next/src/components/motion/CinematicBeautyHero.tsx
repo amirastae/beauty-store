@@ -59,7 +59,7 @@ export default function CinematicBeautyHero() {
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.set(".chapter-two, .chapter-three, .chapter-four", { opacity: 0, y: 34 });
+      gsap.set(".cinematic-chapter", { opacity: 0, y: 28 });
       gsap.set(".cinematic-progress-fill", { scaleY: 0, transformOrigin: "50% 0%" });
 
       if (videoReady && video.current) {
@@ -80,6 +80,7 @@ export default function CinematicBeautyHero() {
             if (pendingFrame) return;
             pendingFrame = window.requestAnimationFrame(() => {
               pendingFrame = 0;
+              if (!media.paused) media.pause();
               if (Math.abs(media.currentTime - targetTime) > 0.016) {
                 media.currentTime = targetTime;
               }
@@ -88,25 +89,28 @@ export default function CinematicBeautyHero() {
         });
 
         const copyTl = gsap.timeline({
-          defaults: { ease: "none" },
+          defaults: { ease: "power2.out" },
           scrollTrigger: {
             trigger: root.current,
             start: "top top",
             end: "bottom bottom",
-            scrub: 0.55,
+            scrub: 0.6,
             invalidateOnRefresh: true
           }
         });
 
+        // Golestan build-journal timing contract:
+        // 01: 15–25%, 02: 35–45%, 03: 60–70%, 04: 85–100%.
         copyTl
-          .to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
-          .to(".chapter-one", { opacity: 0, y: -28, duration: 0.24 }, 0.72)
-          .to(".chapter-two", { opacity: 1, y: 0, duration: 0.28 }, 0.84)
-          .to(".chapter-two", { opacity: 0, y: -28, duration: 0.24 }, 1.56)
-          .to(".chapter-three", { opacity: 1, y: 0, duration: 0.28 }, 1.68)
-          .to(".chapter-three", { opacity: 0, y: -28, duration: 0.24 }, 2.40)
-          .to(".chapter-four", { opacity: 1, y: 0, duration: 0.30 }, 2.54)
-          .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.05 }, 2.70);
+          .to(".cinematic-progress-fill", { scaleY: 1, duration: 1, ease: "none" }, 0)
+          .to(".chapter-one", { opacity: 1, y: 0, duration: 0.035 }, 0.115)
+          .to(".chapter-one", { opacity: 0, y: -24, duration: 0.035 }, 0.25)
+          .to(".chapter-two", { opacity: 1, y: 0, duration: 0.035 }, 0.315)
+          .to(".chapter-two", { opacity: 0, y: -24, duration: 0.035 }, 0.45)
+          .to(".chapter-three", { opacity: 1, y: 0, duration: 0.035 }, 0.565)
+          .to(".chapter-three", { opacity: 0, y: -24, duration: 0.035 }, 0.70)
+          .to(".chapter-four", { opacity: 1, y: 0, duration: 0.05 }, 0.80)
+          .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 0.15 }, 0.85);
 
         return () => {
           if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
@@ -115,7 +119,8 @@ export default function CinematicBeautyHero() {
         };
       }
 
-      gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
+      gsap.set(".chapter-one", { opacity: 1, y: 0 });
+            gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
 
       const fallbackTl = gsap.timeline({
         defaults: { ease: "none" },
@@ -156,7 +161,7 @@ export default function CinematicBeautyHero() {
       ref={root}
       aria-labelledby="cinematic-title"
       data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
-      data-cinematic-runtime="healthy-scroll-v1"
+      data-cinematic-runtime="golestan-scroll-cinematic-v2"
     >
       <div className="cinematic-sticky">
         {VIDEO_SCRUB_ENABLED && <video
@@ -191,6 +196,7 @@ export default function CinematicBeautyHero() {
           <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
         </div>
 
+        <div className="cinematic-frame" aria-hidden="true"><i/><i/><i/><i/></div>
         <div className="cinematic-final-glow" aria-hidden="true" />
         <div className="cinematic-vignette" aria-hidden="true" />
         <div className="cinematic-grain" aria-hidden="true" />

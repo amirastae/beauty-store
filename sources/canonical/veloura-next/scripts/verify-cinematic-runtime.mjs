@@ -13,11 +13,12 @@ const [hero, css] = await Promise.all([
 const required = [
   ["ScrollTrigger.create(", "ScrollTrigger scrub driver"],
   ["window.requestAnimationFrame(", "frame-synced scrub scheduling"],
+  ["15–25%, 02: 35–45%, 03: 60–70%, 04: 85–100%", "Golestan overlay timing contract"],
   ["media.currentTime = targetTime", "video currentTime scrub mapping"],
   ['<source src="/cinematic/fatikhan-hero.webm" type="video/webm" />', "WebM scrub source"],
   ['<source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />', "MP4 scrub fallback source"],
   ["if (reducedMotion || saveData) return;", "accessibility/data-saver fallback"],
-  ['data-cinematic-runtime="healthy-scroll-v1"', "healthy runtime release marker"],
+  ['data-cinematic-runtime="golestan-scroll-cinematic-v2"', "healthy runtime release marker"],
 ];
 
 for (const [needle, label] of required) {

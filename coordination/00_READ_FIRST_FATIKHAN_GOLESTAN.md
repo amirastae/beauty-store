@@ -152,3 +152,22 @@ Mandatory invariant:
 - CI/build must fail if a mobile viewport gate or mobile CSS `display:none` is reintroduced for `.cinematic-scrub-video`.
 
 Regression origin: runtime-v3 introduced an unapproved `max-width: 767px` eligibility gate plus mobile CSS hiding the scrub video. That class of change is forbidden going forward.
+
+
+## Golestan PDF literal cinematic contract
+
+The uploaded Golestan build journal is authoritative for the cinematic interaction pattern. Do not reinterpret it as a static 3D hero with decorative motion.
+
+Required:
+- one continuous hero film is the visual spine;
+- hero scroll track is 400–500vh with a sticky full-viewport video;
+- GSAP ScrollTrigger maps scroll progress directly to `video.currentTime`;
+- overlay windows follow the journal cadence: 15–25%, 35–45%, 60–70%, 85–100%;
+- fixed navbar uses difference-style treatment when transparent and blur after scrolling;
+- film grain (~4%), vignette and inset corner-frame treatment remain visible over the film;
+- video is muted, playsInline, preload=auto and explicitly loaded before seeking;
+- seek occurs while paused;
+- the final film must be assembled from five real 3–5s motion clips connecting six keyframes, with ~0.3s cross dissolves, 30fps, 1920×1080, H.264 plus WebM;
+- the current six-still preview is a temporary media placeholder only and must never be presented as the final Golestan-equivalent cinematic master.
+
+Mobile performance may use a lighter encode when necessary, but a phone viewport alone must not silently replace the approved cinematic interaction in this project unless the user explicitly changes that lock.

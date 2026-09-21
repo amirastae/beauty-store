@@ -17,7 +17,7 @@ a{color:inherit}
 img{display:block}
 .site-shell{overflow:hidden;min-height:100vh}
 .announcement{height:34px;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:10px;letter-spacing:.04em}
-.nav{position:absolute;z-index:20;top:34px;inset-inline:0;height:76px;padding-inline:5vw;display:grid;grid-template-columns:1fr auto auto auto;gap:24px;align-items:center;color:var(--ink)}
+.nav{position:fixed;z-index:40;top:0;inset-inline:0;height:84px;padding-inline:5vw;display:grid;grid-template-columns:1fr auto auto auto;gap:24px;align-items:center;color:#fff;mix-blend-mode:difference;background:transparent;border-bottom:1px solid transparent;transition:background .65s ease-out,backdrop-filter .65s ease-out,border-color .65s ease-out,color .65s ease-out;isolation:isolate}.nav.nav-scrolled{mix-blend-mode:normal;background:rgba(8,6,6,.38);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:rgba(255,255,255,.09)}
 .brand{text-decoration:none;font:700 21px/1 Arial,sans-serif;letter-spacing:.16em}
 .nav-links{display:flex;gap:26px}
 .nav-links a{text-decoration:none;font-size:12px;opacity:.75}
@@ -512,7 +512,7 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 /* FATIKHAN CINEMATIC HERO v1 */
 .cinematic-hero{
   position:relative;
-  height:430vh;
+  height:480vh;
   background:#090707;
   color:#f8f3ef;
   isolation:isolate;
@@ -578,6 +578,19 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   filter:blur(36px);
   pointer-events:none;
 }
+
+.cinematic-frame{
+  position:absolute;
+  z-index:7;
+  inset:22px;
+  pointer-events:none;
+}
+.cinematic-frame i{position:absolute;width:34px;height:34px;opacity:.66}
+.cinematic-frame i:nth-child(1){top:0;left:0;border-top:1px solid #c9a961;border-left:1px solid #c9a961}
+.cinematic-frame i:nth-child(2){top:0;right:0;border-top:1px solid #c9a961;border-right:1px solid #c9a961}
+.cinematic-frame i:nth-child(3){bottom:0;left:0;border-bottom:1px solid #c9a961;border-left:1px solid #c9a961}
+.cinematic-frame i:nth-child(4){bottom:0;right:0;border-bottom:1px solid #c9a961;border-right:1px solid #c9a961}
+
 .cinematic-vignette{
   position:absolute;
   inset:0;
@@ -589,7 +602,7 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   position:absolute;
   inset:0;
   pointer-events:none;
-  opacity:.055;
+  opacity:.04;
   mix-blend-mode:soft-light;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
 }
@@ -609,6 +622,7 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   direction:rtl;
   pointer-events:auto;
   will-change:transform,opacity;
+  opacity:0;
 }
 .cinematic-chapter:not(.chapter-one){opacity:0}
 .cinematic-kicker{
@@ -796,6 +810,7 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 .cinematic-hero.video-active .cinematic-stage{opacity:0!important;pointer-events:none}
 .cinematic-hero.video-active .cinematic-vignette,
 .cinematic-hero.video-active .cinematic-grain,
+.cinematic-hero.video-active .cinematic-frame,
 .cinematic-hero.video-active .cinematic-final-glow,
 .cinematic-hero.video-active .cinematic-copy,
 .cinematic-hero.video-active .cinematic-progress,
@@ -803,7 +818,6 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 .cinematic-hero.video-active .cinematic-copy{z-index:9}
 .cinematic-hero.video-active .cinematic-progress,
 .cinematic-hero.video-active .cinematic-scroll-cue{z-index:10}
-.cinematic-hero.video-active .cinematic-grain,
 .cinematic-hero.video-active .cinematic-final-glow{display:none}
 .site-shell>.nav{
   color:#f8f3ef;
@@ -816,4 +830,11 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 
 @media(prefers-reduced-motion:reduce){
   .cinematic-scrub-video{display:none!important}
+}
+
+.mobile-dock.cinematic-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+
+@media(max-width:560px){
+  .cinematic-frame{inset:14px}
+  .cinematic-frame i{width:24px;height:24px}
 }
