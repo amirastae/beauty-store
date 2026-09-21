@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
+import HeroStage from "@/components/motion/HeroStage";
+import SignatureStory from "@/components/motion/SignatureStory";
 
 const toman = new Intl.NumberFormat("fa-IR");
 
@@ -76,21 +78,7 @@ export default function Storefront() {
           </div>
         </div>
 
-        <div className="hero-object" aria-label="نمایش سینمایی محصول">
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="hero-glow" />
-          <div className="cosmetic-object">
-            <div className="cap" />
-            <div className="bottle">
-              <span className="bottle-shine" />
-              <b>VELOURA</b>
-              <small>PEARL BARRIER SERUM</small>
-            </div>
-          </div>
-          <div className="floating-note note-one"><b>01</b><span>سد دفاعی پوست</span></div>
-          <div className="floating-note note-two"><b>24H</b><span>آبرسانی سبک</span></div>
-        </div>
+        <HeroStage />
 
         <span className="scroll-cue">برای کشف بیشتر اسکرول کن ↓</span>
       </section>
@@ -182,17 +170,7 @@ export default function Storefront() {
         </div>
       </section>
 
-      <section className="signature">
-        <div className="signature-number">02</div>
-        <div>
-          <p className="eyebrow">SIGNATURE PRODUCT FILM</p>
-          <h2>بخش سینمایی محصول،<br/><em>آماده برای GSAP + 3D.</em></h2>
-        </div>
-        <p>
-          این بلوک در فاز بعد به روایت اسکرولی واقعی تبدیل می‌شود: باز شدن محصول، چرخش کنترل‌شده،
-          نمایش بافت و در پایان اتصال مستقیم به خرید.
-        </p>
-      </section>
+      <SignatureStory />
 
       <section className="club" id="club">
         <p className="eyebrow">VELOURA PRIVATE LIST</p>
