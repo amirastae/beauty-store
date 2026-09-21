@@ -13,6 +13,15 @@ orders.post('/orders/status', async (c) => {
   const db = c.env.DB
   if (!db) return fail('DB_NOT_BOUND', 'Order database is not bound in this environment.', 503)
 
+  if (c.env.ORDER_STATUS_RATE_LIMITER) {
+    const actor = c.req.header('cf-connecting-ip') || 'unknown'
+    const limited = await c.env.ORDER_STATUS_RATE_LIMITER.limit({ key: 'order-status:' + actor })
+    if (!limited.success) {
+      c.header('Retry-After', '60')
+      return fail('RATE_LIMITED', 'Too many order status requests.', 429)
+    }
+  }
+
   const body = await c.req.json<{ receipt?: string }>().catch((): { receipt?: string } => ({}))
   const receipt = (body.receipt || '').trim().toLowerCase()
 
