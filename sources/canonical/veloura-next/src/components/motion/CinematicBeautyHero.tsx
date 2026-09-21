@@ -21,14 +21,12 @@ const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO !==
 export default function CinematicBeautyHero() {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const [videoEligible, setVideoEligible] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     if (!VIDEO_SCRUB_ENABLED) return;
-
-    const media = video.current;
-    if (!media) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const compactViewport = window.matchMedia("(max-width: 767px)").matches;
@@ -36,7 +34,17 @@ export default function CinematicBeautyHero() {
     const saveData = connection?.saveData === true;
     const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
 
-    if (reducedMotion || compactViewport || saveData || slowNetwork) return;
+    setVideoEligible(!(reducedMotion || compactViewport || saveData || slowNetwork));
+  }, []);
+
+  useEffect(() => {
+    if (!VIDEO_SCRUB_ENABLED || !videoEligible) return;
+
+    const media = video.current;
+    if (!media) return;
+
+    const controller = new AbortController();
+    let objectUrl = "";
 
     const onReady = () => {
       if (!Number.isFinite(media.duration) || media.duration <= 0 || media.readyState < 2) return;
@@ -52,14 +60,36 @@ export default function CinematicBeautyHero() {
     media.addEventListener("loadeddata", onReady);
     media.addEventListener("canplay", onReady);
     media.addEventListener("error", onError);
-    media.load();
+
+    const loadScrubMaster = async () => {
+      try {
+        const response = await fetch("/cinematic/fatikhan-hero.mp4", {
+          cache: "force-cache",
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error("cinematic master fetch failed");
+
+        const blob = await response.blob();
+        if (controller.signal.aborted) return;
+
+        objectUrl = URL.createObjectURL(blob);
+        media.src = objectUrl;
+        media.load();
+      } catch {
+        if (!controller.signal.aborted) onError();
+      }
+    };
+
+    void loadScrubMaster();
 
     return () => {
+      controller.abort();
       media.removeEventListener("loadeddata", onReady);
       media.removeEventListener("canplay", onReady);
       media.removeEventListener("error", onError);
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, []);
+  }, [videoEligible]);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -177,10 +207,10 @@ export default function CinematicBeautyHero() {
       className={videoReady ? "cinematic-hero video-active" : "cinematic-hero"}
       ref={root}
       aria-labelledby="cinematic-title"
-      data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
+      data-video-state={videoReady ? "ready" : videoFailed || !videoEligible ? "fallback" : "loading"}
     >
       <div className="cinematic-sticky">
-        {VIDEO_SCRUB_ENABLED && <video
+        {VIDEO_SCRUB_ENABLED && videoEligible && <video
           ref={video}
           className="cinematic-scrub-video"
           muted
@@ -189,15 +219,12 @@ export default function CinematicBeautyHero() {
           poster="/cinematic/fatikhan-poster.jpg"
           aria-hidden="true"
           tabIndex={-1}
-        >
-          <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
-          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
-        </video>}
+        />}
 
         {!videoReady && <>
           <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
             <div className="cinematic-product-frame">
-              <HeroStage />
+              <HeroStage allow3D={!videoEligible} />
             </div>
           </div>
 
