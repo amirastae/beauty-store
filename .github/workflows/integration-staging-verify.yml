@@ -22,6 +22,10 @@ jobs:
     timeout-minutes: 4
     steps:
       - uses: actions/checkout@v7
+      - name: Verify canonical and final source are identical
+        run: |
+          diff -qr sources/canonical/veloura-next sources/final/veloura-next
+          echo "CANONICAL_FINAL_MIRROR=PASS"
       - name: Verify production-shaped static routes
         run: |
           test -s public/index.html
