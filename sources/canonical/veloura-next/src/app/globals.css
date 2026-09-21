@@ -509,7 +509,7 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 @media(max-width:700px){.routine-hero{padding:58px 20px 48px}.routine-hero h1{font-size:66px}.routine-controls{padding:36px 18px}.routine-options{grid-template-columns:1fr}.routine-options button{min-height:100px}.routine-result{padding:54px 18px 90px}.routine-result-head{align-items:flex-start;flex-direction:column}.routine-grid{grid-template-columns:1fr 1fr;gap:9px}.routine-result-head .button{width:100%}}
 
 
-/* VELOURA CINEMATIC HERO v1 */
+/* FATIKHAN CINEMATIC HERO v1 */
 .cinematic-hero{
   position:relative;
   height:430vh;
@@ -775,3 +775,36 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 .payment-return.failed,.payment-return.cancelled{background:rgba(255,229,224,.62);border-color:rgba(126,59,49,.24);color:#783b32}
 .payment-return span{font-size:10px;line-height:1.7}
 @media(max-width:560px){.checkout-resume{align-items:stretch;flex-direction:column}.checkout-resume .button{width:100%}}
+
+
+/* FATIKHAN VIDEO SCRUB LAYER */
+.cinematic-scrub-video{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  pointer-events:none;
+  filter:saturate(.88) contrast(1.05) brightness(.76);
+  transition:opacity .35s ease;
+}
+.cinematic-hero.video-active .cinematic-scrub-video{opacity:1}
+.cinematic-hero.video-active .cinematic-stage{opacity:0!important;pointer-events:none}
+.cinematic-hero.video-active .cinematic-vignette,
+.cinematic-hero.video-active .cinematic-grain,
+.cinematic-hero.video-active .cinematic-final-glow,
+.cinematic-hero.video-active .cinematic-copy,
+.cinematic-hero.video-active .cinematic-progress,
+.cinematic-hero.video-active .cinematic-scroll-cue{z-index:8}
+.cinematic-hero.video-active .cinematic-copy{z-index:9}
+.cinematic-hero.video-active .cinematic-progress,
+.cinematic-hero.video-active .cinematic-scroll-cue{z-index:10}
+
+@media(max-width:767px){
+  .cinematic-scrub-video{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-scrub-video{display:none!important}
+}
