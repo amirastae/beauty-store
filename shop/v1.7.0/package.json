@@ -1,6 +1,6 @@
 {
   "name": "veloura-beauty-store",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "quality": "npm run lint && npm run typecheck && npm run build",
-    "deploy:cloudflare": "npx wrangler deploy"
+    "deploy:cloudflare": "npx wrangler deploy",
+    "ci": "npm ci && npm run quality"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
