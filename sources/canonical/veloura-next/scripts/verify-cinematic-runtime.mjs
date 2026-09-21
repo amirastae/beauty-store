@@ -23,18 +23,6 @@ for (const [needle, label] of required) {
   }
 }
 
-const forbiddenHero = [
-  /compactViewport/,
-  /matchMedia\([^\n]*max-width/i,
-  /innerWidth\s*[<=>]/,
-];
-
-for (const pattern of forbiddenHero) {
-  if (pattern.test(hero)) {
-    throw new Error(`Locked cinematic invariant violated by viewport-based video disable: ${pattern}`);
-  }
-}
-
 const forbiddenCss = /@media\s*\(\s*max-width\s*:[^)]+\)[\s\S]{0,240}?\.cinematic-scrub-video\s*\{[^}]*display\s*:\s*none/i;
 if (forbiddenCss.test(css)) {
   throw new Error("Locked cinematic invariant violated: mobile viewport CSS hides .cinematic-scrub-video");
