@@ -1,0 +1,60 @@
+name: Commerce Core CI
+
+on:
+  push:
+    branches:
+      - commerce-core-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Browser bridge syntax
+        run: node --check public/commerce-bridge.js
+
+      - name: Start local Cloudflare Worker
+        run: |
+          npx wrangler dev --local --ip 127.0.0.1 --port 8787 > /tmp/veloura-wrangler.log 2>&1 &
+          echo $! > /tmp/veloura-wrangler.pid
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/health.json; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/veloura-wrangler.log
+          exit 1
+
+      - name: Commerce integration
+        run: ./platform/tests/integration.sh
+
+      - name: Worker log on failure
+        if: failure()
+        run: cat /tmp/veloura-wrangler.log || true
+
+      - name: Stop local Worker
+        if: always()
+        run: |
+          if [ -f /tmp/veloura-wrangler.pid ]; then
+            kill "$(cat /tmp/veloura-wrangler.pid)" || true
+          fi
