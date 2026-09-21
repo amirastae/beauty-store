@@ -119,20 +119,6 @@ for(const name of ["X-Content-Type-Options","Referrer-Policy","X-Frame-Options",
   if(!headers.includes(name)) failures.push(`_headers missing ${name}`);
 }
 
-console.log(JSON.stringify({
-  htmlFiles:htmlFiles.length,
-  routeRefs,
-  assetRefs,
-  sitemapUrls,
-  failures:failures.length
-},null,2));
-
-if(failures.length){
-  for(const item of [...new Set(failures)].slice(0,100)) console.error("FAIL:",item);
-  process.exit(1);
-}
-console.log("FATIKHAN_STATIC_AUDIT_PASS");
-
 
 const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.webmanifest"),"utf8"));
 if(manifest.name?.includes("FATIKHAN")!==true) failures.push("manifest visible name is not FATIKHAN");
@@ -153,3 +139,17 @@ if(!headers.includes("/sw.js")||!headers.includes("no-cache, no-store, must-reva
 if(!headers.includes("/manifest.webmanifest")||!headers.includes("Cache-Control: no-cache")){
   failures.push("_headers does not prevent stale manifest caching");
 }
+
+console.log(JSON.stringify({
+  htmlFiles:htmlFiles.length,
+  routeRefs,
+  assetRefs,
+  sitemapUrls,
+  failures:failures.length
+},null,2));
+
+if(failures.length){
+  for(const item of [...new Set(failures)].slice(0,100)) console.error("FAIL:",item);
+  process.exit(1);
+}
+console.log("FATIKHAN_STATIC_AUDIT_PASS");
