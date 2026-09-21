@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: product.nameFa + " — FATIKHAN",
-    description: product.nameFa + " از " + product.brand + "؛ خرید آنلاین با تجربه پریمیوم ولورا.",
+    description: product.nameFa + " از " + product.brand + "؛ خرید آنلاین با تجربه پریمیوم FATIKHAN.",
     alternates: { canonical },
     openGraph: {
       title: product.nameFa + " — FATIKHAN",
