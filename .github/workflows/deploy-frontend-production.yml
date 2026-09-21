@@ -77,7 +77,7 @@ jobs:
           live_ready=0
           for i in $(seq 1 36); do
             if curl -fsS --max-time 8 "$LIVE_URL/?release=$GITHUB_SHA" -o /tmp/home.html; then
-              if grep -qi "FATIKHAN" /tmp/home.html && grep -q 'data-cinematic-runtime="blob-throttle-v3"' /tmp/home.html; then
+              if grep -qi "FATIKHAN" /tmp/home.html && grep -q 'data-cinematic-runtime="healthy-scroll-v1"' /tmp/home.html; then
                 live_ready=1
                 break
               fi
