@@ -15,6 +15,7 @@ const required = [
   ["media.currentTime = targetTime", "video currentTime scrub mapping"],
   ["setVideoEligible(!(reducedMotion || saveData || slowNetwork))", "mobile-safe eligibility rule"],
   ['["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]', "WebM-first scrub source order"],
+  ["sourceIndex + 1 < sources.length", "decode failure fallback from WebM to MP4"],
 ];
 
 for (const [needle, label] of required) {
