@@ -69,16 +69,44 @@ jobs:
           test -s public/cinematic/fatikhan-hero.webm
           echo "CANONICAL_PUBLIC_MATCH=PASS"
 
-      - name: Commit canonical public snapshot
+      - name: Commit canonical public snapshot safely
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A public
-          if git diff --cached --quiet; then
-            echo "CANONICAL_PUBLIC_COMMIT=NO_CHANGES"
-            exit 0
-          fi
-          git commit -m "build(frontend): sync canonical FATIKHAN public"
-          git push origin HEAD:integration-staging
-          echo "CANONICAL_PUBLIC_COMMIT=PASS"
+
+          source_tree="$(git rev-parse HEAD:sources/canonical/veloura-next)"
+          rm -rf /tmp/fatikhan-canonical-public
+          cp -a public /tmp/fatikhan-canonical-public
+
+          for attempt in 1 2; do
+            git fetch origin integration-staging
+            remote_source_tree="$(git rev-parse origin/integration-staging:sources/canonical/veloura-next)"
+
+            if [ "$remote_source_tree" != "$source_tree" ]; then
+              echo "CANONICAL_PUBLIC_COMMIT=SKIP_NEWER_CANONICAL"
+              exit 0
+            fi
+
+            git reset --hard origin/integration-staging
+            rm -rf public
+            cp -a /tmp/fatikhan-canonical-public public
+            git add -A public
+
+            if git diff --cached --quiet; then
+              echo "CANONICAL_PUBLIC_COMMIT=NO_CHANGES"
+              exit 0
+            fi
+
+            git commit -m "build(frontend): sync canonical FATIKHAN public"
+
+            if git push origin HEAD:integration-staging; then
+              echo "CANONICAL_PUBLIC_COMMIT=PASS"
+              exit 0
+            fi
+
+            echo "Concurrent staging update detected; retrying once without discarding remote work."
+          done
+
+          echo "CANONICAL_PUBLIC_COMMIT=DEFERRED_AFTER_CONCURRENT_UPDATES"
+          exit 0
