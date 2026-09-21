@@ -1,0 +1,25 @@
+name: Veloura Next CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "veloura-next/**"
+      - ".github/workflows/veloura-next-ci.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: veloura-next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --package-lock-only
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
