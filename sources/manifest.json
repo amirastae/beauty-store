@@ -1,35 +1,38 @@
 {
-  "generated_at": "2026-09-21T02:45:00Z",
-  "purpose": "Namespaced source snapshots for conflict-free integration",
-  "canonical_deployment_branch": "cloudflare-site",
-  "staging_branch": "integration-staging",
-  "sources": [
+  "generated_at": "2026-09-21T03:24:00Z",
+  "production": {
+    "branch": "cloudflare-site",
+    "sha": "aa2ff545d56e1619df9bde26d840e4578a43d387",
+    "label": "VELOURA v2.2.0 commerce intelligence release"
+  },
+  "canonical_frontend": {
+    "branch": "veloura-v2.2-commerce",
+    "sha": "669e6205a3d240a9bb4e81cf5d75fbd5b40417f9",
+    "path": "sources/canonical/veloura-next",
+    "tree": "5e7054f9e8ea8927fdf11aa6218c27ccdff5ba78"
+  },
+  "comparison_sources": [
     {
-      "role": "frontend-foundation",
       "branch": "beauty-v2-foundation",
-      "commit": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
-      "path": "sources/foundation/veloura-next",
-      "tree": "54c88f1bcd199b76f5c06fd6bdb2e8b5b90b7e87"
+      "sha": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
+      "path": "sources/foundation/veloura-next"
     },
     {
-      "role": "ui-polish",
-      "branch": "veloura-v2.1-polish",
-      "commit": "46c6612c85c902de679dcf10cb4a6be1db91434d",
-      "path": "sources/polish/veloura-next",
-      "tree": "1027c9ca12f34d1196dcc0010105292b13f82a07"
+      "branch": "iranian-commerce-ux-v1",
+      "sha": "531cc212229b8a4ad5c1197e0aadee72e755328e",
+      "path": "sources/iranian-ux/veloura-next",
+      "tree": "b2170db60a78a8292cb45289f577867b6d79b723"
     },
     {
-      "role": "shop-catalog",
-      "branch": "shop-v1.1.0-work",
-      "commit": "12dd4e0624dfb437bf2e405b8e6d6eb3594fab3d",
-      "path": "sources/shop",
-      "tree": "29d08b41d18620dac80e00eba337c6c7cd6d5b6f"
-    },
-    {
-      "role": "commerce",
-      "branch": "commerce-core-v1",
-      "commit": "3dbd71ed196ac61ed62062a7105d33b013706fb6",
-      "path": "services/commerce"
+      "branch": "shop-v1.3.0-work",
+      "sha": "6cabef3bbfc4a0635880c207d52f03f687a5a306",
+      "path": "sources/shop-latest",
+      "tree": "e370e5ed1ed76e5658faba5188dd74e0106d0e62"
     }
-  ]
+  ],
+  "commerce": {
+    "branch": "commerce-core-v1",
+    "sha": "de18de948e4459f7495f2a3146ec18937ddc81e4",
+    "path": "services/commerce"
+  }
 }

@@ -5,7 +5,7 @@ on:
     branches:
       - integration-staging
     paths:
-      - "sources/polish/veloura-next/**"
+      - "sources/canonical/veloura-next/**"
       - ".github/workflows/build-canonical-staging.yml"
   workflow_dispatch:
 
@@ -34,22 +34,22 @@ jobs:
           node-version: 22
 
       - name: Install canonical frontend
-        working-directory: sources/polish/veloura-next
+        working-directory: sources/canonical/veloura-next
         run: npm install --ignore-scripts --no-audit --no-fund
 
       - name: Typecheck canonical frontend
-        working-directory: sources/polish/veloura-next
+        working-directory: sources/canonical/veloura-next
         run: npm run typecheck
 
       - name: Build canonical static export
-        working-directory: sources/polish/veloura-next
+        working-directory: sources/canonical/veloura-next
         run: npm run build
 
       - name: Replace staging public atomically
         run: |
-          test -s sources/polish/veloura-next/out/index.html
+          test -s sources/canonical/veloura-next/out/index.html
           rm -rf public.next
-          cp -a sources/polish/veloura-next/out public.next
+          cp -a sources/canonical/veloura-next/out public.next
           rm -rf public
           mv public.next public
 
@@ -72,5 +72,5 @@ jobs:
             echo "No generated output changes."
             exit 0
           fi
-          git commit -m "build(staging): sync canonical VELOURA v2.1 export [generated]"
+          git commit -m "build(staging): sync canonical VELOURA v2.2 export [generated]"
           git push origin HEAD:integration-staging
