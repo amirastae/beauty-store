@@ -13,6 +13,8 @@ type NavigatorWithConnection = Navigator & {
   connection?: { saveData?: boolean };
 };
 
+const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO === "1";
+
 export default function CinematicBeautyHero() {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
@@ -20,6 +22,8 @@ export default function CinematicBeautyHero() {
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
+    if (!VIDEO_SCRUB_ENABLED) return;
+
     const media = video.current;
     if (!media) return;
 
@@ -153,7 +157,7 @@ export default function CinematicBeautyHero() {
       data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
     >
       <div className="cinematic-sticky">
-        <video
+        {VIDEO_SCRUB_ENABLED && <video
           ref={video}
           className="cinematic-scrub-video"
           muted
@@ -165,7 +169,7 @@ export default function CinematicBeautyHero() {
         >
           <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
           <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
-        </video>
+        </video>}
 
         <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
           <div className="cinematic-product-frame">
