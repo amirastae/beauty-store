@@ -71,10 +71,32 @@ export default function CinematicBeautyHero() {
       if (videoReady && video.current) {
         const media = video.current;
         let pendingFrame = 0;
-        let targetTime = 0;
+        let targetTime = media.currentTime;
+        let seekInFlight = false;
 
         gsap.set(".cinematic-scrub-video", { opacity: 1 });
-        gsap.set(".cinematic-stage", { opacity: 0 });
+
+        const queueSeek = () => {
+          if (pendingFrame || seekInFlight) return;
+          pendingFrame = window.requestAnimationFrame(() => {
+            pendingFrame = 0;
+            if (seekInFlight || media.readyState < 1) return;
+
+            // Collapse fast wheel/trackpad updates into one seek. Issuing a new
+            // currentTime while the previous seek is unresolved causes visible
+            // frame starvation in Chromium/WebKit.
+            if (Math.abs(media.currentTime - targetTime) < 1 / 30) return;
+
+            seekInFlight = true;
+            media.currentTime = targetTime;
+          });
+        };
+
+        const onSeeked = () => {
+          seekInFlight = false;
+          queueSeek();
+        };
+        media.addEventListener("seeked", onSeeked);
 
         const seekTrigger = ScrollTrigger.create({
           trigger: root.current,
@@ -83,14 +105,7 @@ export default function CinematicBeautyHero() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             targetTime = self.progress * Math.max(0, media.duration - 0.04);
-            if (pendingFrame) return;
-            pendingFrame = window.requestAnimationFrame(() => {
-              pendingFrame = 0;
-              // The master is 30fps; seeking below one frame only adds decode work.
-              if (Math.abs(media.currentTime - targetTime) >= 1 / 30) {
-                media.currentTime = targetTime;
-              }
-            });
+            queueSeek();
           }
         });
 
@@ -117,6 +132,7 @@ export default function CinematicBeautyHero() {
 
         return () => {
           if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
+          media.removeEventListener("seeked", onSeeked);
           seekTrigger.kill();
           copyTl.kill();
         };
@@ -175,27 +191,29 @@ export default function CinematicBeautyHero() {
           aria-hidden="true"
           tabIndex={-1}
         >
-          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
           <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
+          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
         </video>}
 
-        <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
-          <div className="cinematic-product-frame">
-            <HeroStage />
+        {!videoReady && <>
+          <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
+            <div className="cinematic-product-frame">
+              <HeroStage />
+            </div>
           </div>
-        </div>
 
-        <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
-          <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
-        </div>
+          <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
+            <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
+          </div>
 
-        <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
-          <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
-        </div>
+          <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
+            <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
+          </div>
 
-        <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
-          <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
-        </div>
+          <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
+            <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
+          </div>
+        </>}
 
         <div className="cinematic-final-glow" aria-hidden="true" />
         <div className="cinematic-vignette" aria-hidden="true" />
