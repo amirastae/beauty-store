@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {url:base+"/shop/",changeFrequency:"daily",priority:.9},
     {url:base+"/about/",changeFrequency:"monthly",priority:.5},
     {url:base+"/faq/",changeFrequency:"monthly",priority:.5},
+    {url:base+"/contact/",changeFrequency:"monthly",priority:.5},
     {url:base+"/routine/",changeFrequency:"monthly",priority:.7},
     ...products.map((product)=>({url:base+"/product/"+product.slug+"/",changeFrequency:"weekly" as const,priority:.8}))
   ];
