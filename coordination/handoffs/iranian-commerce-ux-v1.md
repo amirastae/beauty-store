@@ -1,10 +1,17 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `1475be847dbc5c4d2e5d4ebb1fe9a132456b5de2`
-- Verification run: `35559498538`
+- Tested code commit: `5680d531b052d15f6c003d74d3bf9ec0be271c55`
+- Verification run: `clean public clone verification`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
+
+## Official store contact
+
+- Support email: `fatmhkhan121@gmail.com`
+- Published on `/contact/`, linked from shop and checkout support.
+- Published in Organization JSON-LD as customer-support contact.
+- Explicitly not used as customer checkout identity/fallback.
 
 ## Applied
 
@@ -74,15 +81,14 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-Exact run `35559498538` on tested code commit `1475be847dbc5c4d2e5d4ebb1fe9a132456b5de2`:
-- dependency preparation: PASS
+Clean public clone verification on tested code commit `5680d531b052d15f6c003d74d3bf9ec0be271c55`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
-- `npm run seo:check`: PASS
-- `npm run links:check`: PASS
-- `npm run catalog:check`: PASS
-- `npm run a11y:check`: PASS
+- `npm run seo:check`: PASS — 56 checks / 4 product pages
+- `npm run links:check`: PASS — 77 internal links / 15 pages
+- `npm run catalog:check`: PASS — 4 products / 4 unique canonicals
+- `npm run a11y:check`: PASS — 13 pages / 20 images / 77 buttons
 - `npm run security:check`: PASS
 
 The custom gates cover:
