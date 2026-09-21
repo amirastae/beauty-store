@@ -12,7 +12,7 @@
     "SHIPPING_FREE_THRESHOLD_MINOR_IRR": "30000000",
     "PAYMENT_PROVIDER": "zarinpal",
     "ZARINPAL_MERCHANT_ID": "test-merchant",
-    "PAYMENT_CALLBACK_BASE_URL": "http://127.0.0.1:8787",
+    "PAYMENT_CALLBACK_BASE_URL": "http://127.0.0.1:8788",
     "ZARINPAL_API_BASE": "http://127.0.0.1:8790",
     "ZARINPAL_STARTPAY_BASE": "http://127.0.0.1:8790/start"
   },
