@@ -99,3 +99,24 @@ Reference source copied from `iranian-commerce-ux-v1`.
 Any future work from that workstream must first ask:
 **How does this strengthen the FATIKHAN Golestan-style canonical experience?**
 If it does not, do not add it.
+
+
+## Latest unified execution rule
+
+From this checkpoint onward, every workstream must optimize for the **same FATIKHAN Golestan-style canonical site**.
+
+Before making a frontend, commerce, catalog, performance, SEO, checkout, media, or deployment change, read this file and the relevant handoff first. Do not create an alternate storefront or a separate visual direction.
+
+Mandatory current handoffs:
+1. `coordination/FATIKHAN_CINEMATIC_MEDIA_HANDOFF.md`
+2. `coordination/IRANIAN_UX_TO_GOLESTAN_HANDOFF.md`
+3. `coordination/COMMERCE_TO_GOLESTAN_HANDOFF.md`
+
+The cinematic FATIKHAN experience is the presentation layer; commerce work must fit underneath it without weakening scroll-scrub performance, mobile fallbacks, accessibility, or brand consistency.
+
+Current release checkpoints:
+- production `cloudflare-site@9ddcd7cac16ec8dc8802c53e58279506cca05d9c`
+- integration `integration-staging@ff67d0ce0f674a068303686f020fc438d4138c38`
+- commerce `commerce-core-v1@ffccdebd769b5a77ac32800b1f2e09952ae3e6e7`
+
+Visible brand remains **FATIKHAN**. Technical compatibility names such as `veloura-next`, `veloura-*` storage keys and `/api/v1/compat/veloura-v2/resolve` remain internal until an explicit migration is approved.

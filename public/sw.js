@@ -1,4 +1,4 @@
-const CACHE="veloura-v2.3.0";
+const CACHE="veloura-v2.5.0";
 const CORE=["/","/shop/","/search/","/about/","/faq/","/offline/","/manifest.webmanifest","/icon.svg"];
 
 self.addEventListener("install",(event)=>{

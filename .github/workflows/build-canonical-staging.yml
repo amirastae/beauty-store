@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: integration-staging-build
@@ -63,11 +63,26 @@ jobs:
           test -s public/robots.txt
           test -s public/sitemap.xml
 
-      - name: Compare generated output with staged public
+      - name: Verify generated output matches staged public
         run: |
-          if diff -qr public sources/canonical/veloura-next/out >/tmp/veloura-public-diff.txt; then
-            echo "CANONICAL_PUBLIC_MATCH=PASS"
-          else
-            echo "CANONICAL_PUBLIC_MATCH=DIFF"
-            head -80 /tmp/veloura-public-diff.txt
+          set -euo pipefail
+          diff -qr public sources/canonical/veloura-next/out >/tmp/canonical-public-diff.txt
+          grep -qi "FATIKHAN" public/index.html
+          ! grep -qi "<title>VELOURA" public/index.html
+          test -s public/cinematic/fatikhan-hero.mp4
+          test -s public/cinematic/fatikhan-hero.webm
+          echo "CANONICAL_PUBLIC_MATCH=PASS"
+
+      - name: Commit canonical public snapshot
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A public
+          if git diff --cached --quiet; then
+            echo "CANONICAL_PUBLIC_COMMIT=NO_CHANGES"
+            exit 0
           fi
+          git commit -m "build(frontend): sync canonical FATIKHAN public"
+          git push origin HEAD:integration-staging
+          echo "CANONICAL_PUBLIC_COMMIT=PASS"

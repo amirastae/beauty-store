@@ -2,6 +2,11 @@
 
 Before changing this repository, read:
 
-`coordination/00_READ_FIRST_FATIKHAN_GOLESTAN.md`
+1. `coordination/00_READ_FIRST_FATIKHAN_GOLESTAN.md`
+2. `coordination/FATIKHAN_CINEMATIC_MEDIA_HANDOFF.md`
+3. `coordination/IRANIAN_UX_TO_GOLESTAN_HANDOFF.md`
+4. `coordination/COMMERCE_TO_GOLESTAN_HANDOFF.md`
 
-The FATIKHAN Golestan-style cinematic canonical site is the design/architecture North Star. Do not create a parallel homepage or competing visual system.
+**FATIKHAN Golestan-style cinematic is the single canonical site.**
+Do not create a parallel homepage, alternate brand, or competing storefront system.
+All frontend/backend/shop work must strengthen that same canonical experience.
