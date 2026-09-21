@@ -40,7 +40,8 @@ cart_id="$(printf '%s' "$cart" | python3 -c 'import json,sys; print(json.load(sy
 curl -fsS -X POST "$BASE/api/v1/carts/$cart_id/items"   -H 'content-type: application/json'   -d '{"variant_id":"var_serum_std","quantity":2}' >/tmp/veloura-add.json
 
 before="$(curl -fsS "$BASE/api/v1/inventory/var_serum_std")"
-printf '%s\n' "$before" | grep -q '"available":100' || fail "inventory before checkout"
+before_available="$(printf '%s' "$before" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["available"])')"
+[ "$before_available" -ge 2 ] || fail "inventory before checkout"
 
 code="$(curl -sS -o /tmp/currency-mismatch.json -w '%{http_code}' -X POST "$BASE/api/v1/carts/$cart_id/items"   -H 'content-type: application/json'   -d '{"variant_id":"var_v2_lip_rose","quantity":1}')"
 [ "$code" = "409" ] || fail "mixed currency must be rejected"
@@ -60,7 +61,9 @@ reuse_code="$(curl -sS -o /tmp/idem-reuse.json -w '%{http_code}' -X POST "$BASE/
 grep -q 'IDEMPOTENCY_KEY_REUSED' /tmp/idem-reuse.json || fail "idempotency reuse code"
 
 after="$(curl -fsS "$BASE/api/v1/inventory/var_serum_std")"
-printf '%s\n' "$after" | grep -q '"available":98' || fail "inventory after checkout"
+after_available="$(printf '%s' "$after" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["available"])')"
+expected_after=$((before_available - 2))
+[ "$after_available" -eq "$expected_after" ] || fail "inventory after checkout"
 
 irr_cart="$(curl -fsS -X POST "$BASE/api/v1/carts" -H 'content-type: application/json' -d '{"currency_code":"IRR"}')"
 irr_cart_id="$(printf '%s' "$irr_cart" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["id"])')"
