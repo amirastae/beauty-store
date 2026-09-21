@@ -13,6 +13,7 @@ export type CartLine = {
 type CartState = {
   lines: CartLine[];
   add: (product: Product, shadeId?: string) => void;
+  decrement: (productId: string, shadeId?: string) => void;
   remove: (productId: string, shadeId?: string) => void;
   clear: () => void;
 };
@@ -31,10 +32,20 @@ export const useCart = create<CartState>()(
           }
           return {
             lines: state.lines.map((line, i) =>
-              i === index ? { ...line, qty: line.qty + 1 } : line
+              i === index ? { ...line, qty: Math.min(line.qty + 1, 20) } : line
             )
           };
         }),
+      decrement: (productId, shadeId) =>
+        set((state) => ({
+          lines: state.lines
+            .map((line) =>
+              line.product.id === productId && line.shadeId === shadeId
+                ? { ...line, qty: line.qty - 1 }
+                : line
+            )
+            .filter((line) => line.qty > 0)
+        })),
       remove: (productId, shadeId) =>
         set((state) => ({
           lines: state.lines.filter(
@@ -45,7 +56,7 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "veloura-cart-v1",
-      version: 1
+      version: 2
     }
   )
 );
