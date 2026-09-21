@@ -21,6 +21,11 @@
 <priority>0.5</priority>
 </url>
 <url>
+<loc>https://beauty-store.nayererohalamini.workers.dev/routine/</loc>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
 <loc>https://beauty-store.nayererohalamini.workers.dev/product/pearl-barrier-serum/</loc>
 <changefreq>weekly</changefreq>
 <priority>0.8</priority>
