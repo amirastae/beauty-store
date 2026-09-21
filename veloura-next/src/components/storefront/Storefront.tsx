@@ -64,7 +64,7 @@ export default function Storefront() {
           <a href="#story">داستان ولورا</a>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
-        <Link className="brand" href="/" aria-label="ولورا">VELOURA</Link>
+        <Link className="brand" href="/" aria-label="FATIKHAN">FATIKHAN</Link>
         <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
@@ -191,7 +191,7 @@ export default function Storefront() {
       <DiscoverySections />
 
       <section className="club" id="club">
-        <p className="eyebrow">VELOURA PRIVATE LIST</p>
+        <p className="eyebrow">FATIKHAN PRIVATE LIST</p>
         <h2>اولین نفر باش.</h2>
         <p>دسترسی زودتر به کالکشن‌ها، رنگ‌های محدود و ادیت‌های جدید.</p>
         <form onSubmit={(event) => event.preventDefault()}>
@@ -201,7 +201,7 @@ export default function Storefront() {
       </section>
 
       <footer>
-        <div className="footer-word">VELOURA</div>
+        <div className="footer-word">FATIKHAN</div>
         <div className="footer-row">
           <span>BEAUTY / 2026</span>
           <span>فارسی · RTL · PREMIUM COMMERCE</span>
@@ -241,7 +241,7 @@ export default function Storefront() {
       <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen}>
         <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
-          <p className="eyebrow">SEARCH VELOURA</p>
+          <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
             autoFocus={searchOpen}
             value={query}

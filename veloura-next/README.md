@@ -1,4 +1,4 @@
-# VELOURA Next
+# FATIKHAN Next
 
 Production-oriented rebuild of the Persian beauty storefront.
 
