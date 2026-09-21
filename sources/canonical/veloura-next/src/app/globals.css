@@ -766,3 +766,12 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   .chapter-one{opacity:1!important;transform:none!important}
   .cinematic-progress{display:none}
 }
+
+/* production checkout payment handoff */
+.checkout-resume{margin:0 0 22px;padding:15px 17px;border:1px solid var(--line);border-radius:15px;background:#efe4dc;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.checkout-resume b,.checkout-resume span{display:block}.checkout-resume b{font-size:11px}.checkout-resume span{font-size:9px;color:var(--muted);margin-top:4px}
+.payment-return{margin:0 0 22px;padding:15px 17px;border:1px solid var(--line);border-radius:15px;display:grid;gap:5px;font-size:11px}
+.payment-return.success{background:rgba(211,236,216,.58);border-color:rgba(55,108,65,.26);color:#315b39}
+.payment-return.failed,.payment-return.cancelled{background:rgba(255,229,224,.62);border-color:rgba(126,59,49,.24);color:#783b32}
+.payment-return span{font-size:10px;line-height:1.7}
+@media(max-width:560px){.checkout-resume{align-items:stretch;flex-direction:column}.checkout-resume .button{width:100%}}

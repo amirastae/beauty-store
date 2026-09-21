@@ -23,12 +23,23 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
   })
 
-  const payload = await response.json() as Envelope<T>
-  if (!response.ok || !payload.ok) {
-    const error = !payload.ok ? payload.error : { code: "REQUEST_FAILED", message: "Commerce request failed." }
+  const payload = await response.json().catch(() => null) as Envelope<T> | null
+  if (!response.ok || !payload || !payload.ok) {
+    const error = payload && !payload.ok ? payload.error : { code: "REQUEST_FAILED", message: "Commerce request failed." }
     throw Object.assign(new Error(error.message), { code: error.code, status: response.status })
   }
   return payload.data
+}
+
+export function commerceHealth() {
+  return request<{
+    service: string
+    env: string
+    database_bound: boolean
+    media_bound: boolean
+    admin_configured: boolean
+    payment_provider_configured: boolean
+  }>("/api/v1/health")
 }
 
 export async function createCommerceOrder(
@@ -51,10 +62,15 @@ export async function createCommerceOrder(
   })
 
   for (const line of lines) {
-    const resolved = await request<{ variant_id: string }>("/api/v1/compat/veloura-v2/resolve", {
+    const resolved = await request<{ variant_id: string; currency_code: string }>("/api/v1/compat/veloura-v2/resolve", {
       method: "POST",
       body: JSON.stringify({ product_id: line.product.id, shade_id: line.shadeId })
     })
+
+    if (resolved.currency_code !== "IRR") {
+      throw Object.assign(new Error("Resolved product currency does not match the IRR cart."), { code: "CURRENCY_MISMATCH" })
+    }
+
     await request("/api/v1/carts/" + encodeURIComponent(cart.id) + "/items", {
       method: "POST",
       body: JSON.stringify({ variant_id: resolved.variant_id, quantity: line.qty })
@@ -70,6 +86,7 @@ export async function createCommerceOrder(
     subtotal_minor: number
     shipping_minor: number
     total_minor: number
+    payment_expires_at: string
   }>("/api/v1/checkout/" + encodeURIComponent(cart.id), {
     method: "POST",
     headers: { "Idempotency-Key": idempotencyKey },
@@ -88,6 +105,13 @@ export async function createCommerceOrder(
       }
     })
   })
+}
+
+export function startCommercePayment(orderId: string) {
+  return request<{ redirect_url: string; authority: string }>(
+    "/api/v1/payments/" + encodeURIComponent(orderId) + "/start",
+    { method: "POST", body: "{}" }
+  )
 }
 
 export async function checkoutFingerprint(lines: CommerceCartLine[], draft: unknown) {
