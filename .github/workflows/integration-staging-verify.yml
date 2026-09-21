@@ -1,0 +1,78 @@
+name: Integration Staging Verify
+
+on:
+  push:
+    branches:
+      - integration-staging
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify production-shaped static routes
+        run: |
+          test -s public/index.html
+          test -s public/shop/index.html
+          test -s public/cart/index.html
+          test -s public/checkout/index.html
+          test -s public/wishlist/index.html
+          test -s public/robots.txt
+          test -s public/sitemap.xml
+          echo "STATIC_ROUTE_SMOKE=PASS"
+
+  polish-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: sources/polish/veloura-next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sources/polish/veloura-next/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run build
+
+  commerce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: services/commerce
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: services/commerce/package-lock.json
+      - name: Install
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Migration syntax smoke
+        run: |
+          python3 - <<'PY'
+          import sqlite3, pathlib
+          db=sqlite3.connect("/tmp/veloura-stage.db")
+          for p in sorted(pathlib.Path("db/migrations").glob("*.sql")):
+              db.executescript(p.read_text())
+          db.executescript(pathlib.Path("db/seed.sql").read_text())
+          fk=db.execute("pragma foreign_key_check").fetchall()
+          products=db.execute("select count(*) from products").fetchone()[0]
+          variants=db.execute("select count(*) from product_variants").fetchone()[0]
+          assert not fk, fk
+          assert products >= 68, products
+          assert variants >= 72, variants
+          print(f"COMMERCE_DB_SMOKE=PASS products={products} variants={variants}")
+          PY
