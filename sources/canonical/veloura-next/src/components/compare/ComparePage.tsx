@@ -18,7 +18,7 @@ export default function ComparePage(){
 
   return <main className="compare-page">
     <header className="shop-nav">
-      <Link href="/" className="brand">VELOURA</Link>
+      <Link href="/" className="brand">FATIKHAN</Link>
       <nav><Link href="/shop/">فروشگاه</Link><Link href="/wishlist/">علاقه‌مندی‌ها</Link></nav>
     </header>
 
