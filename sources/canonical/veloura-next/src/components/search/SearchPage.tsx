@@ -52,16 +52,16 @@ export default function SearchPage(){
       <label htmlFor="catalog-search">چه چیزی می‌خواهی پیدا کنی؟</label>
       <div className="search-field">
         <input ref={inputRef} id="catalog-search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="نام محصول، دسته یا ترکیب…" autoComplete="off"/>
-        {query && <button onClick={()=>setQuery("")} aria-label="پاک کردن جستجو">×</button>}
+        {query && <button type="button" onClick={()=>setQuery("")} aria-label="پاک کردن جستجو">×</button>}
       </div>
       {!query && <div className="popular-searches">
         <span>جستجوهای پیشنهادی</span>
-        <div>{popular.map((item)=><button key={item} onClick={()=>setQuery(item)}>{item}</button>)}</div>
+        <div>{popular.map((item)=><button type="button" key={item} onClick={()=>setQuery(item)}>{item}</button>)}</div>
       </div>}
     </section>
 
     <section className="search-results-page">
-      {query ? <div className="search-results-head"><strong>{fa.format(results.length)} نتیجه</strong><span>برای «{query}»</span></div> : null}
+      {query ? <div className="search-results-head" aria-live="polite"><strong>{fa.format(results.length)} نتیجه</strong><span>برای «{query}»</span></div> : null}
 
       {query && results.length > 0 && <div className="search-product-list">
         {results.map((product)=>(
@@ -77,7 +77,7 @@ export default function SearchPage(){
             </div>
             <div className="search-product-buy">
               <strong>{money(product.price)}</strong>
-              <button onClick={()=>add(product,product.shades?.[0]?.id)}>+ سبد</button>
+              <button type="button" onClick={()=>add(product,product.shades?.[0]?.id)}>+ سبد</button>
               <button type="button" className={ids.includes(product.id)?"active":""} onClick={()=>toggle(product.id)} aria-label={ids.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"} aria-pressed={ids.includes(product.id)}>{ids.includes(product.id)?"♥":"♡"}</button>
             </div>
           </article>
@@ -88,7 +88,7 @@ export default function SearchPage(){
         <span>0 RESULTS</span>
         <h2>چیزی با این عبارت پیدا نشد.</h2>
         <p>نام کوتاه‌تر، دسته محصول یا یکی از ترکیبات را امتحان کن.</p>
-        <button onClick={()=>setQuery("")}>جستجوی دوباره</button>
+        <button type="button" onClick={()=>setQuery("")}>جستجوی دوباره</button>
       </div>}
 
       {!query && <div className="search-explore">
