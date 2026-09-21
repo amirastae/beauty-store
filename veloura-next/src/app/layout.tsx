@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import MobileDock from "@/components/navigation/MobileDock";
 
 export const metadata: Metadata = {
   title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
@@ -18,7 +19,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body>{children}<MobileDock /></body>
     </html>
   );
 }
