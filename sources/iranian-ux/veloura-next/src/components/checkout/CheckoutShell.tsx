@@ -99,7 +99,7 @@ export default function CheckoutShell(){
   const displayTotal=verification?.serverSubtotalToman ?? total;
 
   return <main className="checkout-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
     <IranianTrustRail />
     <div className="checkout-layout">
       <section>
@@ -112,15 +112,15 @@ export default function CheckoutShell(){
           >
             <strong>
               {paymentReturn.status === "success"
-                ? "پرداخت با موفقیت تأیید شد."
+                ? "نتیجه بازگشت پرداخت: موفق."
                 : paymentReturn.status === "cancelled"
                   ? "پرداخت لغو شد."
-                  : "پرداخت تأیید نشد."}
+                  : "نتیجه بازگشت پرداخت: ناموفق."}
             </strong>
             {paymentReturn.order && <span>شماره سفارش: {toFaDigits(paymentReturn.order)}</span>}
             <small>
               {paymentReturn.status === "success"
-                ? "این وضعیت فقط از callback تأییدشده هسته تجارت نمایش داده می‌شود."
+                ? "این پیام نتیجه بازگشت مسیر پرداخت را نشان می‌دهد؛ نمایش آن به‌تنهایی جای استعلام وضعیت نهایی سفارش از سرور را نمی‌گیرد."
                 : "در صورت کسر وجه یا ابهام، قبل از تلاش دوباره با پشتیبانی فروشگاه تماس بگیر."}
             </small>
           </div>

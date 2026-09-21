@@ -23,7 +23,7 @@ export default function HeroStage() {
           <div className="cap" />
           <div className="bottle">
             <span className="bottle-shine" />
-            <b>VELOURA</b>
+            <b>FATIKHAN</b>
             <small>PEARL BARRIER SERUM</small>
           </div>
         </div>
@@ -32,7 +32,7 @@ export default function HeroStage() {
       {enable3D && <div className="hero-r3f"><HeroProductScene /></div>}
 
       <div className="floating-note note-one"><b>01</b><span>سد دفاعی پوست</span></div>
-      <div className="floating-note note-two"><b>24H</b><span>آبرسانی سبک</span></div>
+      <div className="floating-note note-two"><b>GLOW</b><span>نور نرم</span></div>
     </div>
   );
 }

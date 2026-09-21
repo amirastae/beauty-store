@@ -118,7 +118,7 @@ export async function verifyCommerceCart(lines: CartLine[]): Promise<CommerceVer
       issues.push({
         code: "CURRENCY_MISMATCH",
         productId: line.productId,
-        message: "واحد پول این محصول با سبد ولورا هماهنگ نیست."
+        message: "واحد پول این محصول با سبد FATIKHAN هماهنگ نیست."
       });
     }
     if (line.available < line.qty) {

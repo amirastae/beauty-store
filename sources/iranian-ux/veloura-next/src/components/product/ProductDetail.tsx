@@ -71,7 +71,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   return (
     <main className="pdp">
       <header className="pdp-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav className="pdp-nav-links">
           <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
           <Link href="/cart/">سبد <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link>
@@ -136,13 +136,16 @@ export default function ProductDetail({ product }: { product: Product }) {
               {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
             </button>
             <button
+              type="button"
               className={wishlistIds.includes(product.id) ? "button pdp-wish active" : "button pdp-wish"}
               onClick={() => toggleWishlist(product.id)}
               aria-pressed={wishlistIds.includes(product.id)}
+              aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
             >
               {wishlistIds.includes(product.id) ? "♥ ذخیره شد" : "♡ علاقه‌مندی"}
             </button>
             <button
+              type="button"
               className={compared ? "button compare-toggle active" : "button compare-toggle"}
               onClick={() => toggleCompare(product.id)}
               aria-pressed={compared}
@@ -192,7 +195,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       )}
 
       <section className="pdp-editorial">
-        <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
+        <div><p className="eyebrow">FATIKHAN OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
         <span>03 / PRODUCT STORY</span>
       </section>
       <CommerceFooter />

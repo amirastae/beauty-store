@@ -5,7 +5,7 @@ export default function CommerceFooter() {
   return (
     <footer className="commerce-footer">
       <div className="commerce-footer-brand">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <p>تجربه خرید فارسی برای آرایش، مراقبت پوست و عطر.</p>
       </div>
       <nav aria-label="لینک‌های فروشگاه">

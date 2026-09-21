@@ -23,11 +23,11 @@ export default function ShadeLab(){
       <p>آندرتون را انتخاب کن، بعد رنگ را روی آبجکت محصول ببین. تغییر رنگ فوری است و هیچ انیمیشنی جلوی انتخاب واقعی را نمی‌گیرد.</p>
 
       <div className="undertones" role="group" aria-label="انتخاب آندرتون">
-        {(["گرم","خنثی","سرد"] as const).map((item)=><button key={item} className={undertone===item?"active":""} onClick={()=>setUndertone(item)}>{item}</button>)}
+        {(["گرم","خنثی","سرد"] as const).map((item)=><button type="button" key={item} className={undertone===item?"active":""} aria-pressed={undertone===item} onClick={()=>setUndertone(item)}>{item}</button>)}
       </div>
 
       <div className="shade-options" role="group" aria-label="انتخاب رنگ">
-        {options.map((item)=><button key={item.id} className={selected===item.id?"active":""} onClick={()=>setSelected(item.id)} aria-label={item.name} title={item.name}><i style={{background:item.hex}}/><span>{item.name}</span></button>)}
+        {options.map((item)=><button type="button" key={item.id} className={selected===item.id?"active":""} aria-pressed={selected===item.id} onClick={()=>setSelected(item.id)} aria-label={item.name} title={item.name}><i style={{background:item.hex}}/><span>{item.name}</span></button>)}
       </div>
 
       <a className="button shade-cta" href="/product/velvet-cloud-lip/">مشاهده محصول ←</a>
@@ -38,7 +38,7 @@ export default function ShadeLab(){
       <div className="shade-stick">
         <div className="shade-cap"/>
         <div className="shade-bullet"/>
-        <div className="shade-base"><b>VELOURA</b></div>
+        <div className="shade-base"><b>FATIKHAN</b></div>
       </div>
       <div className="shade-label"><span>SHADE</span><strong>{shade.name}</strong><small>{shade.tone} UNDERTONE</small></div>
     </div>

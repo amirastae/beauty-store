@@ -13,7 +13,10 @@
     "deploy": "npm run build && wrangler deploy --config wrangler.jsonc",
     "a11y:check": "node scripts/a11y-smoke.mjs",
     "security:check": "node scripts/security-smoke.mjs",
-    "performance:check": "node scripts/performance-smoke.mjs"
+    "performance:check": "node scripts/performance-smoke.mjs",
+    "mutation-safety:check": "node scripts/mutation-safety-smoke.mjs",
+    "brand:check": "node scripts/brand-smoke.mjs",
+    "trust:check": "node scripts/trust-smoke.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

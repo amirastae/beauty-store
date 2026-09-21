@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import WishlistPage from "@/components/wishlist/WishlistPage";
 
 export const metadata: Metadata = {
-  title: "علاقه‌مندی‌ها — VELOURA",
+  title: "علاقه‌مندی‌ها — FATIKHAN",
   robots: { index: false, follow: false }
 };
 

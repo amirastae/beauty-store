@@ -21,7 +21,7 @@ export default function ComparePage() {
   return (
     <main className="utility-page compare-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
 
@@ -71,7 +71,7 @@ export default function ComparePage() {
                       <td key={product.id}>
                         {product.shades?.length ? (
                           <div className="compare-swatches">
-                            {product.shades.map((shade)=><i key={shade.id} title={shade.nameFa} style={{backgroundColor:shade.hex}} />)}
+                            {product.shades.map((shade)=><i key={shade.id} role="img" aria-label={shade.nameFa} title={shade.nameFa} style={{backgroundColor:shade.hex}} />)}
                           </div>
                         ) : "—"}
                       </td>
@@ -81,7 +81,7 @@ export default function ComparePage() {
                     <th />
                     {items.map((product)=>(
                       <td key={product.id}>
-                        <button className="button button-dark compare-add" onClick={()=>add(product,product.shades?.[0]?.id)}>افزودن به سبد</button>
+                        <button type="button" className="button button-dark compare-add" aria-label={"افزودن " + product.nameFa + " به سبد"} onClick={()=>add(product,product.shades?.[0]?.id)}>افزودن به سبد</button>
                       </td>
                     ))}
                   </tr>

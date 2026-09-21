@@ -29,11 +29,11 @@ export default function RoutineGuide() {
   return (
     <main className="routine-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav><Link href="/shop/?category=%D9%BE%D9%88%D8%B3%D8%AA">محصولات پوست</Link><Link href="/shop/">فروشگاه</Link></nav>
       </header>
       <section className="routine-hero">
-        <p className="eyebrow">VELOURA ROUTINE GUIDE</p>
+        <p className="eyebrow">FATIKHAN ROUTINE GUIDE</p>
         <h1>روتین ساده،<br/>اجرای دقیق.</h1>
         <p>یک ترتیب عمومی برای چیدن محصولات مراقبت پوست در صبح و شب؛ بدون تشخیص نوع پوست و بدون شلوغ‌کردن روتین.</p>
       </section>
