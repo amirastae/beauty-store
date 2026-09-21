@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { products } from "@/data/products";
 
 type WishlistState = {
   ids: string[];
@@ -9,6 +10,8 @@ type WishlistState = {
   has: (id: string) => boolean;
   clear: () => void;
 };
+
+const catalogIds = new Set(products.map((product) => product.id));
 
 export const useWishlist = create<WishlistState>()(
   persist(
@@ -23,6 +26,16 @@ export const useWishlist = create<WishlistState>()(
       has: (id) => get().ids.includes(id),
       clear: () => set({ ids: [] })
     }),
-    { name: "veloura-wishlist-v1", version: 1 }
+    {
+      name: "veloura-wishlist-v1",
+      version: 2,
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<WishlistState>;
+        const ids = Array.isArray(saved.ids)
+          ? [...new Set(saved.ids.filter((id) => typeof id === "string" && catalogIds.has(id)))]
+          : [];
+        return { ...current, ids };
+      }
+    }
   )
 );
