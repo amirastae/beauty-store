@@ -1,4 +1,4 @@
-# VELOURA Beauty Store
+# VELOURA Beauty Store — v1.8.0
 
 فروشگاه فارسی و RTL محصولات زیبایی، ساخته‌شده با Next.js 16، React 19، TypeScript و Tailwind CSS 4.
 
@@ -31,7 +31,7 @@ Quality gates:
 npm run quality
 ```
 
-این دستور به‌ترتیب ESLint، TypeScript و production build را اجرا می‌کند. خروجی static در مسیر `out/` ساخته می‌شود.
+این دستور به‌ترتیب ESLint، TypeScript، source audit، production build و static-output audit را اجرا می‌کند. خروجی static در مسیر `out/` ساخته می‌شود.
 
 ## Cloudflare Workers Static Assets
 
@@ -67,3 +67,19 @@ checkout فعلی UI فروشگاهی است و پرداخت بانکی/درگا
 MIT copyright notice اصلی در فایل `LICENSE` بدون حذف نگه‌داری شده است. تغییرات اختصاصی VELOURA روی همان پایه توسعه یافته‌اند.
 
 Three.js و سایر dependencyها تابع مجوزهای خودشان هستند.
+
+
+## Self-auditing quality gate
+
+نسخه 1.8 علاوه بر lint/typecheck/build، دو audit داخلی دارد:
+
+```bash
+npm run audit:source
+npm run audit:static
+```
+
+`audit:source` کد اجرایی را برای credential patternهای رایج، donor-brand residue، لینک `#`، TODO/FIXME و قیمت دلاری بررسی می‌کند.
+
+`audit:static` خروجی build را برای لینک داخلی شکسته، asset مفقود، alt تصویر، نام دسترس‌پذیر button، skip-link، canonical، robots، sitemap، security headers و social-proof ساختگی بررسی می‌کند.
+
+صفحه 404 برندشده و `manifest.webmanifest` نیز در این نسخه اضافه شده‌اند.
