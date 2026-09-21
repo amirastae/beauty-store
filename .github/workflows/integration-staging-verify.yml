@@ -26,12 +26,12 @@ jobs:
           test -s public/sitemap.xml
           echo "STATIC_ROUTE_SMOKE=PASS"
 
-  polish-source:
+  canonical-frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
       run:
-        working-directory: sources/polish/veloura-next
+        working-directory: sources/canonical/veloura-next
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
