@@ -120,7 +120,7 @@ export default function Storefront() {
       <section className="editorial" id="story">
         <div className="editorial-media">
           <Image
-            src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1600&q=90"
+            src="/editorial-hero.jpg"
             alt="کمپین آرایشی ولورا"
             fill
             sizes="(max-width: 900px) 100vw, 58vw"
