@@ -38,3 +38,4 @@ jobs:
       - run: npm run performance:check
       - run: npm run mutation-safety:check
       - run: npm run brand:check
+      - run: npm run trust:check
