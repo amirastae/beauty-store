@@ -814,9 +814,6 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   color:#171311;
 }
 
-@media(max-width:767px){
-  .cinematic-scrub-video{display:none}
-}
 @media(prefers-reduced-motion:reduce){
   .cinematic-scrub-video{display:none!important}
 }
