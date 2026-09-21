@@ -1,25 +1,16 @@
 # Integration Staging Manifest
 
-This branch is the only pre-production assembly area for the VELOURA site.
+This is the only pre-production assembly area for the single VELOURA site.
 
-## Active layers
+## Current inputs
 
-- Live-shaped static storefront: `public/**`
-- Foundation source snapshot: `sources/foundation/veloura-next/**`
-- UI polish source snapshot: `sources/polish/veloura-next/**`
-- Shop/catalog snapshot: `sources/shop/**`
-- Commerce service snapshot: `services/commerce/**`
+- Canonical feature source: `veloura-v2.5-routine` under `sources/canonical/veloura-next`.
+- Iran commerce hardening reference: `iranian-commerce-ux-v1` under `sources/iranian-ux/veloura-next`.
+- Latest shop workstream snapshot: `shop-v1.9.0-work` under `sources/shop-latest`.
+- Transaction source of truth: latest `commerce-core-v1` under `services/commerce`.
 
-## Source of truth by concern
+## Integration rule
 
-- Visual/UI candidate: `sources/polish/veloura-next`
-- Baseline comparison: `sources/foundation/veloura-next`
-- Catalog compatibility input: `sources/shop`
-- Transaction/data source of truth: `services/commerce`
-- Deployment output: `public` only after a verified staging build
+Do not merge generated outputs from the workstreams. Build one canonical source, selectively port Iran-commerce validation/security/trust changes, then generate `public/**` atomically.
 
-## Merge policy
-
-Generated Next.js output from multiple branches must never be merged together. Rebuild the selected canonical frontend source and replace `public/**` atomically after verification.
-
-Commerce code remains namespaced until Cloudflare D1/R2 bindings are proven on a preview Worker.
+Checkout mutation may be enabled only after the canonical frontend uses the verified commerce API contract. Payment must remain pending until a real provider confirms it.

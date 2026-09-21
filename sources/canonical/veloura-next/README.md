@@ -1,32 +1,23 @@
-# VELOURA Next — v2.2.0
+# VELOURA Next — v2.5.0
 
-Premium Persian RTL cosmetics storefront for fast static delivery on Cloudflare.
+Premium Persian RTL cosmetics storefront.
 
-## v2.2 highlights
-- 56 local beauty products and 56 static PDP routes
-- local editorial + UGC media; no Unsplash runtime dependency
-- richer PDP: benefits, localized usage guidance, ingredients, breadcrumbs and related products
-- product JSON-LD + BreadcrumbList schema
-- ingredient-aware catalog search
-- dedicated /search route
-- URL-backed category, budget, rating and shade filters
-- persistent wishlist, cart quantity controls and mobile commerce dock
-- checkout draft persistence on-device with no fake payment state
-- global premium footer
-- About + FAQ routes
-- adaptive R3F hero + GSAP signature product film + Shade Lab
-- reduced-motion / Save-Data / weak-device fallbacks
-- branded static 404
+## v2.5 highlights
+- deterministic Routine Builder with 4 goals, budget selection and 3/5-step routines
+- recommendations are derived from the local catalog, categories, ingredients, ratings and price
+- one-click add-all-to-cart
+- no medical diagnosis or fake AI claims
+- routine route added to homepage CTA, footer and sitemap
+- all v2.4 capabilities retained: recent history, sharing, compare tray, compare page, PWA/offline, advanced search, rich PDP, wishlist/cart and checkout draft
 
-## Verification baseline
+## Verification gate
 Before production release:
-- TypeScript must pass
-- Next.js production build must pass
-- all static routes must generate
-- Cloudflare temporary preview must pass HTTP smoke
-- all sitemap URLs and local media must return 200
-- branded 404 must return 404 with custom content
+- TypeScript PASS
+- Next production build PASS
+- static export PASS
+- routine route + sitemap + client recommendation markers PASS
+- temporary Cloudflare preview PASS
+- branded 404 PASS
 
 ## Release discipline
-Stable releases are copied under `/versions/` before the next development cycle.
-Do not edit archived version folders in place.
+Stable releases are copied under `/versions/` after production verification.

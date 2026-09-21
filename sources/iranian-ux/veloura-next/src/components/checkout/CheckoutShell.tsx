@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { FormEvent, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/lib/commerce-verify";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
 import { useCart } from "@/store/cart";
+import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
 const provinces = [
   "آذربایجان شرقی","آذربایجان غربی","اردبیل","اصفهان","البرز","ایلام","بوشهر","تهران",
@@ -100,7 +102,7 @@ export default function CheckoutShell(){
             <input name="mobile" required inputMode="tel" autoComplete="tel" placeholder="۰۹۱۲۱۲۳۴۵۶۷" aria-invalid={Boolean(mobileError)} aria-describedby={mobileError?"mobile-error":undefined}/>
             {mobileError && <span id="mobile-error" className="checkout-field-error">{mobileError}</span>}
           </label>
-          <label>ایمیل اختیاری<input name="email" type="email" autoComplete="email"/></label>
+          <label>ایمیل خریدار — اختیاری<input name="email" type="email" autoComplete="email"/></label>
           <label>
             استان
             <select name="province" required defaultValue="">
@@ -119,7 +121,7 @@ export default function CheckoutShell(){
 
           <fieldset className="checkout-methods">
             <legend>روش پرداخت</legend>
-            <label><input type="radio" name="payment" value="online" defaultChecked/> پرداخت آنلاین از درگاه فروشگاه</label>
+            <label><input type="radio" name="payment" value="online" defaultChecked/> پرداخت آنلاین — فعال‌سازی پس از اتصال درگاه واقعی</label>
           </fieldset>
 
           <button className="button button-dark wide" disabled={!lines.length||checking}>
@@ -140,11 +142,19 @@ export default function CheckoutShell(){
         </div>}
 
         {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}
+        <p className="checkout-support">پشتیبانی فروشگاه: <a href={STORE_SUPPORT_MAILTO}>{STORE_SUPPORT_EMAIL}</a></p>
       </section>
 
       <aside className="order-summary">
         <h2>سفارش شما</h2>
-        {lines.map((line)=><div key={line.product.id+"-"+(line.shadeId||"default")}><span>{line.product.nameFa} × {formatFaNumber(line.qty)}</span><strong>{formatToman(line.product.price*line.qty)}</strong></div>)}
+        {lines.map((line)=>{
+          const verifiedLine=verification?.lines.find((item)=>item.productId===line.product.id && item.shadeId===line.shadeId);
+          const lineTotal=(verifiedLine?.serverUnitToman??line.product.price)*line.qty;
+          return <div key={line.product.id+"-"+(line.shadeId||"default")}>
+            <span>{line.product.nameFa} × {formatFaNumber(line.qty)}</span>
+            <strong>{formatToman(lineTotal)}</strong>
+          </div>;
+        })}
         <hr/>
         <div><span>{verification?"جمع تأییدشده سرور":"جمع کالاها"}</span><strong>{formatToman(displayTotal)}</strong></div>
         {!verification&&savings>0 && <div className="order-saving"><span>صرفه‌جویی شما</span><strong>{formatToman(savings)}</strong></div>}
@@ -155,5 +165,6 @@ export default function CheckoutShell(){
         </small>
       </aside>
     </div>
-  </main>;
+    <CommerceFooter />
+</main>;
 }

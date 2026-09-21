@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { products, type Product } from "@/data/products";
 import { formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
@@ -12,6 +13,7 @@ export default function ComparePage() {
   const remove = useCompare((state) => state.remove);
   const clear = useCompare((state) => state.clear);
   const add = useCart((state) => state.add);
+  const cartCount = useCart((state) => state.lines.reduce((sum, line) => sum + line.qty, 0));
   const items = ids
     .map((id) => products.find((product) => product.id === id))
     .filter((product): product is Product => Boolean(product));
@@ -20,7 +22,7 @@ export default function ComparePage() {
     <main className="utility-page compare-page">
       <header className="shop-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید</Link></nav>
+        <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
 
       <section className="utility-head">
@@ -33,7 +35,7 @@ export default function ComparePage() {
         {!items.length ? (
           <div className="empty-state">
             <h2>هنوز محصولی برای مقایسه انتخاب نکردی.</h2>
-            <p>از فروشگاه حداکثر ۴ محصول را انتخاب کن و تفاوت قیمت، امتیاز، دسته و رنگ‌ها را کنار هم ببین.</p>
+            <p>از فروشگاه حداکثر ۴ محصول را انتخاب کن و تفاوت قیمت، دسته و رنگ‌ها را کنار هم ببین.</p>
             <Link className="button button-dark" href="/shop/">انتخاب محصولات</Link>
           </div>
         ) : (
@@ -61,7 +63,6 @@ export default function ComparePage() {
                 </thead>
                 <tbody>
                   <tr><th>قیمت</th>{items.map((product)=><td key={product.id}>{formatToman(product.price)}</td>)}</tr>
-                  <tr><th>امتیاز</th>{items.map((product)=><td key={product.id}>★ {product.rating} <small>({formatFaNumber(product.reviewCount)})</small></td>)}</tr>
                   <tr><th>دسته</th>{items.map((product)=><td key={product.id}>{product.category}</td>)}</tr>
                   <tr><th>برند</th>{items.map((product)=><td key={product.id}>{product.brand}</td>)}</tr>
                   <tr>
@@ -90,6 +91,7 @@ export default function ComparePage() {
           </>
         )}
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }

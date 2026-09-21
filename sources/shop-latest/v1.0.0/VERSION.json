@@ -1,8 +1,0 @@
-{
-  "name": "VELOURA Beauty Store",
-  "version": "1.0.0",
-  "snapshot": "premium-persian-beauty-store",
-  "source": "beauty-final",
-  "status": "checkpoint",
-  "includes": ["RTL Persian UI", "56 products", "cart", "wishlist", "checkout", "search", "3D hero", "SEO metadata"]
-}

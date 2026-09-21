@@ -7,6 +7,10 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+function serializeJsonLd(value: unknown) {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
@@ -58,11 +62,6 @@ export default async function ProductPage({ params }: Props) {
       url: productUrl,
       priceCurrency: "IRR",
       price: product.price * 10
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount
     }
   };
 
@@ -80,11 +79,11 @@ export default async function ProductPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbLd) }}
       />
       <ProductDetail product={product} />
     </>

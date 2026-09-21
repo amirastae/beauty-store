@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { categories, products } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import { useCompare } from "@/store/compare";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -23,6 +24,8 @@ export default function ShopCatalog() {
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
+  const compareIds = useCompare((state) => state.ids);
+  const toggleCompare = useCompare((state) => state.toggle);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -189,6 +192,7 @@ export default function ShopCatalog() {
                 <div className="card-actions">
                   <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
                   <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label="علاقه‌مندی" onClick={()=>toggleWishlist(product.id)}>♡</button>
+                  <button className={compareIds.includes(product.id)?"compare-toggle active":"compare-toggle"} onClick={()=>toggleCompare(product.id)}>{compareIds.includes(product.id)?"مقایسه ✓":"مقایسه"}</button>
                 </div>
               </div>
             </article>

@@ -1,7 +1,0 @@
-{
-  "name": "VELOURA Beauty Store",
-  "version": "1.2.0",
-  "status": "verified-checkpoint",
-  "build": {"routes": 95, "output_mb": 22, "files": 978, "robots": true, "sitemap": true},
-  "features": ["RTL Persian", "56 localized products", "persistent cart", "wishlist", "checkout", "Persian and English search", "3D hero with performance fallback", "SEO metadata", "policy pages", "dead-link cleanup", "unified product detail", "localized ingredients and usage"]
-}

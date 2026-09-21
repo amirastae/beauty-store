@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { products } from "@/data/products";
 import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
@@ -56,6 +57,7 @@ export default function WishlistPage() {
           </div>
         )}
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }

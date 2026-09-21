@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import { formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
@@ -61,5 +62,6 @@ export default function CartPage(){
         {lines.length>0 && <button type="button" className="cart-clear" onClick={clear}>پاک کردن سبد</button>}
       </aside>
     </section>
-  </main>;
+    <CommerceFooter />
+</main>;
 }

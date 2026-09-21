@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-09-21T03:24:00Z",
+  "generated_at": "2026-09-21T04:45:00Z",
   "production": {
     "branch": "cloudflare-site",
-    "sha": "aa2ff545d56e1619df9bde26d840e4578a43d387",
-    "label": "VELOURA v2.2.0 commerce intelligence release"
+    "sha": "f133f7e2ad82d442107b0aa9d8ad0cf610e273d0",
+    "label": "Deploy VELOURA v2.3.0 compare and PWA release"
   },
   "canonical_frontend": {
-    "branch": "veloura-v2.2-commerce",
-    "sha": "669e6205a3d240a9bb4e81cf5d75fbd5b40417f9",
+    "branch": "veloura-v2.5-routine",
+    "sha": "41dc1339f8b3f946292be9e01c10bdb997660d73",
     "path": "sources/canonical/veloura-next",
-    "tree": "5e7054f9e8ea8927fdf11aa6218c27ccdff5ba78"
+    "tree": "f016db45a5b8de75a4486d93b90446cbac46e4e8"
   },
   "comparison_sources": [
     {
@@ -19,20 +19,27 @@
     },
     {
       "branch": "iranian-commerce-ux-v1",
-      "sha": "531cc212229b8a4ad5c1197e0aadee72e755328e",
+      "sha": "59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1",
       "path": "sources/iranian-ux/veloura-next",
-      "tree": "b2170db60a78a8292cb45289f577867b6d79b723"
+      "tree": "4ac22d23e02bbb71671d384ed9355188d3c3ada5"
     },
     {
-      "branch": "shop-v1.3.0-work",
-      "sha": "6cabef3bbfc4a0635880c207d52f03f687a5a306",
+      "branch": "shop-v1.9.0-work",
+      "sha": "813e450f69336928481f4ec09b7cc071c048b62d",
       "path": "sources/shop-latest",
-      "tree": "e370e5ed1ed76e5658faba5188dd74e0106d0e62"
+      "tree": "8fb31f790b251af60cbb1001333cd8c3f29bede5"
     }
   ],
   "commerce": {
     "branch": "commerce-core-v1",
-    "sha": "de18de948e4459f7495f2a3146ec18937ddc81e4",
-    "path": "services/commerce"
+    "sha": "8873c1897755de57ae3472d4bf15848bdab09927",
+    "path": "services/commerce",
+    "verified": {
+      "local_typecheck": true,
+      "local_migrations_1_8": true,
+      "temporary_cloudflare_d1_checkout": true,
+      "temporary_cloudflare_phone_only_irr_checkout": true,
+      "r2_preview": "blocked_by_temporary_token_permission"
+    }
   }
 }

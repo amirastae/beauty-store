@@ -22,7 +22,7 @@ export default function DiscoverySections(){
         <p className="eyebrow">THE THREE-STEP EDIT</p>
         <h2>سه محصول.<br/><em>یک ریتم کامل.</em></h2>
         <p>سرم، رنگ و رایحه در یک ادیت مینیمال؛ برای کسی که می‌خواهد سریع انتخاب کند اما تجربه لوکس را از دست ندهد.</p>
-        <Link className="button button-light" href="/shop/">ساخت روتین من</Link>
+        <Link className="button button-light" href="/routine/">ساخت روتین من</Link>
       </div>
       <div className="bundle-objects" aria-hidden="true"><i/><i/><i/></div>
     </section>
