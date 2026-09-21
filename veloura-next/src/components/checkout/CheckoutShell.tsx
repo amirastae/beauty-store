@@ -10,7 +10,7 @@ import {
   type CommerceVerification,
   verifyCommerceCart
 } from "@/lib/commerce-verify";
-import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
+import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode, toFaDigits } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
@@ -117,7 +117,7 @@ export default function CheckoutShell(){
                   ? "پرداخت لغو شد."
                   : "پرداخت تأیید نشد."}
             </strong>
-            {paymentReturn.order && <span>شماره سفارش: {formatFaNumber(paymentReturn.order)}</span>}
+            {paymentReturn.order && <span>شماره سفارش: {toFaDigits(paymentReturn.order)}</span>}
             <small>
               {paymentReturn.status === "success"
                 ? "این وضعیت فقط از callback تأییدشده هسته تجارت نمایش داده می‌شود."

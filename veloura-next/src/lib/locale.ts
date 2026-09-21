@@ -40,3 +40,7 @@ export function normalizePersianSearch(value: string) {
     .trim()
     .toLocaleLowerCase("fa");
 }
+
+export function toFaDigits(value: string | number) {
+  return String(value).replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+}
