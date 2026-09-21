@@ -136,13 +136,16 @@ export default function ProductDetail({ product }: { product: Product }) {
               {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
             </button>
             <button
+              type="button"
               className={wishlistIds.includes(product.id) ? "button pdp-wish active" : "button pdp-wish"}
               onClick={() => toggleWishlist(product.id)}
               aria-pressed={wishlistIds.includes(product.id)}
+              aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
             >
               {wishlistIds.includes(product.id) ? "♥ ذخیره شد" : "♡ علاقه‌مندی"}
             </button>
             <button
+              type="button"
               className={compared ? "button compare-toggle active" : "button compare-toggle"}
               onClick={() => toggleCompare(product.id)}
               aria-pressed={compared}

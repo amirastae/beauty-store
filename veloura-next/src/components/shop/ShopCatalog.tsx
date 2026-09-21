@@ -145,8 +145,8 @@ export default function ShopCatalog() {
                     </div>
                   </div>
                   <div className="card-actions commerce-card-actions">
-                    <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
-                    <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label="علاقه‌مندی" onClick={()=>toggleWishlist(product.id)}>♡</button>
+                    <button type="button" aria-label={"افزودن " + product.nameFa + " به سبد"} onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
+                    <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"} aria-pressed={wishlistIds.includes(product.id)} onClick={()=>toggleWishlist(product.id)}>♡</button>
                     <button
                       className={compared ? "compare-toggle active" : "compare-toggle"}
                       aria-pressed={compared}

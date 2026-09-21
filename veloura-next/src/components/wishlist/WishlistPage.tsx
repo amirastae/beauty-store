@@ -46,9 +46,9 @@ export default function WishlistPage() {
                       <div className="product-price-stack"><strong>{formatToman(product.price)}</strong>{product.compareAtPrice&&<del>{formatToman(product.compareAtPrice)}</del>}</div>
                     </div>
                     <div className="card-actions commerce-card-actions">
-                      <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
-                      <button onClick={()=>toggle(product.id)}>حذف</button>
-                      <button className={compared?"compare-toggle active":"compare-toggle"} disabled={compareDisabled} onClick={()=>toggleCompare(product.id)}>{compared?"✓ مقایسه":"مقایسه"}</button>
+                      <button type="button" aria-label={"افزودن " + product.nameFa + " به سبد"} onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
+                      <button type="button" aria-label={"حذف " + product.nameFa + " از علاقه‌مندی‌ها"} onClick={()=>toggle(product.id)}>حذف</button>
+                      <button type="button" className={compared?"compare-toggle active":"compare-toggle"} aria-pressed={compared} aria-label={(compared ? "حذف " : "افزودن ") + product.nameFa + " " + (compared ? "از مقایسه" : "به مقایسه")} disabled={compareDisabled} title={compareDisabled ? "حداکثر ۴ محصول قابل مقایسه است" : undefined} onClick={()=>toggleCompare(product.id)}>{compared?"✓ مقایسه":"مقایسه"}</button>
                     </div>
                   </div>
                 </article>
