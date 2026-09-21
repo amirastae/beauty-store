@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import type { Product } from "@/data/products";
+import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
-
-const fa = new Intl.NumberFormat("fa-IR");
-const money = (value:number) => fa.format(value) + " تومان";
 
 export default function ProductDetail({ product }: { product: Product }) {
   const [shadeId, setShadeId] = useState(product.shades?.[0]?.id);
@@ -21,6 +20,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     () => product.shades?.find((item) => item.id === shadeId),
     [product.shades, shadeId]
   );
+  const discount = discountPercent(product.price, product.compareAtPrice);
 
   const addToCart = () => {
     add(product, shadeId);
@@ -32,7 +32,7 @@ export default function ProductDetail({ product }: { product: Product }) {
     <main className="pdp">
       <header className="pdp-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <Link href="/#products">بازگشت به فروشگاه ←</Link>
+        <Link href="/shop/">بازگشت به فروشگاه ←</Link>
       </header>
 
       <section className="pdp-hero">
@@ -59,16 +59,16 @@ export default function ProductDetail({ product }: { product: Product }) {
           <h1>{product.nameFa}</h1>
           <p className="pdp-en">{product.nameEn}</p>
 
-          <div className="pdp-rating">★ {product.rating} <span>{fa.format(product.reviewCount)} دیدگاه</span></div>
+          <div className="pdp-rating">★ {product.rating} <span>{formatFaNumber(product.reviewCount)} دیدگاه</span></div>
 
           <div className="pdp-price">
-            <strong>{money(product.price)}</strong>
-            {product.compareAtPrice && <del>{money(product.compareAtPrice)}</del>}
+            <strong>{formatToman(product.price)}</strong>
+            {product.compareAtPrice && <del>{formatToman(product.compareAtPrice)}</del>}
+            {discount > 0 && <span className="sale-pill">٪{formatFaNumber(discount)} تخفیف</span>}
           </div>
 
           <p className="pdp-description">
-            تجربه‌ای پریمیوم با تمرکز روی بافت، رنگ و استفاده روزانه. طراحی شده برای اینکه انتخاب محصول
-            سریع بماند و حس کمپین لوکس از بین نرود.
+            تجربه‌ای پریمیوم با تمرکز روی بافت، رنگ و استفاده روزانه؛ با اطلاعات شفاف‌تر برای خرید آنلاین فارسی.
           </p>
 
           {product.shades && (
@@ -103,13 +103,13 @@ export default function ProductDetail({ product }: { product: Product }) {
             </button>
           </div>
 
-          <div className="pdp-trust">
-            <span>ضمانت اصالت</span>
-            <span>ارسال سریع</span>
-            <span>پرداخت امن</span>
-          </div>
+          <p className="pdp-commerce-note">
+            هزینه و زمان نهایی ارسال در مرحله ثبت آدرس و پس از اتصال سرویس واقعی ارسال محاسبه می‌شود.
+          </p>
         </aside>
       </section>
+
+      <IranianTrustRail />
 
       <section className="pdp-details">
         <article><span>01</span><h2>چرا خاص است؟</h2><p>فرمول و طراحی محصول برای استفاده واقعی، با تمرکز بر راحتی، جلوه و ماندگاری متعادل.</p></article>
