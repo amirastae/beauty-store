@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { products } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import { normalizePersianSearch } from "@/lib/locale";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -32,10 +33,10 @@ export default function SearchPage(){
   },[query]);
 
   const results=useMemo(()=>{
-    const q=query.trim().toLocaleLowerCase("fa");
+    const q=normalizePersianSearch(query);
     if(!q) return [];
     return products.filter((product)=>{
-      const text=(product.nameFa+" "+product.nameEn+" "+product.category+" "+product.ingredients.join(" ")).toLocaleLowerCase("fa");
+      const text=normalizePersianSearch(product.nameFa+" "+product.nameEn+" "+product.category+" "+product.ingredients.join(" "));
       return text.includes(q);
     });
   },[query]);
@@ -77,7 +78,7 @@ export default function SearchPage(){
             <div className="search-product-buy">
               <strong>{money(product.price)}</strong>
               <button onClick={()=>add(product,product.shades?.[0]?.id)}>+ سبد</button>
-              <button className={ids.includes(product.id)?"active":""} onClick={()=>toggle(product.id)} aria-label="علاقه‌مندی">{ids.includes(product.id)?"♥":"♡"}</button>
+              <button type="button" className={ids.includes(product.id)?"active":""} onClick={()=>toggle(product.id)} aria-label={ids.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"} aria-pressed={ids.includes(product.id)}>{ids.includes(product.id)?"♥":"♡"}</button>
             </div>
           </article>
         ))}
