@@ -71,27 +71,32 @@ export default function CinematicBeautyHero() {
       if (videoReady && video.current) {
         const media = video.current;
         let targetTime = media.currentTime;
-        let seekInFlight = false;
+        let lastSeekAt = 0;
+        let trailingSeek = 0;
+        const seekIntervalMs = 45;
 
         gsap.set(".cinematic-scrub-video", { opacity: 1 });
 
-        const seekToTarget = () => {
-          if (seekInFlight || media.readyState < 1) return;
-
-          // Collapse fast wheel/trackpad updates into one seek. Issuing a new
-          // currentTime while the previous seek is unresolved causes visible
-          // frame starvation in Chromium/WebKit.
+        const applySeek = () => {
+          trailingSeek = 0;
+          if (media.readyState < 1) return;
           if (Math.abs(media.currentTime - targetTime) < 1 / 30) return;
 
-          seekInFlight = true;
+          lastSeekAt = performance.now();
           media.currentTime = targetTime;
         };
 
-        const onSeeked = () => {
-          seekInFlight = false;
-          seekToTarget();
+        const scheduleSeek = () => {
+          const elapsed = performance.now() - lastSeekAt;
+          if (elapsed >= seekIntervalMs) {
+            if (trailingSeek) window.clearTimeout(trailingSeek);
+            applySeek();
+            return;
+          }
+
+          if (trailingSeek) return;
+          trailingSeek = window.setTimeout(applySeek, seekIntervalMs - elapsed);
         };
-        media.addEventListener("seeked", onSeeked);
 
         const seekTrigger = ScrollTrigger.create({
           trigger: root.current,
@@ -100,7 +105,7 @@ export default function CinematicBeautyHero() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             targetTime = self.progress * Math.max(0, media.duration - 0.04);
-            seekToTarget();
+            scheduleSeek();
           }
         });
 
@@ -126,7 +131,7 @@ export default function CinematicBeautyHero() {
           .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.05 }, 2.70);
 
         return () => {
-          media.removeEventListener("seeked", onSeeked);
+          if (trailingSeek) window.clearTimeout(trailingSeek);
           seekTrigger.kill();
           copyTl.kill();
         };
