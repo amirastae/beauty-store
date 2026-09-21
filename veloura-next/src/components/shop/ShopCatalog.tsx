@@ -16,6 +16,7 @@ export default function ShopCatalog() {
   const [query, setQuery] = useState("");
   const [saleOnly, setSaleOnly] = useState(false);
   const add = useCart((state) => state.add);
+  const cartCount = useCart((state) => state.lines.reduce((sum, line) => sum + line.qty, 0));
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
   const compareIds = useCompare((state) => state.ids);
@@ -74,7 +75,7 @@ export default function ShopCatalog() {
         <nav>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
           <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
-          <Link href="/cart/">سبد خرید</Link>
+          <Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link>
         </nav>
       </header>
 

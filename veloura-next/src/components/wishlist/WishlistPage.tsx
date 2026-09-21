@@ -12,6 +12,7 @@ export default function WishlistPage() {
   const ids = useWishlist((state)=>state.ids);
   const toggle = useWishlist((state)=>state.toggle);
   const add = useCart((state)=>state.add);
+  const cartCount = useCart((state)=>state.lines.reduce((sum,line)=>sum+line.qty,0));
   const compareIds = useCompare((state)=>state.ids);
   const toggleCompare = useCompare((state)=>state.toggle);
   const items = products.filter((product)=>ids.includes(product.id));
@@ -20,7 +21,7 @@ export default function WishlistPage() {
     <main className="utility-page">
       <header className="shop-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <nav><Link href="/shop/">فروشگاه</Link><Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link></nav>
+        <nav><Link href="/shop/">فروشگاه</Link><Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link><Link href="/cart/">سبد <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
       <section className="utility-head"><p className="eyebrow">YOUR EDIT</p><h1>علاقه‌مندی‌ها</h1><p>{formatFaNumber(items.length)} محصول برای بعد ذخیره شده.</p></section>
       <section className="utility-content">

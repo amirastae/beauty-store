@@ -25,3 +25,4 @@ jobs:
       - run: npm run seo:check
       - run: npm run links:check
       - run: npm run catalog:check
+      - run: npm run a11y:check
