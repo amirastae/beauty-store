@@ -46,6 +46,8 @@ for(const file of htmlFiles){
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
   const route=rel==="index.html"?"/":"/"+rel.replace(/\/index\.html$/,"/").replace(/\.html$/,"/");
 
+  if(/>\s*(?:VELOURA|ولورا)\s*</i.test(html)) failures.push(`legacy visible brand detected on ${route}`);
+
   for(const m of html.matchAll(/href="([^"]+)"/g)){
     const p=internalPath(m[1]);
     if(!p||p.startsWith("/_next/")) continue;
@@ -79,8 +81,17 @@ for(const file of htmlFiles){
 
 const home=fs.readFileSync(path.join(root,"index.html"),"utf8");
 if(!home.includes("FATIKHAN")) failures.push("visible FATIKHAN brand missing from rendered home");
-if(/>\s*(?:VELOURA|REHHA|LUXORA)\s*</i.test(home)) failures.push("legacy visible brand detected on rendered home");
 
+for(const claim of [
+  "امتیاز جامعه",
+  "بدون تست حیوانی",
+  "ارسال رایگان برای سفارش‌های منتخب",
+  "★ 4.",
+  "★ 5.",
+  "پرفروش"
+]){
+  if(home.includes(claim)) failures.push(`rendered homepage contains unsupported claim: ${claim}`);
+}
 
 function canonicalHref(html){
   return html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] || "";
@@ -115,8 +126,15 @@ const sitemapUrls=(sitemap.match(/<url>/g)||[]).length;
 if(sitemapUrls<10) failures.push(`sitemap unexpectedly small: ${sitemapUrls}`);
 
 const headers=fs.readFileSync(path.join(root,"_headers"),"utf8");
-for(const name of ["X-Content-Type-Options","Referrer-Policy","X-Frame-Options","Permissions-Policy","Cross-Origin-Opener-Policy"]){
-  if(!headers.includes(name)) failures.push(`_headers missing ${name}`);
+for(const requiredHeader of [
+  "X-Content-Type-Options: nosniff",
+  "Referrer-Policy: strict-origin-when-cross-origin",
+  "X-Frame-Options: SAMEORIGIN",
+  "Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()",
+  "Cross-Origin-Opener-Policy: same-origin",
+  "Cache-Control: public, max-age=31536000, immutable"
+]){
+  if(!headers.includes(requiredHeader)) failures.push(`_headers missing expected policy: ${requiredHeader}`);
 }
 
 console.log(JSON.stringify({

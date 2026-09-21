@@ -48,3 +48,8 @@ Commerce/SEO/Search نباید render اولیه Hero را block کند.
 
 ## تعریف Done
 Done یعنی قابلیت روی **همین canonical سایت** ادغام شده، build/test شده و handoff دارد. branch جانبیِ سالم به‌تنهایی Done نیست.
+
+
+## Donor reconciliation
+Before starting overlapping work, read `coordination/DONOR_RECONCILIATION.md`.
+It records which parallel-chat patches are already integrated so they are not rebuilt or merged wholesale.
