@@ -124,7 +124,9 @@ export default function Storefront() {
             {categories.map((item) => (
               <button
                 key={item}
+                type="button"
                 className={category === item ? "chip active" : "chip"}
+                aria-pressed={category === item}
                 onClick={() => setCategory(item)}
               >
                 {item}
@@ -154,10 +156,12 @@ export default function Storefront() {
                   <strong>{price(product.price)}</strong>
                 </div>
                 <div className="card-actions home-card-actions">
-                  <button onClick={() => addProduct(product)}>+ سبد</button>
+                  <button type="button" onClick={() => addProduct(product)}>+ سبد</button>
                   <button
+                    type="button"
                     className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
-                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+                    aria-pressed={wishlistIds.includes(product.id)}
                     onClick={() => toggleWishlist(product.id)}
                   >♡</button>
                 </div>
@@ -165,9 +169,11 @@ export default function Storefront() {
                   <div className="swatches" aria-label="انتخاب رنگ">
                     {product.shades.map((shade) => (
                       <button
+                        type="button"
                         key={shade.id}
                         title={shade.nameFa}
                         aria-label={shade.nameFa}
+                        aria-pressed={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id}
                         className={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id ? "swatch active" : "swatch"}
                         style={{ backgroundColor: shade.hex }}
                         onClick={() => setSelectedShade((state) => ({ ...state, [product.id]: shade.id }))}
@@ -192,10 +198,10 @@ export default function Storefront() {
         <a className="button button-dark" href="mailto:fatmhkhan121@gmail.com">تماس با FATIKHAN ←</a>
       </section>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal={cartOpen || undefined} aria-label="سبد خرید" inert={!cartOpen}>
         <div className="drawer-head">
           <h2>سبد خرید</h2>
-          <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
+          <button type="button" onClick={() => setCartOpen(false)} aria-label="بستن سبد">×</button>
         </div>
         <div className="drawer-lines">
           {lines.length === 0 ? (
@@ -208,10 +214,10 @@ export default function Storefront() {
                 <div>
                   <strong>{line.product.nameFa}</strong>
                   <span>{shade?.nameFa ?? line.product.category}</span>
-                  <div className="drawer-qty"><button aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
+                  <div className="drawer-qty"><button type="button" aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button type="button" aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
                   <small>{price(line.product.price * line.qty)}</small>
                 </div>
-                <button onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
+                <button type="button" onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
               </div>
             );
           })}
@@ -221,10 +227,10 @@ export default function Storefront() {
         </div>
         {lines.length ? <Link className="button button-dark checkout" href="/checkout/">ادامه به پرداخت</Link> : <button className="button button-dark checkout" disabled>ادامه به پرداخت</button>}
       </aside>
-      {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
+      {cartOpen && <button type="button" className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
-        <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal={searchOpen || undefined} aria-label="جستجوی محصولات" inert={!searchOpen}>
+        <button type="button" className="search-close" aria-label="بستن جستجو" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
           <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
