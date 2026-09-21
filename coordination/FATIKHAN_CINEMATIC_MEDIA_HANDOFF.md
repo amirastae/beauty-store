@@ -10,9 +10,9 @@
 
 ## Implemented
 
-- Real `video.currentTime` scroll scrubbing is active on desktop.
+- Real `video.currentTime` scroll scrubbing is active on eligible desktop **and mobile** devices.
 - GSAP/image/3D remains the automatic fallback.
-- Video activation is skipped for mobile <768px, Save-Data, reduced-motion, or media failure.
+- Mobile viewport width alone does not disable video. Fallback is reserved for Save-Data, reduced-motion, 2G/very slow network, or genuine media failure.
 - Browser source order is WebM -> MP4.
 - Hero waits for decoded video data before hiding the fallback, reducing blank-frame risk.
 - Poster now uses `/cinematic/fatikhan-poster.jpg`.
@@ -31,18 +31,18 @@
 Scenes 01-06 are now all generated specifically for the FATIKHAN cinematic sequence:
 Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual.
 
-The current video is a deterministic AI-still cinematic preview, not the final Kling motion master.
+The current video is a deterministic AI-still cinematic preview, not the final Google Flow motion master.
 
 ## Remaining final-media gate
 
-1. Generate five Start+End Frame transitions with Kling 3.0.
+1. Generate five Start+End Frame transitions in Google Flow using the six locked source frames.
 2. Assemble the five clips using the included script.
 3. Replace the current preview MP4/WebM.
 4. Run desktop/mobile real-device visual regression before production promotion.
 
 ## Generation constraint
 
-The connected Higgsfield workspace currently has 9.1 credits on the Free plan. Six scene frames are complete. A full five-transition Kling 3.0 set still exceeds the available balance, so no partial Kling set was promoted.
+Six locked scene frames are complete. Google Flow is now the approved final-motion lane; Higgsfield generations remain QA/reference candidates and must not replace the master without visual review.
 
 ## Conflict / safety
 
