@@ -1,45 +1,49 @@
 # FATIKHAN Cinematic Media Handoff
 
-- Source branch: `fatikan-cinematic-media-v1`
+- Source branch: `fatikan-cinematic-polish-v2`
 - Base: `integration-staging`
-- Scope: homepage cinematic media + scroll-scrub implementation only
+- Scope: homepage cinematic media + scroll-scrub polish only
 - Production branch: untouched directly
 
 ## Implemented
 
-- Added real `video.currentTime` scroll scrubbing to `CinematicBeautyHero.tsx`.
-- Keeps the existing GSAP/image/3D hero as the automatic fallback.
-- Desktop video path: `/cinematic/fatikhan-hero.mp4`.
-- Mobile (<768px), Save-Data, and `prefers-reduced-motion` keep the lightweight fallback.
-- Added 6-frame FATIKHAN cinematic asset set under `public/cinematic/frames/`.
-- Added a 16.5s, 1280x720, 30fps, muted H.264 scroll-preview master at `public/cinematic/fatikhan-hero.mp4`.
-- Preview payload: 2,418,320 bytes (~2.31 MiB), GOP=30 for responsive seeking.
-- Added `CINEMATIC_MEDIA_PIPELINE.md` with the six scene prompts + five motion prompts adapted from the Golestan build journal.
-- Added `scripts/assemble-cinematic.py` for final 1080p MP4/WebM assembly with measured 0.30s cross dissolves and optional all-I scrub mode.
+- Real `video.currentTime` scroll scrubbing is active on desktop.
+- GSAP/image/3D remains the automatic fallback.
+- Video activation is skipped for mobile <768px, Save-Data, reduced-motion, or media failure.
+- Browser source order is WebM -> MP4.
+- Hero waits for decoded video data before hiding the fallback, reducing blank-frame risk.
+- Poster now uses `/cinematic/fatikhan-poster.jpg`.
+- All six FATIKHAN scene frames are dedicated AI generations.
+- Source frames are compressed WebP files under `cinematic/frames/` and are no longer shipped in `public/**`.
+- Public preview master is 16.5s, 1280x720, 30fps with 0.30s cross dissolves.
+- MP4: 2,717,271 bytes.
+- WebM: 1,277,072 bytes.
+- Poster: 52,433 bytes.
+- Both video encodes use a 1-second GOP for responsive seeking.
+- `npm run build` now runs `verify:cinematic` first so missing/oversized media fails CI.
+- Final 1080p MP4/WebM assembly remains available through `scripts/assemble-cinematic.py`, including optional `--all-i`.
 
-## Current frame provenance
+## Media status
 
-- Scene 01: existing FATIKHAN/beauty-store serum asset used as temporary descent frame.
-- Scenes 02-05: freshly generated cinematic frames.
-- Scene 06: existing UGC serum asset used as temporary ritual frame.
+Scenes 01-06 are now all generated specifically for the FATIKHAN cinematic sequence:
+Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual.
 
-The current preview is a working scroll-scrub proof, not the final Kling master.
+The current video is a deterministic AI-still cinematic preview, not the final Kling motion master.
 
-## Remaining media upgrade
+## Remaining final-media gate
 
-Final target remains:
-1. Generate final Scene 01 and Scene 06 to match the same bottle exactly.
-2. Animate 01→02, 02→03, 03→04, 04→05, 05→06 with Kling 3.0 Start+End Frame.
-3. Replace `fatikhan-hero.mp4` and generate `fatikhan-hero.webm` with the included assembly script.
-4. Real-device desktop/mobile visual regression before production promotion.
+1. Generate five Start+End Frame transitions with Kling 3.0.
+2. Assemble the five clips using the included script.
+3. Replace the current preview MP4/WebM.
+4. Run desktop/mobile real-device visual regression before production promotion.
 
-## External generation constraint encountered
+## Generation constraint
 
-The connected Higgsfield workspace is on the Free plan. Four scene generations completed, while two were blocked/failed by backend rate limiting. A full five-clip Kling 3.0 run would exceed the currently available credit balance, so the repository preview deliberately uses deterministic FFmpeg motion until the final Kling assets are available.
+The connected Higgsfield workspace currently has 9.1 credits on the Free plan. Six scene frames are complete. A full five-transition Kling 3.0 set still exceeds the available balance, so no partial Kling set was promoted.
 
 ## Conflict / safety
 
 - No commerce/API/schema/payment/D1/R2 changes.
-- Latest integration-staging commerce change was checked and does not overlap these paths.
-- One-shot media hydration workflow was removed before handoff.
-- Promotion must still go through `integration-staging` verification.
+- The staging commerce workstream does not overlap these paths.
+- Temporary one-shot media workflows were removed after the assets were committed.
+- Promotion still goes through `integration-staging` verification only.
