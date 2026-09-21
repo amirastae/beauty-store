@@ -17,6 +17,7 @@ const required = [
   ['<source src="/cinematic/fatikhan-hero.webm" type="video/webm" />', "WebM scrub source"],
   ['<source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />', "MP4 scrub fallback source"],
   ["if (reducedMotion || saveData) return;", "accessibility/data-saver fallback"],
+  ['data-cinematic-runtime="healthy-scroll-v1"', "healthy runtime release marker"],
 ];
 
 for (const [needle, label] of required) {
