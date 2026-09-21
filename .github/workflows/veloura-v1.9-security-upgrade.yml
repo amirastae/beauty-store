@@ -35,11 +35,11 @@ jobs:
           cache-dependency-path: shop/v1.9.0/package-lock.json
 
       - name: Upgrade patched framework dependencies
-        run: npm install --save-exact next@16.3.3 react@19.2.8 react-dom@19.2.8
+        run: npm install --save-exact next@16.3.3 react@19.2.8 react-dom@19.2.8 && npm install --save-dev --save-exact eslint-config-next@16.3.3
 
       - name: Verify resolved versions
         run: |
-          node -e "const p=require('./package.json'); if(p.version!=='1.9.0'||p.dependencies.next!=='16.3.3'||p.dependencies.react!=='19.2.8'||p.dependencies['react-dom']!=='19.2.8') process.exit(1)"
+          node -e "const p=require('./package.json'); if(p.version!=='1.9.0'||p.dependencies.next!=='16.3.3'||p.dependencies.react!=='19.2.8'||p.dependencies['react-dom']!=='19.2.8'||p.devDependencies['eslint-config-next']!=='16.3.3') process.exit(1)"
           node -e "const l=require('./package-lock.json'); if(l.packages[''].version!=='1.9.0') process.exit(1)"
 
       - name: Commit generated lockfile
