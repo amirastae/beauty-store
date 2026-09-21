@@ -1,13 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import HeroStage from "@/components/motion/HeroStage";
-import SignatureStory from "@/components/motion/SignatureStory";
+import ShadeLab from "@/components/beauty/ShadeLab";
+import DiscoverySections from "@/components/beauty/DiscoverySections";
+
+const SignatureStory = dynamic(() => import("@/components/motion/SignatureStory"), { ssr: false });
 
 const toman = new Intl.NumberFormat("fa-IR");
 
@@ -89,7 +93,7 @@ export default function Storefront() {
 
       <section className="category-strip" aria-label="دسته‌بندی">
         {["لب", "پوست", "عطر", "چشم"].map((item, index) => (
-          <a href="#products" key={item}><span>0{index + 1}</span>{item}</a>
+          <Link href={"/shop/?category=" + encodeURIComponent(item)} key={item}><span>0{index + 1}</span>{item}</Link>
         ))}
       </section>
 
@@ -183,6 +187,8 @@ export default function Storefront() {
       </section>
 
       <SignatureStory />
+      <ShadeLab />
+      <DiscoverySections />
 
       <section className="club" id="club">
         <p className="eyebrow">VELOURA PRIVATE LIST</p>
