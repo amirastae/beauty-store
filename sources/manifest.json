@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-09-21T02:45:00Z",
+  "purpose": "Namespaced source snapshots for conflict-free integration",
+  "canonical_deployment_branch": "cloudflare-site",
+  "staging_branch": "integration-staging",
+  "sources": [
+    {
+      "role": "frontend-foundation",
+      "branch": "beauty-v2-foundation",
+      "commit": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
+      "path": "sources/foundation/veloura-next",
+      "tree": "54c88f1bcd199b76f5c06fd6bdb2e8b5b90b7e87"
+    },
+    {
+      "role": "ui-polish",
+      "branch": "veloura-v2.1-polish",
+      "commit": "46c6612c85c902de679dcf10cb4a6be1db91434d",
+      "path": "sources/polish/veloura-next",
+      "tree": "1027c9ca12f34d1196dcc0010105292b13f82a07"
+    },
+    {
+      "role": "shop-catalog",
+      "branch": "shop-v1.1.0-work",
+      "commit": "12dd4e0624dfb437bf2e405b8e6d6eb3594fab3d",
+      "path": "sources/shop",
+      "tree": "29d08b41d18620dac80e00eba337c6c7cd6d5b6f"
+    },
+    {
+      "role": "commerce",
+      "branch": "commerce-core-v1",
+      "commit": "3dbd71ed196ac61ed62062a7105d33b013706fb6",
+      "path": "services/commerce"
+    }
+  ]
+}
