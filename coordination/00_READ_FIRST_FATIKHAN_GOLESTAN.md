@@ -114,10 +114,7 @@ Mandatory current handoffs:
 
 The cinematic FATIKHAN experience is the presentation layer; commerce work must fit underneath it without weakening scroll-scrub performance, mobile fallbacks, accessibility, or brand consistency.
 
-Current release checkpoints:
-- production `cloudflare-site@1276b6448e470179523b8c12887ef46f30400668`
-- integration `integration-staging@725624bd540bba6ab1bcca31e7e7e40bd20b8111`
-- commerce `commerce-core-v1@fb1b5a18ce7c971a21a0fd73623adba82d683519`
+Current release checkpoints must be resolved live from GitHub at the start of every workstream. Never use an old chat SHA as a write base.
 
 Visible brand remains **FATIKHAN**. Technical compatibility names such as `veloura-next`, `veloura-*` storage keys and `/api/v1/compat/veloura-v2/resolve` remain internal until an explicit migration is approved.
 
@@ -136,3 +133,7 @@ The old `shop/v1.x` experiments are reference-only and must never become a paral
 A workstream is **not complete** merely because its branch works. A feature is complete only after its smallest compatible patch is integrated into `sources/canonical/veloura-next` or `services/commerce`, the canonical build/quality gates pass, and the handoff is updated.
 
 All chats must treat side branches as donor lanes only. Never keep a second visual/storefront direction alive beside FATIKHAN Golestan.
+
+## Cross-chat anti-duplication rule
+
+Before overlapping work: fetch live `integration-staging`, read `coordination/ACTIVE_WORKSTREAMS.md`, read `coordination/DONOR_RECONCILIATION.md`, compare donor vs canonical, and port only missing behavior. If canonical already has it, do not rebuild it.
