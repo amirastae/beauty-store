@@ -507,3 +507,14 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 .routine-note{margin-top:40px;padding:20px 22px;border:1px solid var(--line);border-radius:18px;background:#efe4dc}.routine-note strong{font-size:11px}.routine-note p{margin:7px 0 0;color:var(--muted);font-size:10px;line-height:1.9;max-width:900px}
 @media(max-width:1000px){.routine-options{grid-template-columns:1fr 1fr}.routine-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.routine-hero{padding:58px 20px 48px}.routine-hero h1{font-size:66px}.routine-controls{padding:36px 18px}.routine-options{grid-template-columns:1fr}.routine-options button{min-height:100px}.routine-result{padding:54px 18px 90px}.routine-result-head{align-items:flex-start;flex-direction:column}.routine-grid{grid-template-columns:1fr 1fr;gap:9px}.routine-result-head .button{width:100%}}
+
+
+/* final commerce integration */
+.checkout-form select{display:block;width:100%;margin-top:8px;border:1px solid var(--line);border-radius:13px;background:#fff8f4;padding:14px;outline:0;color:var(--ink)}
+.checkout-error{margin-top:18px;border:1px solid rgba(137,40,40,.28);border-radius:14px;padding:14px;background:rgba(255,226,226,.55);color:#7d2828;font-size:11px;line-height:1.8}
+.checkout-support{margin-top:18px;color:var(--muted);font-size:10px}.checkout-support a{text-underline-offset:4px}
+.checkout-resume{margin:0 0 24px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:#efe4dc;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.checkout-resume b,.checkout-resume span{display:block}.checkout-resume b{font-size:11px}.checkout-resume span{margin-top:4px;color:var(--muted);font-size:9px}
+.payment-return{margin:0 0 24px;padding:16px 18px;border-radius:16px;border:1px solid var(--line);display:grid;gap:5px;font-size:11px}.payment-return.success{background:rgba(214,237,218,.62);border-color:rgba(56,112,67,.26);color:#335f3b}.payment-return.failed,.payment-return.cancelled{background:rgba(255,231,226,.64);border-color:rgba(138,67,55,.25);color:#7c3b31}.payment-return span,.payment-return small{display:block}
+.checkout-form button:disabled,.checkout-resume button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:560px){.checkout-resume{align-items:stretch;flex-direction:column}.checkout-resume .button{width:100%}}
