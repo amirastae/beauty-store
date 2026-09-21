@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import { normalizePersianSearch } from "@/lib/locale";
 import CinematicBeautyHero from "@/components/motion/CinematicBeautyHero";
 import ShadeLab from "@/components/beauty/ShadeLab";
 import DiscoverySections from "@/components/beauty/DiscoverySections";
@@ -30,13 +31,12 @@ export default function Storefront() {
   const toggleWishlist = useWishlist((state) => state.toggle);
 
   const visibleProducts = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("fa");
+    const q = normalizePersianSearch(query);
     return products.filter((product) => {
       const categoryMatch = category === "همه" || product.category === category;
       const queryMatch =
         !q ||
-        `${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`
-          .toLocaleLowerCase("fa")
+        normalizePersianSearch(`${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`)
           .includes(q);
       return categoryMatch && queryMatch;
     }).slice(0, 8);
@@ -76,7 +76,7 @@ export default function Storefront() {
       <div className="announcement">FATIKHAN · کالکشن زیبایی ۲۰۲۶</div>
 
       <header className="nav">
-        <button className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
+        <button type="button" className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
           سبد <span className="cart-count">{toman.format(cartCount)}</span>
         </button>
         <nav className="nav-links" aria-label="ناوبری اصلی">
@@ -85,10 +85,12 @@ export default function Storefront() {
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
         <Link className="brand" href="/" aria-label="FATIKHAN">FATIKHAN</Link>
-        <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
+        <button type="button" className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
-      <CinematicBeautyHero />\n\n      <section className="category-strip" aria-label="دسته‌بندی">
+      <CinematicBeautyHero />
+
+      <section className="category-strip" aria-label="دسته‌بندی">
         {["پوست", "آرایش", "عطر", "مو"].map((item, index) => (
           <Link href={"/shop/?category=" + encodeURIComponent(item)} key={item}><span>0{index + 1}</span>{item}</Link>
         ))}
@@ -124,7 +126,9 @@ export default function Storefront() {
             {categories.map((item) => (
               <button
                 key={item}
+                type="button"
                 className={category === item ? "chip active" : "chip"}
+                aria-pressed={category === item}
                 onClick={() => setCategory(item)}
               >
                 {item}
@@ -156,8 +160,10 @@ export default function Storefront() {
                 <div className="card-actions home-card-actions">
                   <button onClick={() => addProduct(product)}>+ سبد</button>
                   <button
+                    type="button"
                     className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
-                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+                    aria-pressed={wishlistIds.includes(product.id)}
                     onClick={() => toggleWishlist(product.id)}
                   >♡</button>
                 </div>
@@ -168,6 +174,8 @@ export default function Storefront() {
                         key={shade.id}
                         title={shade.nameFa}
                         aria-label={shade.nameFa}
+                        type="button"
+                        aria-pressed={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id}
                         className={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id ? "swatch active" : "swatch"}
                         style={{ backgroundColor: shade.hex }}
                         onClick={() => setSelectedShade((state) => ({ ...state, [product.id]: shade.id }))}
@@ -192,10 +200,10 @@ export default function Storefront() {
         <a className="button button-dark" href="mailto:fatmhkhan121@gmail.com">تماس با FATIKHAN ←</a>
       </section>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal={cartOpen || undefined} aria-label="سبد خرید" inert={!cartOpen}>
         <div className="drawer-head">
           <h2>سبد خرید</h2>
-          <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
+          <button type="button" onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
         </div>
         <div className="drawer-lines">
           {lines.length === 0 ? (
@@ -208,10 +216,10 @@ export default function Storefront() {
                 <div>
                   <strong>{line.product.nameFa}</strong>
                   <span>{shade?.nameFa ?? line.product.category}</span>
-                  <div className="drawer-qty"><button aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
+                  <div className="drawer-qty"><button type="button" aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button type="button" aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
                   <small>{price(line.product.price * line.qty)}</small>
                 </div>
-                <button onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
+                <button type="button" onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
               </div>
             );
           })}
@@ -221,10 +229,10 @@ export default function Storefront() {
         </div>
         {lines.length ? <Link className="button button-dark checkout" href="/checkout/">ادامه به پرداخت</Link> : <button className="button button-dark checkout" disabled>ادامه به پرداخت</button>}
       </aside>
-      {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
+      {cartOpen && <button type="button" className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
-        <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal={searchOpen || undefined} aria-label="جستجوی محصولات" inert={!searchOpen}>
+        <button type="button" className="search-close" aria-label="بستن جستجو" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
           <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
@@ -234,7 +242,7 @@ export default function Storefront() {
             placeholder="دنبال چه محصولی هستی؟"
             aria-label="جستجوی محصول"
           />
-          <div className="search-count">{toman.format(visibleProducts.length)} نتیجه</div>
+          <div className="search-count" aria-live="polite">{toman.format(visibleProducts.length)} نتیجه</div>
           <div className="search-mini-grid">
             {visibleProducts.slice(0, 4).map((product) => (
               <Link key={product.id} href={"/product/" + product.slug} onClick={() => setSearchOpen(false)}>
