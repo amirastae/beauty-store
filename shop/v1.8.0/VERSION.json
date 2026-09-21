@@ -1,42 +1,39 @@
 {
   "name": "VELOURA Beauty Store",
-  "version": "1.7.0",
-  "status": "git-guarded-checkpoint",
-  "inherited_from": "1.6.0",
-  "quality_baseline": {
-    "eslint": "pass",
-    "typescript": "pass",
-    "next_build_typescript": "pass",
-    "build": "pass"
-  },
-  "cloudflare": {
-    "wrangler_dry_run": "pass",
-    "assets_read": 1069,
-    "headers_file": true,
-    "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
-  },
-  "security": [
-    "nosniff",
-    "referrer-policy",
-    "same-origin framing",
-    "permissions-policy",
-    "COOP",
-    "CSP"
-  ],
-  "cache": {
-    "fingerprinted_next_static": "immutable-1y"
-  },
-  "release_guards": [
-    "branch-scoped GitHub Actions quality workflow",
-    "npm ci lockfile install",
-    "lint",
-    "typecheck",
+  "version": "1.8.0",
+  "status": "self-auditing-checkpoint",
+  "inherited_from": "1.7.0",
+  "required_gates": [
+    "npm ci --ignore-scripts",
+    "eslint",
+    "typescript",
+    "source integrity audit",
     "production build",
-    "release checklist"
+    "static output integrity/accessibility/SEO audit"
   ],
-  "notes": [
-    "No production branch changes",
-    "No remote-server build required for this versioning step"
-  ]
+  "source_audit": [
+    "common credential patterns",
+    "dead hash links",
+    "donor brand residue in executable source",
+    "TODO/FIXME markers",
+    "dollar-price residue"
+  ],
+  "static_audit": [
+    "internal links",
+    "referenced assets",
+    "image alt text",
+    "button accessible names",
+    "skip-link target",
+    "canonical metadata",
+    "robots disallow rules",
+    "sitemap minimum coverage",
+    "Cloudflare security headers",
+    "forbidden fake social proof"
+  ],
+  "ux": [
+    "branded 404 page",
+    "web app manifest",
+    "RTL Persian metadata"
+  ],
+  "production_boundary": "commerce backend/auth/payment/contact submission remain separate workstreams and are not faked by this snapshot"
 }
