@@ -19,6 +19,8 @@ function read(relativePath) {
 const home = read("index.html");
 check(home.includes('lang="fa"'), "home must declare lang=fa");
 check(home.includes('dir="rtl"'), "home must declare dir=rtl");
+check(home.includes('"@type":"Organization"'), "Organization JSON-LD missing");
+check(home.includes("fatmhkhan121@gmail.com"), "support email missing from Organization JSON-LD");
 
 const contact = read("contact/index.html");
 check(contact.includes('rel="canonical"'), "contact canonical missing");
