@@ -1,2 +1,2 @@
-:HL["/_next/static/chunks/2_184dpc3923m.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"product","param":null,"prefetchHints":4192,"slots":{"children":{"name":"slug","param":{"type":"d","key":"mascara-pro","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"AuGF_-7V6xY5bKgivWx7b"}
+:HL["/_next/static/chunks/1d8mo5bw_xp1g.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"product","param":null,"prefetchHints":4192,"slots":{"children":{"name":"slug","param":{"type":"d","key":"mascara-pro","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"u-4ulsBQdKk0I6cFHdJeY"}
