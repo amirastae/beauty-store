@@ -12,6 +12,7 @@ import { search } from './routes/search'
 import { compat } from './routes/compat'
 import { payments } from './routes/payments'
 import { ensurePreviewDatabase } from './lib/bootstrap'
+import { releaseExpiredOrders } from './lib/order-inventory'
 
 const app = new Hono<AppBindings>()
 
@@ -68,4 +69,11 @@ app.onError((err, c) => {
   return c.json({ ok: false, error: { code: 'INTERNAL_ERROR', message: 'Unexpected server error.' } }, 500)
 })
 
-export default app
+export default {
+  fetch: app.fetch,
+  scheduled: (_controller: ScheduledController, env: AppBindings['Bindings'], ctx: ExecutionContext) => {
+    ctx.waitUntil(releaseExpiredOrders(env).then((result) => {
+      console.log('expired order release', result)
+    }))
+  }
+} satisfies ExportedHandler<AppBindings['Bindings']>

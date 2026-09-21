@@ -249,11 +249,13 @@ checkout.post('/checkout/:cartId', async (c) => {
       await releaseIdempotencyLock(db, idem)
       return fail('SHIPPING_POLICY_NOT_CONFIGURED', 'Shipping policy is not configured for this currency.', 503)
     }
+
     const shipping = shippingRule.amount
     const discount = 0
     const tax = 0
     const total = subtotal - discount + shipping + tax
     const now = new Date().toISOString()
+    const paymentExpiresAt = new Date(Date.now() + 30 * 60_000).toISOString()
     const orderId = id('ord')
     const paymentId = id('pay')
     const orderNo = orderNumber()
@@ -268,7 +270,8 @@ checkout.post('/checkout/:cartId', async (c) => {
         currency_code: cart.currency_code,
         subtotal_minor: subtotal,
         shipping_minor: shipping,
-        total_minor: total
+        total_minor: total,
+        payment_expires_at: paymentExpiresAt
       }
     })
 
@@ -277,13 +280,14 @@ checkout.post('/checkout/:cartId', async (c) => {
         `INSERT INTO orders
          (id, order_number, customer_id, email, phone, currency_code, status, payment_status,
           fulfillment_status, subtotal_minor, discount_minor, shipping_minor, tax_minor,
-          total_minor, shipping_address_json, billing_address_json, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, 'pending', 'unpaid', 'unfulfilled', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          total_minor, shipping_address_json, billing_address_json, payment_expires_at, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, 'pending', 'unpaid', 'unfulfilled', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         orderId, orderNo, cart.customer_id, email, phone || null, cart.currency_code,
         subtotal, discount, shipping, tax, total,
         JSON.stringify(body.shipping_address),
         body.billing_address ? JSON.stringify(body.billing_address) : null,
+        paymentExpiresAt,
         now, now
       )
     ]
@@ -301,6 +305,13 @@ checkout.post('/checkout/:cartId', async (c) => {
           line.line_total_minor, JSON.stringify(line)
         )
       )
+      statements.push(
+        db.prepare(
+          `INSERT INTO inventory_events
+           (id, variant_id, event_type, quantity, reference_type, reference_id, metadata_json, created_at)
+           VALUES (?, ?, 'reserve', ?, 'order', ?, '{}', ?)`
+        ).bind(id('inv'), line.variant_id, line.quantity, orderId, now)
+      )
     }
 
     statements.push(
@@ -311,23 +322,6 @@ checkout.post('/checkout/:cartId', async (c) => {
          VALUES (?, ?, ?, 'unconfigured', 'requires_provider', ?, ?, ?, '{}', ?, ?)`
       ).bind(paymentId, orderId, cartId, total, cart.currency_code, idem, now, now)
     )
-
-    for (const line of lines) {
-      statements.push(
-        db.prepare(
-          `UPDATE inventory_items
-           SET stock_on_hand = stock_on_hand - ?, reserved = MAX(reserved - ?, 0), updated_at = ?
-           WHERE variant_id = ?`
-        ).bind(line.quantity, line.quantity, now, line.variant_id)
-      )
-      statements.push(
-        db.prepare(
-          `INSERT INTO inventory_events
-           (id, variant_id, event_type, quantity, reference_type, reference_id, metadata_json, created_at)
-           VALUES (?, ?, 'stock_out', ?, 'order', ?, '{}', ?)`
-        ).bind(id('inv'), line.variant_id, line.quantity, orderId, now)
-      )
-    }
 
     statements.push(
       db.prepare(`UPDATE carts SET status = 'completed', email = ?, phone = ?, updated_at = ? WHERE id = ?`)

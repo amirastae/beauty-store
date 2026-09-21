@@ -1,14 +1,18 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `d44ece0c5ead0fa1717ff9f831ad9407faa4f66e`
+Source commit: `ffccdebd769b5a77ac32800b1f2e09952ae3e6e7`
 
-Latest status:
-- checkout claim migration present
-- contact/mobile + currency-aware shipping contract present
-- Zarinpal provider adapter + callback verification present
-- D1 real Cloudflare temporary preview checkout integration: PASS
-- full temporary R2 preview: blocked by temporary-account R2 provisioning/auth limitation
-- production R2 still requires authenticated account token/binding
+Verified gates:
+- TypeScript: PASS
+- Wrangler preview dry-run: PASS
+- D1 real temporary Cloudflare checkout flow: PASS
+- inventory is reserved at checkout, finalized only after verified payment
+- unpaid orders expire after 30 minutes
+- scheduled cleanup configured every 5 minutes
+- migrations 0001-0009 present
 
-Do not deploy this snapshot directly to production until account-side D1/R2/payment secrets are bound.
+External production gates still required:
+- authenticated Cloudflare production D1/R2 bindings
+- real Zarinpal merchant credential
+- storefront build must receive NEXT_PUBLIC_COMMERCE_API_BASE

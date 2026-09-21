@@ -924,6 +924,11 @@ ALTER TABLE orders ADD COLUMN phone TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_orders_phone_created
 ON orders(phone, created_at DESC);
+`,
+  `ALTER TABLE orders ADD COLUMN payment_expires_at TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_orders_payment_expiry
+ON orders(status, payment_status, payment_expires_at);
 `
 ]
 
@@ -985,9 +990,5 @@ export async function ensurePreviewDatabase(env: Env) {
     ready = true
   })()
 
-  try {
-    await inflight
-  } finally {
-    inflight = null
-  }
+  try { await inflight } finally { inflight = null }
 }

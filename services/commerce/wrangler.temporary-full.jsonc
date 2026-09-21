@@ -27,5 +27,10 @@
       "binding": "MEDIA",
       "bucket_name": "veloura-commerce-temp-media"
     }
-  ]
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
 }
