@@ -27,6 +27,8 @@ for (const file of files) {
 
   if (!/<html[^>]*\blang="fa"/i.test(html)) failures.push(`${name}: lang=fa missing`);
   if (!/<html[^>]*\bdir="rtl"/i.test(html)) failures.push(`${name}: dir=rtl missing`);
+  if (!html.includes('href="#main-content"')) failures.push(`${name}: skip link missing`);
+  if (!html.includes('id="main-content"')) failures.push(`${name}: main-content target missing`);
 
   const h1Count = (html.match(/<h1\b/gi) || []).length;
   if (h1Count !== 1) failures.push(`${name}: expected 1 h1, found ${h1Count}`);

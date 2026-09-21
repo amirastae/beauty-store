@@ -44,8 +44,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }}
         />
+        <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
         <StoreHydrator />
-        {children}
+        <div id="main-content" tabIndex={-1}>{children}</div>
       </body>
     </html>
   );
