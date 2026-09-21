@@ -34,7 +34,7 @@ if(!fs.existsSync(root)){
 for(const required of [
   "index.html","shop/index.html","cart/index.html","checkout/index.html",
   "wishlist/index.html","robots.txt","sitemap.xml","manifest.webmanifest","_headers",
-  "cinematic/fatikhan-cinematic.mp4","cinematic/fatikhan-cinematic.webm","cinematic/fatikhan-poster.jpg"
+  "cinematic/fatikhan-hero.mp4","cinematic/fatikhan-hero.webm","cinematic/fatikhan-poster.jpg"
 ]){
   if(!exists(required)) failures.push(`missing required output: ${required}`);
 }
