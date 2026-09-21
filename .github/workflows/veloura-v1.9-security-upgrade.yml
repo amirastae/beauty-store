@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "VELOURA Security Updater"
           git config user.email "noreply@github.com"
-          git add shop/v1.9.0/package.json shop/v1.9.0/package-lock.json
+          git add package.json package-lock.json
           if git diff --cached --quiet; then
             echo "No dependency changes to commit"
           else
