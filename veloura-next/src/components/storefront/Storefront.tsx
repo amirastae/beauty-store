@@ -39,7 +39,7 @@ export default function Storefront() {
           .toLocaleLowerCase("fa")
           .includes(q);
       return categoryMatch && queryMatch;
-    });
+    }).slice(0, 8);
   }, [category, query]);
 
   const cartCount = lines.reduce((sum, line) => sum + line.qty, 0);
@@ -112,7 +112,7 @@ export default function Storefront() {
       </section>
 
       <section className="category-strip" aria-label="دسته‌بندی">
-        {["لب", "پوست", "عطر", "چشم"].map((item, index) => (
+        {["پوست", "آرایش", "عطر", "مو"].map((item, index) => (
           <Link href={"/shop/?category=" + encodeURIComponent(item)} key={item}><span>0{index + 1}</span>{item}</Link>
         ))}
       </section>
