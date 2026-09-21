@@ -1,0 +1,8 @@
+{
+  "name": "VELOURA Beauty Store",
+  "version": "1.3.0",
+  "status": "verified-checkpoint",
+  "quality": {"eslint": "pass", "typescript": "pass", "build": "pass"},
+  "build": {"routes": 95, "output_mb": 21, "files": 977},
+  "features": ["56 localized products", "persistent cart", "wishlist", "honest checkout handoff", "honest auth handoff", "support routes", "localized catalog details", "3D performance fallback", "SEO", "robots", "sitemap", "policy pages", "fake social proof removed"]
+}
