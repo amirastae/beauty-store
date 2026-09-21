@@ -1,8 +1,8 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `93c697e16ebb0b04aa73322b431c5d1b6e12c22f`
-- Verification run: `clean public clone verification`
+- Tested code commit: `59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1`
+- Verification run: `35561513257`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
 
@@ -25,6 +25,7 @@
 - Live reactive cart counters on shop, wishlist, product and compare routes.
 - AM/PM skincare routine guide as an isolated public route.
 - Recently viewed products are persisted locally, reconciled against the current catalog and shown only on product pages.
+- Unified commerce footer provides shop/routine/contact navigation and the official support email across commerce routes without touching the homepage.
 
 ### Cart/state
 - Zustand cart/wishlist/compare hydration is explicitly deferred until mount to avoid SSR hydration mismatch.
@@ -73,6 +74,8 @@
 - Accessibility smoke gate verifies skip target plus existing lang/dir/H1/alt/button/ID/zoom invariants.
 
 ### Security / performance
+- Measured static baseline before budget enforcement: total ~2.21MB, JS ~1.74MB, largest JS chunk ~0.89MB, CSS ~0.04MB, largest HTML ~0.02MB.
+- Performance CI budgets: total <= 4MB, JS total <= 3MB, largest JS chunk <= 1.2MB, CSS <= 150KB, largest HTML <= 100KB.
 - Next.js pinned to stable `16.3.5` instead of a floating `^16.0.0` range.
 - Cloudflare static response headers in `public/_headers`:
   - `X-Content-Type-Options: nosniff`
@@ -87,7 +90,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-Clean public clone verification on tested code commit `93c697e16ebb0b04aa73322b431c5d1b6e12c22f`:
+GitHub Actions verification on tested code commit `59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -96,6 +99,7 @@ Clean public clone verification on tested code commit `93c697e16ebb0b04aa73322b4
 - `npm run catalog:check`: PASS — 4 products / 4 unique canonicals
 - `npm run a11y:check`: PASS — 13 pages / 20 images / 77 buttons
 - `npm run security:check`: PASS
+- `npm run performance:check`: PASS — baseline guard for total output, JS, largest JS chunk, CSS and HTML page size
 
 CI itself is bounded with a 10-minute timeout, read-only repository permission and concurrency cancellation for stale runs. Manual `workflow_dispatch` verification is also available.
 
