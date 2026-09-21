@@ -39,6 +39,32 @@ The exact same bottle at eye level, surrounded by a slow vortex of translucent s
 
 Two elegant feminine hands with warm olive-toned skin gently cradle the exact same FATIKHAN bottle. Subtle delicate gold jewelry. One glossy serum drop rests on the back of one hand. Rose petals below, warm gold spotlight, intimate final beauty ritual, no face visible, deep crimson-to-black background, 16:9.
 
+## Current staging preview
+
+The current staging media is now built from **six dedicated FATIKHAN AI scene frames** rather than legacy storefront stills.
+
+Source frames are archived outside the public bundle:
+
+```
+cinematic/frames/scene-01-descent.webp
+cinematic/frames/scene-02-reveal.webp
+cinematic/frames/scene-03-burst.webp
+cinematic/frames/scene-04-impact.webp
+cinematic/frames/scene-05-formula.webp
+cinematic/frames/scene-06-ritual.webp
+```
+
+Current public scrub media:
+
+- `fatikhan-hero.mp4`: 2,717,271 bytes
+- `fatikhan-hero.webm`: 1,277,072 bytes
+- `fatikhan-poster.jpg`: 52,433 bytes
+- 16.5 seconds, 1280x720, 30fps preview master
+- 1-second GOP for practical scroll seeking
+- six scenes connected with 0.30s cross dissolves
+
+This is the deterministic staging preview. The final production-media upgrade is still the five Kling 3.0 Start+End Frame transitions described below.
+
 ## Kling 3.0 motion prompts
 
 Use Start + End Frame mode. Each transition should be 3-5 seconds, 30fps feel, muted, locked camera unless explicitly noted.

@@ -34,7 +34,7 @@ export default function CinematicBeautyHero() {
     if (reducedMotion || compactViewport || saveData) return;
 
     const onReady = () => {
-      if (!Number.isFinite(media.duration) || media.duration <= 0) return;
+      if (!Number.isFinite(media.duration) || media.duration <= 0 || media.readyState < 2) return;
       media.pause();
       setVideoFailed(false);
       setVideoReady(true);
@@ -44,12 +44,14 @@ export default function CinematicBeautyHero() {
       setVideoFailed(true);
     };
 
-    media.addEventListener("loadedmetadata", onReady);
+    media.addEventListener("loadeddata", onReady);
+    media.addEventListener("canplay", onReady);
     media.addEventListener("error", onError);
     media.load();
 
     return () => {
-      media.removeEventListener("loadedmetadata", onReady);
+      media.removeEventListener("loadeddata", onReady);
+      media.removeEventListener("canplay", onReady);
       media.removeEventListener("error", onError);
     };
   }, []);
@@ -163,10 +165,11 @@ export default function CinematicBeautyHero() {
           muted
           playsInline
           preload="auto"
-          poster="/editorial-hero.jpg"
+          poster="/cinematic/fatikhan-poster.jpg"
           aria-hidden="true"
           tabIndex={-1}
         >
+          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
           <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
         </video>}
 
