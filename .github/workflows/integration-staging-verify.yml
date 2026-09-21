@@ -109,7 +109,7 @@ jobs:
           npx wrangler d1 execute DB --config wrangler.payment-test.jsonc --local --file db/seed.sql
           node tests/mock-zarinpal.mjs > /tmp/mock-zarinpal.log 2>&1 &
           mock_pid=$!
-          npx wrangler dev --config wrangler.payment-test.jsonc --local --ip 127.0.0.1 --port 8787 > /tmp/veloura-commerce-payment-dev.log 2>&1 &
+          npx wrangler dev --config wrangler.payment-test.jsonc --local --ip 127.0.0.1 --port 8788 > /tmp/veloura-commerce-payment-dev.log 2>&1 &
           worker_pid=$!
           cleanup() {
             kill "$worker_pid" "$mock_pid" 2>/dev/null || true
@@ -117,7 +117,7 @@ jobs:
           trap cleanup EXIT
           ready=0
           for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/payment-health.json; then
+            if curl -fsS http://127.0.0.1:8788/api/v1/health >/tmp/payment-health.json; then
               ready=1
               break
             fi
@@ -128,4 +128,4 @@ jobs:
             cat /tmp/mock-zarinpal.log
             exit 1
           fi
-          node tests/payment-lifecycle.mjs http://127.0.0.1:8787 http://127.0.0.1:8790
+          node tests/payment-lifecycle.mjs http://127.0.0.1:8788 http://127.0.0.1:8790
