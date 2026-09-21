@@ -488,3 +488,22 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 @media(max-width:520px){
   .recent-grid{grid-template-columns:1fr 1fr;gap:9px}.recent-image{border-radius:16px}.recent-copy h2{font-size:15px}.recent-copy>div{align-items:flex-start;flex-direction:column}
 }
+
+
+/* v2.5 routine builder */
+.routine-page{min-height:100vh;background:#f5eee8}
+.routine-hero{padding:88px 7vw 72px;background:linear-gradient(135deg,#f5eee8,#e4cbc0)}
+.routine-hero h1{margin:0;font-size:clamp(62px,9vw,132px);line-height:.86;letter-spacing:-.065em;font-weight:500}.routine-hero h1 em{font-family:Georgia,"Times New Roman",serif;font-weight:500}
+.routine-hero>p:last-child{max-width:760px;color:var(--muted);font-size:12px;line-height:1.95;margin-top:28px}
+.routine-controls{padding:48px 6vw;border-block:1px solid var(--line);background:#efe4dc;display:grid;gap:30px}
+.routine-controls fieldset{border:0;padding:0;margin:0}.routine-controls legend{font-size:10px;font-weight:600;margin-bottom:14px}
+.routine-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.routine-options button{min-height:126px;text-align:start;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.35);padding:18px;cursor:pointer;color:var(--ink)}.routine-options button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.routine-options strong,.routine-options span{display:block}.routine-options strong{font-size:17px;font-weight:500}.routine-options span{font-size:9px;line-height:1.75;opacity:.62;margin-top:8px}
+.routine-pills{display:flex;gap:8px;flex-wrap:wrap}.routine-pills button{border:1px solid var(--line);background:rgba(255,255,255,.35);border-radius:999px;padding:10px 15px;cursor:pointer;font-size:9px}.routine-pills button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.routine-result{padding:76px 5vw 110px}.routine-result-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:34px}.routine-result-head h2{font-size:clamp(38px,5vw,70px);font-weight:500;letter-spacing:-.05em;margin:0}.routine-result-head>div>p:last-child{font-size:10px;color:var(--muted)}
+.routine-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.routine-grid article{position:relative;min-width:0}.routine-step{position:absolute;z-index:2;top:12px;inset-inline-start:12px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(245,238,232,.88);backdrop-filter:blur(8px);font:600 8px Arial,sans-serif}
+.routine-image{position:relative;display:block;aspect-ratio:.82;border-radius:20px;overflow:hidden;background:#decfc4}.routine-image img{object-fit:cover;transition:transform .5s ease}.routine-image:hover img{transform:scale(1.035)}
+.routine-copy{padding-top:12px}.routine-copy>span{font:600 8px Arial,sans-serif;color:var(--muted);letter-spacing:.08em}.routine-copy h3{font-size:17px;font-weight:500;margin:6px 0 4px}.routine-copy h3 a{text-decoration:none;color:inherit}.routine-copy>p{font:500 8px Arial,sans-serif;color:var(--muted);min-height:28px}.routine-copy>div{display:flex;align-items:center;justify-content:space-between;gap:10px}.routine-copy strong{font-size:10px}.routine-copy button{width:32px;height:32px;border:1px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer}.routine-copy button.active{background:var(--berry);color:#fff;border-color:var(--berry)}
+.routine-note{margin-top:40px;padding:20px 22px;border:1px solid var(--line);border-radius:18px;background:#efe4dc}.routine-note strong{font-size:11px}.routine-note p{margin:7px 0 0;color:var(--muted);font-size:10px;line-height:1.9;max-width:900px}
+@media(max-width:1000px){.routine-options{grid-template-columns:1fr 1fr}.routine-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.routine-hero{padding:58px 20px 48px}.routine-hero h1{font-size:66px}.routine-controls{padding:36px 18px}.routine-options{grid-template-columns:1fr}.routine-options button{min-height:100px}.routine-result{padding:54px 18px 90px}.routine-result-head{align-items:flex-start;flex-direction:column}.routine-grid{grid-template-columns:1fr 1fr;gap:9px}.routine-result-head .button{width:100%}}
