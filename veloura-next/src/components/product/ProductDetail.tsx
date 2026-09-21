@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { useEffect, useMemo, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import { products, type Product } from "@/data/products";
@@ -194,6 +195,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
         <span>03 / PRODUCT STORY</span>
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }

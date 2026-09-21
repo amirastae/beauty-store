@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import CommerceFooter from "@/components/commerce/CommerceFooter";
 import { useEffect, useMemo, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import { categories, products } from "@/data/products";
@@ -163,6 +164,7 @@ export default function ShopCatalog() {
         </div>
         {!visible.length && <div className="empty-state"><h2>محصولی پیدا نشد.</h2><button onClick={resetFilters}>پاک کردن فیلترها</button></div>}
       </section>
-    </main>
+      <CommerceFooter />
+</main>
   );
 }
