@@ -8,7 +8,7 @@ export default function ContactPage() {
   return (
     <main className="contact-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav>
           <Link href="/shop/">فروشگاه</Link>
           <Link href="/cart/">سبد خرید</Link>
@@ -16,7 +16,7 @@ export default function ContactPage() {
       </header>
 
       <section className="contact-hero">
-        <p className="eyebrow">VELOURA SUPPORT</p>
+        <p className="eyebrow">FATIKHAN SUPPORT</p>
         <h1>پشتیبانی،<br/><em>شفاف و مستقیم.</em></h1>
         <p>
           برای پرسش درباره محصول، خرید یا هماهنگی سفارش از ایمیل رسمی پشتیبانی استفاده کن.

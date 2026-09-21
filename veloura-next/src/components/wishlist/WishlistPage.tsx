@@ -21,7 +21,7 @@ export default function WishlistPage() {
   return (
     <main className="utility-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav><Link href="/shop/">فروشگاه</Link><Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link><Link href="/cart/">سبد <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
       <section className="utility-head"><p className="eyebrow">YOUR EDIT</p><h1>علاقه‌مندی‌ها</h1><p>{formatFaNumber(items.length)} محصول برای بعد ذخیره شده.</p></section>

@@ -21,7 +21,7 @@ export default function ComparePage() {
   return (
     <main className="utility-page compare-page">
       <header className="shop-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav><Link href="/shop/">فروشگاه</Link><Link href="/cart/">سبد خرید <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link></nav>
       </header>
 

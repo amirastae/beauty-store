@@ -71,7 +71,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   return (
     <main className="pdp">
       <header className="pdp-nav">
-        <Link href="/" className="brand">VELOURA</Link>
+        <Link href="/" className="brand">FATIKHAN</Link>
         <nav className="pdp-nav-links">
           <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
           <Link href="/cart/">سبد <span aria-live="polite">({formatFaNumber(cartCount)})</span></Link>
@@ -195,7 +195,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       )}
 
       <section className="pdp-editorial">
-        <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
+        <div><p className="eyebrow">FATIKHAN OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
         <span>03 / PRODUCT STORY</span>
       </section>
       <CommerceFooter />
