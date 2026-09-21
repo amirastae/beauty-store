@@ -120,7 +120,7 @@ export default function Storefront() {
       <section className="editorial" id="story">
         <div className="editorial-media">
           <Image
-            src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1600&q=90"
+            src="/editorial-hero.jpg"
             alt="کمپین آرایشی ولورا"
             fill
             sizes="(max-width: 900px) 100vw, 58vw"
@@ -219,14 +219,6 @@ export default function Storefront() {
           <button type="submit">عضویت ←</button>
         </form>
       </section>
-
-      <footer>
-        <div className="footer-word">VELOURA</div>
-        <div className="footer-row">
-          <span>BEAUTY / 2026</span>
-          <span>فارسی · RTL · PREMIUM COMMERCE</span>
-        </div>
-      </footer>
 
       <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
         <div className="drawer-head">

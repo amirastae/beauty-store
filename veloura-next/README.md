@@ -1,35 +1,31 @@
-# VELOURA Next — v2.1.0
+# VELOURA Next — v2.2.0
 
-Premium Persian RTL cosmetics storefront for Cloudflare static delivery.
+Premium Persian RTL cosmetics storefront for fast static delivery on Cloudflare.
 
-## Production-grade surface
-- 56 local beauty products across skincare, makeup, fragrance, haircare, sets and wellness
-- 56 statically generated crawlable PDP routes
-- Persian RTL commerce UX
-- adaptive R3F hero with weak-device fallback
-- GSAP/ScrollTrigger signature product film
-- interactive Shade Lab
-- editorial / bundle / UGC / discovery / trust chapters
-- URL-backed shop filtering + sorting + search
-- persistent cart + quantity controls
-- persistent wishlist
-- checkout information shell with no fake payment completion
-- mobile commerce dock + PDP sticky buy bar
-- Product + Organization JSON-LD
-- sitemap + robots + branded 404
-- reduced-motion and Save-Data/device capability fallback
+## v2.2 highlights
+- 56 local beauty products and 56 static PDP routes
+- local editorial + UGC media; no Unsplash runtime dependency
+- richer PDP: benefits, localized usage guidance, ingredients, breadcrumbs and related products
+- product JSON-LD + BreadcrumbList schema
+- ingredient-aware catalog search
+- dedicated /search route
+- URL-backed category, budget, rating and shade filters
+- persistent wishlist, cart quantity controls and mobile commerce dock
+- checkout draft persistence on-device with no fake payment state
+- global premium footer
+- About + FAQ routes
+- adaptive R3F hero + GSAP signature product film + Shade Lab
+- reduced-motion / Save-Data / weak-device fallbacks
+- branded static 404
 
-## Release verification
-v2.1.0 was verified with:
-- TypeScript: PASS
-- Next.js 16 production build: PASS
-- 65 static pages generated
-- 56 local product images exported
-- Cloudflare temporary preview: PASS
-- 58 sitemap URLs: HTTP 200
-- 56 product image assets: HTTP 200
-- branded 404: PASS
-- full preview verification: PASS
+## Verification baseline
+Before production release:
+- TypeScript must pass
+- Next.js production build must pass
+- all static routes must generate
+- Cloudflare temporary preview must pass HTTP smoke
+- all sitemap URLs and local media must return 200
+- branded 404 must return 404 with custom content
 
 ## Release discipline
 Stable releases are copied under `/versions/` before the next development cycle.

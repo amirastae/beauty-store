@@ -10,7 +10,7 @@ import { useWishlist } from "@/store/wishlist";
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail({ product, related }: { product: Product; related: Product[] }) {
   const [shadeId, setShadeId] = useState(product.shades?.[0]?.id);
   const [added, setAdded] = useState(false);
   const add = useCart((state) => state.add);
@@ -32,7 +32,13 @@ export default function ProductDetail({ product }: { product: Product }) {
     <main className="pdp">
       <header className="pdp-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <Link href="/#products">بازگشت به فروشگاه ←</Link>
+        <nav className="pdp-crumbs" aria-label="مسیر صفحه">
+          <Link href="/shop/">فروشگاه</Link>
+          <span>/</span>
+          <Link href={"/shop/?category=" + encodeURIComponent(product.category)}>{product.category}</Link>
+          <span>/</span>
+          <b>{product.nameFa}</b>
+        </nav>
       </header>
 
       <section className="pdp-hero">
@@ -47,10 +53,10 @@ export default function ProductDetail({ product }: { product: Product }) {
             />
             {product.badge && <span className="badge">{product.badge}</span>}
           </div>
-          <div className="pdp-thumb-row" aria-hidden="true">
-            <span className="active" />
-            <span />
-            <span />
+          <div className="pdp-media-meta">
+            <span>{product.brand}</span>
+            <span>{product.category}</span>
+            <span>PRODUCT OBJECT</span>
           </div>
         </div>
 
@@ -59,7 +65,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           <h1>{product.nameFa}</h1>
           <p className="pdp-en">{product.nameEn}</p>
 
-          <div className="pdp-rating">★ {product.rating} <span>{fa.format(product.reviewCount)} دیدگاه</span></div>
+          <div className="pdp-rating">★ {product.rating} <span>{fa.format(product.reviewCount)} امتیاز</span></div>
 
           <div className="pdp-price">
             <strong>{money(product.price)}</strong>
@@ -67,9 +73,13 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
 
           <p className="pdp-description">
-            تجربه‌ای پریمیوم با تمرکز روی بافت، رنگ و استفاده روزانه. طراحی شده برای اینکه انتخاب محصول
-            سریع بماند و حس کمپین لوکس از بین نرود.
+            محصولی از کالکشن ولورا با تمرکز روی تجربه استفاده، انتخاب روشن و اطلاعات کاربردی؛
+            بدون شلوغی اضافه در مسیر خرید.
           </p>
+
+          <ul className="pdp-benefits">
+            {product.benefitsFa.map((benefit) => <li key={benefit}>{benefit}</li>)}
+          </ul>
 
           {product.shades && (
             <fieldset className="pdp-shades">
@@ -105,29 +115,62 @@ export default function ProductDetail({ product }: { product: Product }) {
 
           <div className="pdp-trust">
             <span>ضمانت اصالت</span>
-            <span>ارسال سریع</span>
-            <span>پرداخت امن</span>
+            <span>ارسال قابل پیگیری</span>
+            <span>پرداخت امن پس از اتصال درگاه</span>
           </div>
         </aside>
       </section>
 
-      <section className="pdp-details">
-        <article><span>01</span><h2>چرا خاص است؟</h2><p>فرمول و طراحی محصول برای استفاده واقعی، با تمرکز بر راحتی، جلوه و ماندگاری متعادل.</p></article>
-        <article><span>02</span><h2>روش استفاده</h2><p>محصول را به‌صورت لایه‌ای استفاده کن و شدت نتیجه را متناسب با استایل خودت تنظیم کن.</p></article>
-        <article><span>03</span><h2>جزئیات فرمول</h2><p>اطلاعات کامل ترکیبات، سازگاری و نکات محصول در نسخه داده واقعی از کاتالوگ نمایش داده می‌شود.</p></article>
+      <section className="pdp-details-rich">
+        <article>
+          <span>01</span>
+          <h2>چرا انتخابش کنیم؟</h2>
+          <ul>{product.benefitsFa.map((benefit) => <li key={benefit}>{benefit}</li>)}</ul>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>روش استفاده</h2>
+          <p>{product.usageFa}</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>ترکیبات شاخص</h2>
+          <div className="ingredient-chips">
+            {product.ingredients.map((ingredient) => <span key={ingredient}>{ingredient}</span>)}
+          </div>
+        </article>
       </section>
 
       <section className="pdp-review-shell">
         <div>
           <p className="eyebrow">REVIEWS · VERIFIED PURCHASES</p>
           <h2>{product.rating} <span>/ 5</span></h2>
-          <p>{fa.format(product.reviewCount)} امتیاز ثبت‌شده برای این محصول.</p>
+          <p>{fa.format(product.reviewCount)} امتیاز تجمیعی در کاتالوگ.</p>
         </div>
         <div className="review-policy">
           <strong>دیدگاه واقعی، نه متن ساختگی.</strong>
-          <p>متن دیدگاه‌های خریداران پس از اتصال سیستم سفارش و تایید خرید نمایش داده می‌شود. تا آن زمان فقط امتیاز تجمیعی کاتالوگ نشان داده می‌شود.</p>
+          <p>متن دیدگاه خریداران فقط بعد از اتصال سیستم سفارش و تایید خرید نمایش داده می‌شود. تا آن زمان هیچ testimonial ساختگی منتشر نمی‌شود.</p>
         </div>
       </section>
+
+      {related.length > 0 && (
+        <section className="related-products">
+          <div className="related-head">
+            <div><p className="eyebrow">RELATED EDIT</p><h2>در همین حال‌وهوا.</h2></div>
+            <Link href={"/shop/?category=" + encodeURIComponent(product.category)}>همه {product.category} ←</Link>
+          </div>
+          <div className="related-grid">
+            {related.map((item) => (
+              <article key={item.id}>
+                <Link href={"/product/" + item.slug} className="related-image">
+                  <Image src={item.image} alt={item.imageAlt} fill sizes="(max-width:700px) 50vw,25vw" />
+                </Link>
+                <div><Link href={"/product/" + item.slug}>{item.nameFa}</Link><span>{money(item.price)}</span></div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="pdp-editorial">
         <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
