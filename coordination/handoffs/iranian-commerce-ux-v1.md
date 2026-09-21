@@ -1,7 +1,7 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `5680d531b052d15f6c003d74d3bf9ec0be271c55`
+- Tested code commit: `93c697e16ebb0b04aa73322b431c5d1b6e12c22f`
 - Verification run: `clean public clone verification`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
@@ -24,6 +24,7 @@
 - Responsive compare table for price/category/brand/shades.
 - Live reactive cart counters on shop, wishlist, product and compare routes.
 - AM/PM skincare routine guide as an isolated public route.
+- Recently viewed products are persisted locally, reconciled against the current catalog and shown only on product pages.
 
 ### Cart/state
 - Zustand cart/wishlist/compare hydration is explicitly deferred until mount to avoid SSR hydration mismatch.
@@ -66,6 +67,11 @@
 - robots allows those pages to be crawled so crawlers can actually observe their meta `noindex` directives; they are not blocked with `Disallow`.
 - Routine route is public and included in sitemap.
 
+### Accessibility
+- Skip navigation link to the main content target on every rendered route.
+- Visible `:focus-visible` treatment for keyboard navigation.
+- Accessibility smoke gate verifies skip target plus existing lang/dir/H1/alt/button/ID/zoom invariants.
+
 ### Security / performance
 - Next.js pinned to stable `16.3.5` instead of a floating `^16.0.0` range.
 - Cloudflare static response headers in `public/_headers`:
@@ -81,7 +87,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-Clean public clone verification on tested code commit `5680d531b052d15f6c003d74d3bf9ec0be271c55`:
+Clean public clone verification on tested code commit `93c697e16ebb0b04aa73322b431c5d1b6e12c22f`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -90,6 +96,8 @@ Clean public clone verification on tested code commit `5680d531b052d15f6c003d74d
 - `npm run catalog:check`: PASS — 4 products / 4 unique canonicals
 - `npm run a11y:check`: PASS — 13 pages / 20 images / 77 buttons
 - `npm run security:check`: PASS
+
+CI itself is bounded with a 10-minute timeout, read-only repository permission and concurrency cancellation for stale runs. Manual `workflow_dispatch` verification is also available.
 
 The custom gates cover:
 - canonical/noindex/robots/sitemap/JSON-LD expectations,

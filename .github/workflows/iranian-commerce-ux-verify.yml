@@ -1,15 +1,24 @@
 name: Iranian Commerce UX Verify
 
 on:
+  workflow_dispatch:
   push:
     branches: [iranian-commerce-ux-v1]
     paths:
       - "veloura-next/**"
       - ".github/workflows/iranian-commerce-ux-verify.yml"
 
+permissions:
+  contents: read
+
+concurrency:
+  group: iranian-commerce-ux-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: veloura-next
