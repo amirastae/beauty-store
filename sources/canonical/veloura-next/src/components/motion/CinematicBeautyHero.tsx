@@ -156,6 +156,7 @@ export default function CinematicBeautyHero() {
       ref={root}
       aria-labelledby="cinematic-title"
       data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
+      data-cinematic-runtime="healthy-scroll-v1"
     >
       <div className="cinematic-sticky">
         {VIDEO_SCRUB_ENABLED && <video
