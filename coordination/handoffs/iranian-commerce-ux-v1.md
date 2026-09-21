@@ -1,10 +1,18 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `89cd3662add4ec936a8d12255af05d04b3a3a376`
-- Verification run: `35564644984`
+- Tested code commit: `5268f3eb1852e8219625ffce5bb80fe77f123f07`
+- Verification run: `35566012580`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
-- Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
+- Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial logic remains untouched; only authoritative brand literals were aligned to FATIKHAN. Production deployment remains untouched.
+
+## Brand identity
+
+- Authoritative user-visible brand: `FATIKHAN`.
+- User-visible `VELOURA` / `ولورا` has been removed from `veloura-next/src` and the branch README.
+- Technical lowercase identifiers are intentionally preserved for compatibility: `veloura-next`, `veloura-*` persisted storage keys and `/api/v1/compat/veloura-v2/resolve`.
+- `npm run brand:check` locks this invariant in CI.
+- Integration drift is tracked in issue #44: canonical staging source is FATIKHAN, while current final/public artifacts still carry the old brand.
 
 ## Official store contact
 
@@ -93,7 +101,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-GitHub Actions verification on tested code commit `89cd3662add4ec936a8d12255af05d04b3a3a376`:
+GitHub Actions verification on tested code commit `5268f3eb1852e8219625ffce5bb80fe77f123f07`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -103,7 +111,8 @@ GitHub Actions verification on tested code commit `89cd3662add4ec936a8d12255af05
 - `npm run a11y:check`: PASS — 13 pages / 20 images / 77 buttons
 - `npm run security:check`: PASS
 - `npm run performance:check`: PASS — baseline guard for total output, JS, largest JS chunk, CSS and HTML page size
-- `npm run mutation-safety:check`: PASS — frontend cannot call cart/order/payment mutation endpoints while blocker #42 remains open
+- `npm run mutation-safety:check`: PASS — frontend cannot call cart/order/payment mutation endpoints while production-readiness blockers remain open
+- `npm run brand:check`: PASS — FATIKHAN visible identity locked; legacy VELOURA/ولورا display strings absent
 
 CI itself is bounded with a 10-minute timeout, read-only repository permission and concurrency cancellation for stale runs. Manual `workflow_dispatch` verification is also available.
 
@@ -132,36 +141,41 @@ The custom gates cover:
 ## Current commerce-core integration status
 
 Rechecked parallel backend branch:
-- `commerce-core-v1@cecea343cd17ab75e237eb573db3d0533c36efa7`
+- `commerce-core-v1@369c63030ff5a0ae6a6a20e6e95455da9b6b3175`
 
-Relevant endpoints still present:
+Relevant endpoints:
 - `POST /api/v1/compat/veloura-v2/resolve`
 - `GET /api/v1/inventory/:variantId`
 - `POST /api/v1/carts`
 - `POST /api/v1/carts/:id/items`
 - `POST /api/v1/checkout/:cartId`
+- `POST /api/v1/payments/:orderId/start`
+- `GET /api/v1/payments/zarinpal/callback`
 
-This UI branch intentionally consumes only the read/resolve path for safe verification.
+This UI branch intentionally consumes only the read/resolve path for price/inventory verification.
 
-### Current backend readiness and blocker before mutating checkout is enabled
-Rechecked parallel backend branch:
-- `commerce-core-v1@f5a748a6eea499b531668f0e5146327fd07fec20`
+### Backend progress verified
+- Shipping policy is currency-aware and reads per-currency flat/free-threshold configuration.
+- Checkout accepts email **or** phone, matching the Iran mobile-first frontend contract.
+- Zarinpal request/start + callback + verify adapter exists.
+- Inventory handling moved to reservation-first behavior.
+- Cancelled/failed payment paths release reservation.
+- Successful payment verification finalizes inventory.
+- Expired unpaid orders have reservation-release logic.
 
-Resolved since the earlier handoff:
-- Shipping policy is now currency-aware and reads per-currency flat/free-threshold configuration.
-- Checkout now accepts email **or** phone, so the Iran mobile-first frontend contract is compatible.
-- A Zarinpal start + callback + verify adapter exists in code.
-
-Still required before frontend mutation checkout is enabled:
-1. **Inventory/payment invariant — BLOCKER:** checkout currently decrements stock before payment is verified, while cancelled/failed payment callbacks do not restore that stock. Coordination issue: https://github.com/amirastae/beauty-store/issues/42
-2. Runtime shipping variables must actually be configured for IRR in the deployed commerce worker; repo config does not prove runtime values.
+### Remaining production-readiness blockers
+1. **Inventory/payment regression coverage (#42):** the original unsafe stock-finalization mechanism is corrected in code, but automated tests still need to prove successful finalize, cancel/fail release, duplicate callback idempotency, unpaid expiry release and no double-release/double-finalize.
+2. Runtime IRR shipping variables must be verified in the deployed commerce worker.
 3. Runtime payment provider configuration must be verified (`PAYMENT_PROVIDER`, merchant secret, callback base and storefront base). Secrets/runtime bindings are intentionally not inspected or modified by this frontend workstream.
-4. Add regression coverage for paid, cancelled, failed, duplicate callback and unpaid-expiry inventory behavior.
+4. **Authoritative payment-return lookup (#45):** query parameters such as `?payment=success` are not proof of payment. Backend needs a minimal abuse-resistant read endpoint or opaque receipt/status token so frontend can re-fetch final status without exposing PII.
+5. **Staging brand artifact drift (#44):** current `integration-staging` canonical source is FATIKHAN, but `sources/final` and `public` still carry VELOURA/ولورا and must be rebuilt from canonical before promotion.
 
 Therefore:
 - keep frontend checkout mutation disabled;
 - retain current read-only server price/inventory verification;
-- enable order/payment mutation only after #42 is fixed and runtime provider/config verification passes;
+- treat payment-return query state only as return-path UX, not authoritative proof;
+- enable order/payment mutation only after #42 regression coverage and runtime provider/config verification pass;
+- resolve #44 through canonical -> verified final -> public propagation, not manual artifact renaming;
 - integrate through the designated staging process, not direct production.
 
 ## Remaining non-blocking caveats
@@ -171,7 +185,7 @@ Therefore:
 
 ## Non-interference / promotion rules
 - Do not merge this branch wholesale into production.
-- Do not overwrite homepage/motion/design work from other chats.
+- Do not overwrite homepage/motion/design logic from other chats; only authoritative FATIKHAN brand literals may be aligned.
 - Review overlapping frontend files in `integration-staging`.
 - Commerce-core remains source of truth for final price, inventory, shipping and payment.
 - Production branch `cloudflare-site` was not modified by this workstream.
