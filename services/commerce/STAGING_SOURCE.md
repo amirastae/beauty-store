@@ -1,18 +1,12 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `a2a752eb4df43d04310505efb36db19346b635de`
+Source commit: `93ad9a1fc577ffc4ed7fec013e6b2bd2c37be5c5`
 
-This snapshot supports the single FATIKHAN Golestan-style canonical site.
+Latest release-critical verification:
+- authoritative receipt-status lookup + no-store + rate-limit binding;
+- reservation-first inventory;
+- abandoned order release;
+- payment lifecycle regression harness covering verified success, cancellation, provider request rejection, verification failure, duplicate callback and expiry release.
 
-Verified latest capabilities:
-- reservation-first inventory and abandoned-order cleanup
-- Iranian phone + IRR shipping checkout
-- disabled-by-default Zarinpal provider adapter
-- opaque non-PII order/payment receipt-status lookup
-- no-store response policy
-- optional Cloudflare Rate Limiting binding for receipt lookup
-- real Cloudflare temporary Worker + D1 integration: PASS
-- TypeScript + Wrangler preview dry-run with D1/R2/rate-limit bindings: PASS
-
-Production still requires authenticated account D1/R2/payment credentials before mutation checkout is enabled.
+This service remains subordinate to the FATIKHAN Golestan-style canonical frontend.

@@ -100,3 +100,40 @@ jobs:
           fi
           bash tests/integration.sh http://127.0.0.1:8787
           node tests/concurrent-checkout.mjs http://127.0.0.1:8787
+
+      - name: Payment lifecycle regression with mock provider
+        run: |
+          set -euo pipefail
+          rm -rf .wrangler/state
+          npm run db:migrate:preview-local
+          npm run db:seed:preview-local
+          cat > .dev.vars <<'EOF'
+          PAYMENT_PROVIDER=zarinpal
+          ZARINPAL_MERCHANT_ID=test-merchant
+          PAYMENT_CALLBACK_BASE_URL=http://127.0.0.1:8787
+          ZARINPAL_API_BASE=http://127.0.0.1:8790
+          ZARINPAL_STARTPAY_BASE=http://127.0.0.1:8790/start
+          EOF
+          node tests/mock-zarinpal.mjs > /tmp/mock-zarinpal.log 2>&1 &
+          mock_pid=$!
+          npm run dev:preview > /tmp/veloura-commerce-payment-dev.log 2>&1 &
+          worker_pid=$!
+          cleanup() {
+            kill "$worker_pid" "$mock_pid" 2>/dev/null || true
+            rm -f .dev.vars
+          }
+          trap cleanup EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/payment-health.json; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then
+            cat /tmp/veloura-commerce-payment-dev.log
+            cat /tmp/mock-zarinpal.log
+            exit 1
+          fi
+          node tests/payment-lifecycle.mjs http://127.0.0.1:8787 http://127.0.0.1:8790
