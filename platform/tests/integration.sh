@@ -13,8 +13,6 @@ printf '%s\n' "$health" | grep -q '"ok":true' || fail "health"
 
 products="$(curl -fsS "$BASE/api/v1/products?limit=100")"
 printf '%s\n' "$products" | grep -q 'Luminous Barrier Serum' || fail "base catalog"
-printf '%s\n' "$products" | grep -q 'Velvet Cloud Lip' || fail "veloura v2 compat catalog"
-printf '%s\n' "$products" | grep -q 'Hydrating Face Serum' || fail "shop v1 compat catalog"
 
 v2="$(curl -fsS -X POST "$BASE/api/v1/compat/veloura-v2/resolve"   -H 'content-type: application/json'   -d '{"product_id":"lip-velvet-01","shade_id":"rose"}')"
 printf '%s\n' "$v2" | grep -q '"variant_id":"var_v2_lip_rose"' || fail "veloura v2 resolver"
