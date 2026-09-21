@@ -81,6 +81,27 @@ const home=fs.readFileSync(path.join(root,"index.html"),"utf8");
 if(!home.includes("FATIKHAN")) failures.push("visible FATIKHAN brand missing from rendered home");
 if(/>\s*(?:VELOURA|REHHA|LUXORA)\s*</i.test(home)) failures.push("legacy visible brand detected on rendered home");
 
+
+function canonicalHref(html){
+  return html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] || "";
+}
+function hasNoIndex(html){
+  return /<meta name="robots" content="[^"]*noindex/i.test(html);
+}
+
+const homeCanonical=canonicalHref(home);
+if(!homeCanonical.endsWith("/")) failures.push("home canonical missing or invalid");
+if(homeCanonical.endsWith("/shop/")) failures.push("home canonical incorrectly points to shop");
+
+const shopHtml=fs.readFileSync(path.join(root,"shop/index.html"),"utf8");
+const shopCanonical=canonicalHref(shopHtml);
+if(!shopCanonical.endsWith("/shop/")) failures.push("shop canonical missing or does not point to /shop/");
+
+for(const route of ["cart","checkout","wishlist","compare","recent","search","offline"]){
+  const html=fs.readFileSync(path.join(root,route,"index.html"),"utf8");
+  if(!hasNoIndex(html)) failures.push(`stateful route missing noindex: /${route}/`);
+}
+
 const robots=fs.readFileSync(path.join(root,"robots.txt"),"utf8");
 for(const p of ["/cart/","/checkout/","/wishlist/","/compare/","/recent/","/search/","/offline/"]){
   if(!robots.includes(`Disallow: ${p}`)) failures.push(`robots.txt missing Disallow: ${p}`);
