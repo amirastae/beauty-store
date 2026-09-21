@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   title: "FATIKHAN — زیبایی، در دقیق‌ترین حالتش",
   description: "فروشگاه پریمیوم فارسی لوازم آرایشی، مراقبت پوست و عطر FATIKHAN.",
   metadataBase: new URL("https://beauty-store.nayererohalamini.workers.dev"),
-  alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   openGraph: {
@@ -17,7 +16,6 @@ export const metadata: Metadata = {
     description: "زیبایی، در دقیق‌ترین حالتش",
     type: "website",
     locale: "fa_IR",
-    url: "/"
   }
 };
 
