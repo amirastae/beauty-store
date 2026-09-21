@@ -14,13 +14,25 @@ import { ensurePreviewDatabase } from './lib/bootstrap'
 
 const app = new Hono<AppBindings>()
 
+function allowedOrigin(env: AppBindings['Bindings'], origin: string) {
+  if (!origin) return ''
+  const configured = (env.ALLOWED_ORIGINS || 'https://beauty-store.nayererohalamini.workers.dev')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+
+  if (configured.includes(origin)) return origin
+  if (env.APP_ENV !== 'production' && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin)) return origin
+  return ''
+}
+
 app.use('*', logger())
 app.use('/api/*', async (c, next) => {
   await ensurePreviewDatabase(c.env)
   await next()
 })
 app.use('/api/*', cors({
-  origin: (origin) => origin || '*',
+  origin: (origin, c) => allowedOrigin(c.env, origin),
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Idempotency-Key', 'Authorization', 'X-Admin-Key'],
   maxAge: 86400

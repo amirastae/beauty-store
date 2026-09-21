@@ -1,16 +1,8 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `de18de948e4459f7495f2a3146ec18937ddc81e4`
+Source commit: `cecea343cd17ab75e237eb573db3d0533c36efa7`
 
-Current verified state:
-- migrations 0001-0007
-- full VELOURA v2.1 compatibility
-- Shop v1.1 compatibility
-- currency-safe carts
-- idempotent checkout
-- per-cart checkout claim against duplicate concurrent orders
-- real Cloudflare temporary Worker + D1 verification completed
-- runtime DB bootstrap disabled in deployed configs
+Verified capabilities include D1 migrations 0001-0007, full VELOURA and Shop compatibility mappings, currency-safe carts, idempotent checkout, per-cart checkout claims, restricted browser CORS origins, and real Cloudflare temporary D1 verification.
 
-Permanent Cloudflare account authentication is still required for long-lived D1/R2 preview resources.
+Permanent D1/R2 deployment remains gated behind account-authenticated Cloudflare credentials.
