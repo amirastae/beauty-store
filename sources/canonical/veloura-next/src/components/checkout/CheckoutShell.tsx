@@ -42,7 +42,8 @@ type PendingOrder={
 };
 
 const emptyDraft:Draft={name:"",phone:"",email:"",province:"",address:"",city:"",postal:"",note:""};
-const storageKey="veloura-checkout-draft-v2";
+const draftSessionKey="veloura-checkout-draft-session-v1";
+const legacyDraftStorageKey="veloura-checkout-draft-v2";
 const pendingKey="veloura-pending-payment-v1";
 
 function commerceErrorMessage(error: unknown) {
@@ -78,8 +79,17 @@ export default function CheckoutShell(){
   useEffect(()=>{
     let savedPending:PendingOrder|null=null;
     try{
-      const raw=localStorage.getItem(storageKey);
-      if(raw) setDraft({...emptyDraft,...JSON.parse(raw)});
+      let draftRaw=sessionStorage.getItem(draftSessionKey);
+      if(!draftRaw){
+        const legacyRaw=localStorage.getItem(legacyDraftStorageKey);
+        if(legacyRaw){
+          draftRaw=legacyRaw;
+          sessionStorage.setItem(draftSessionKey,legacyRaw);
+        }
+      }
+      localStorage.removeItem(legacyDraftStorageKey);
+      if(draftRaw) setDraft({...emptyDraft,...JSON.parse(draftRaw)});
+
       const pendingRaw=sessionStorage.getItem(pendingKey);
       if(pendingRaw){
         savedPending=JSON.parse(pendingRaw) as PendingOrder;
@@ -105,7 +115,12 @@ export default function CheckoutShell(){
         if(status.payment_status==="paid"){
           setPaymentReturn("success");
           clearCheckoutIdempotency();
-          try{sessionStorage.removeItem(pendingKey)}catch{}
+          try{
+            sessionStorage.removeItem(pendingKey);
+            sessionStorage.removeItem(draftSessionKey);
+            localStorage.removeItem(legacyDraftStorageKey);
+          }catch{}
+          setDraft(emptyDraft);
           setPending(null);
           clearCart();
           return;
@@ -181,10 +196,10 @@ export default function CheckoutShell(){
     setPostalError(postalValid?"":"کد پستی باید ۱۰ رقم باشد.");
     if(!mobileValid||!postalValid||!lines.length) return;
 
-    try{ localStorage.setItem(storageKey,JSON.stringify(draft)); }catch{}
+    try{ sessionStorage.setItem(draftSessionKey,JSON.stringify(draft)); }catch{}
 
     if(!commerceEnabled){
-      setMessage("اطلاعات روی همین دستگاه ذخیره شد؛ سرویس سفارش واقعی در این build فعال نیست و هیچ سفارش یا پرداختی ساخته نشد.");
+      setMessage("اطلاعات فقط برای همین نشست مرورگر نگه‌داری شد؛ سرویس سفارش واقعی در این build فعال نیست و هیچ سفارش یا پرداختی ساخته نشد.");
       return;
     }
 
@@ -278,7 +293,7 @@ export default function CheckoutShell(){
           <button className="button button-dark wide" disabled={!lines.length||submitting}>{submitting?"در حال آماده‌سازی پرداخت…":commerceEnabled?"ثبت سفارش و رفتن به درگاه":"ذخیره اطلاعات"}</button>
         </form>
 
-        <div className="checkout-safety"><b>پرداخت نمایشی نداریم.</b><p>اطلاعات کارت در FATIKHAN دریافت یا ذخیره نمی‌شود. سفارش فقط بعد از callback تأییدشده درگاه، پرداخت‌شده محسوب می‌شود.</p></div>
+        <div className="checkout-safety"><b>پرداخت نمایشی نداریم.</b><p>اطلاعات کارت در FATIKHAN دریافت یا ذخیره نمی‌شود. پیش‌نویس اطلاعات تحویل فقط در همین نشست مرورگر نگه‌داری می‌شود و بعد از پرداخت تأییدشده پاک می‌شود.</p></div>
         <div className={message?"checkout-note success":"checkout-note"} aria-live="polite">{message||"شماره موبایل، آدرس و مبلغ نهایی قبل از پرداخت روی سرور بررسی می‌شوند."}</div>
       </section>
 
