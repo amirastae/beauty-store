@@ -8,7 +8,7 @@
   },
   "vars": {
     "APP_ENV": "preview",
-    "AUTO_BOOTSTRAP": "1"
+    "AUTO_BOOTSTRAP": "0"
   },
   "assets": {
     "directory": "./public",

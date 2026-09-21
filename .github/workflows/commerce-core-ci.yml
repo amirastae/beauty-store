@@ -12,7 +12,10 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: platform
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,39 +25,63 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Install
         run: npm install --ignore-scripts --no-audit --no-fund
 
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Browser bridge syntax
-        run: node --check public/commerce-bridge.js
+      - name: Wrangler preview dry-run
+        run: npx wrangler deploy --config wrangler.preview.jsonc --dry-run
 
-      - name: Start local Cloudflare Worker
+      - name: Base commerce integration
         run: |
-          npx wrangler dev --local --ip 127.0.0.1 --port 8787 > /tmp/veloura-wrangler.log 2>&1 &
-          echo $! > /tmp/veloura-wrangler.pid
+          set -euo pipefail
+          rm -rf .wrangler/state
+          npm run db:migrate:preview-local
+          npm run db:seed:preview-local
+          npm run dev:preview > /tmp/commerce-core-dev.log 2>&1 &
+          worker_pid=$!
+          cleanup(){ kill "$worker_pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          ready=0
           for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/health.json; then
-              cat /tmp/health.json
-              exit 0
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/core-health.json; then
+              ready=1
+              break
             fi
             sleep 1
           done
-          cat /tmp/veloura-wrangler.log
-          exit 1
-
-      - name: Commerce integration
-        run: ./platform/tests/integration.sh
-
-      - name: Worker log on failure
-        if: failure()
-        run: cat /tmp/veloura-wrangler.log || true
-
-      - name: Stop local Worker
-        if: always()
-        run: |
-          if [ -f /tmp/veloura-wrangler.pid ]; then
-            kill "$(cat /tmp/veloura-wrangler.pid)" || true
+          if [ "$ready" != "1" ]; then
+            cat /tmp/commerce-core-dev.log
+            exit 1
           fi
+          bash tests/integration.sh http://127.0.0.1:8787
+          node tests/concurrent-checkout.mjs http://127.0.0.1:8787
+
+      - name: Payment lifecycle regression
+        run: |
+          set -euo pipefail
+          rm -rf .wrangler/state
+          npx wrangler d1 migrations apply DB --config wrangler.payment-test.jsonc --local
+          npx wrangler d1 execute DB --config wrangler.payment-test.jsonc --local --file db/seed.sql
+          node tests/mock-zarinpal.mjs > /tmp/mock-zarinpal.log 2>&1 &
+          mock_pid=$!
+          npx wrangler dev --config wrangler.payment-test.jsonc --local --ip 127.0.0.1 --port 8787 > /tmp/payment-worker.log 2>&1 &
+          worker_pid=$!
+          cleanup(){ kill "$worker_pid" "$mock_pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/payment-health.json; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then
+            cat /tmp/payment-worker.log
+            cat /tmp/mock-zarinpal.log
+            exit 1
+          fi
+          node tests/payment-lifecycle.mjs http://127.0.0.1:8787 http://127.0.0.1:8790
