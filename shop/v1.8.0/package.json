@@ -1,16 +1,16 @@
 {
   "name": "veloura-beauty-store",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start",
     "typecheck": "tsc --noEmit",
-    "quality": "npm run lint && npm run typecheck && npm run build",
+    "quality": "npm run lint && npm run typecheck && npm run build && npm run audit:static",
     "deploy:cloudflare": "npx wrangler deploy",
-    "ci": "npm ci && npm run quality"
+    "ci": "npm ci --ignore-scripts && npm run quality",
+    "audit:static": "node scripts/audit-static.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
