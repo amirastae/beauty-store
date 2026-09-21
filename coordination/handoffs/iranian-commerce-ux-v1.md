@@ -1,8 +1,8 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `98d9654ffdee8b8169c8096df4ac4c49496af551`
-- Verification run: `35564494899`
+- Tested code commit: `89cd3662add4ec936a8d12255af05d04b3a3a376`
+- Verification run: `35564644984`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
 
@@ -70,6 +70,8 @@
 - Routine route is public and included in sitemap.
 
 ### Accessibility
+- Control labels/state are explicit for wishlist, compare, add-to-cart and visual shade swatches.
+- Compare/wishlist controls expose `aria-pressed` and accessible action names without visual changes.
 - Skip navigation link to the main content target on every rendered route.
 - Visible `:focus-visible` treatment for keyboard navigation.
 - Accessibility smoke gate verifies skip target plus existing lang/dir/H1/alt/button/ID/zoom invariants.
@@ -91,7 +93,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-GitHub Actions verification on tested code commit `98d9654ffdee8b8169c8096df4ac4c49496af551`:
+GitHub Actions verification on tested code commit `89cd3662add4ec936a8d12255af05d04b3a3a376`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -101,6 +103,7 @@ GitHub Actions verification on tested code commit `98d9654ffdee8b8169c8096df4ac4
 - `npm run a11y:check`: PASS — 13 pages / 20 images / 77 buttons
 - `npm run security:check`: PASS
 - `npm run performance:check`: PASS — baseline guard for total output, JS, largest JS chunk, CSS and HTML page size
+- `npm run mutation-safety:check`: PASS — frontend cannot call cart/order/payment mutation endpoints while blocker #42 remains open
 
 CI itself is bounded with a 10-minute timeout, read-only repository permission and concurrency cancellation for stale runs. Manual `workflow_dispatch` verification is also available.
 
