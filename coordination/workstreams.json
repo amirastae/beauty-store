@@ -1,0 +1,45 @@
+{
+  "updated_at": "2026-09-21T05:31:00+03:30",
+  "production": {
+    "branch": "cloudflare-site",
+    "sha": "4683bc2fdbfda6e7ded412941eab86283c45c708"
+  },
+  "integration": {
+    "branch": "integration-staging",
+    "base": "cloudflare-site",
+    "sha": "4683bc2fdbfda6e7ded412941eab86283c45c708"
+  },
+  "workstreams": [
+    {
+      "branch": "beauty-v2-foundation",
+      "sha": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
+      "role": "frontend-foundation"
+    },
+    {
+      "branch": "veloura-v2.1-polish",
+      "sha": "da691bebfd9de28094b96dac40fe73710254c2f0",
+      "role": "ui-polish"
+    },
+    {
+      "branch": "shop-v1.1.0-work",
+      "sha": "12dd4e0624dfb437bf2e405b8e6d6eb3594fab3d",
+      "role": "shop-catalog-assets"
+    },
+    {
+      "branch": "commerce-core-v1",
+      "sha": "a3b6587763466f1f171738d70d3b4fa011cac4f0",
+      "role": "backend-commerce-core"
+    },
+    {
+      "branch": "commerce-infrastructure-lab",
+      "sha": "6878025abbf770a8e1deb47b3542615d8bcf814d",
+      "role": "reference-only"
+    }
+  ],
+  "rules": {
+    "only_integration_target": "integration-staging",
+    "only_production_source": "cloudflare-site",
+    "direct_cross_branch_edits": false,
+    "production_requires_staging_verify": true
+  }
+}
