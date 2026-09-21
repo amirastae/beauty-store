@@ -1,8 +1,8 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested code commit: `59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1`
-- Verification run: `35561513257`
+- Tested code commit: `98d9654ffdee8b8169c8096df4ac4c49496af551`
+- Verification run: `35564494899`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
 
@@ -48,6 +48,7 @@
 - Insufficient stock, stale price, missing mapping and backend-unavailable states are surfaced without creating an order.
 - No backend cart creation, reservation, order creation or payment mutation is enabled from this branch.
 - If Commerce API is absent, UI explicitly states that no order/payment was created.
+- Payment return UI safely handles backend callback redirects for `success`, `failed`, and `cancelled`, including sanitized order-number display; it does not itself mutate payment/order state.
 
 ### Product/trust
 - Toman and compare-at display.
@@ -90,7 +91,7 @@
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-GitHub Actions verification on tested code commit `59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1`:
+GitHub Actions verification on tested code commit `98d9654ffdee8b8169c8096df4ac4c49496af551`:
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
@@ -139,23 +140,30 @@ Relevant endpoints still present:
 
 This UI branch intentionally consumes only the read/resolve path for safe verification.
 
-### Blockers before mutating checkout is enabled
-1. Shipping is still computed in commerce-core with a currency-agnostic fixed rule:
-   `subtotal >= 7500 ? 0 : 800`
-   while carts may be USD or IRR. This must become currency-aware or be replaced by the real shipping service/policy.
-2. Backend checkout currently requires a valid email, while this Iran-focused UI treats email as optional and mobile as the primary contact. The contract must be aligned before mutation checkout is enabled.
-3. Payment remains `requires_provider` / unconfigured until a real provider adapter and verified webhook flow exist.
+### Current backend readiness and blocker before mutating checkout is enabled
+Rechecked parallel backend branch:
+- `commerce-core-v1@f5a748a6eea499b531668f0e5146327fd07fec20`
+
+Resolved since the earlier handoff:
+- Shipping policy is now currency-aware and reads per-currency flat/free-threshold configuration.
+- Checkout now accepts email **or** phone, so the Iran mobile-first frontend contract is compatible.
+- A Zarinpal start + callback + verify adapter exists in code.
+
+Still required before frontend mutation checkout is enabled:
+1. **Inventory/payment invariant — BLOCKER:** checkout currently decrements stock before payment is verified, while cancelled/failed payment callbacks do not restore that stock. Coordination issue: https://github.com/amirastae/beauty-store/issues/42
+2. Runtime shipping variables must actually be configured for IRR in the deployed commerce worker; repo config does not prove runtime values.
+3. Runtime payment provider configuration must be verified (`PAYMENT_PROVIDER`, merchant secret, callback base and storefront base). Secrets/runtime bindings are intentionally not inspected or modified by this frontend workstream.
+4. Add regression coverage for paid, cancelled, failed, duplicate callback and unpaid-expiry inventory behavior.
 
 Therefore:
-- do not enable frontend cart/order mutation yet;
-- fix the shipping policy/service;
-- decide the email-vs-mobile checkout contract;
-- attach and verify the real payment provider/webhook;
-- integrate only through `integration-staging`, not directly to production.
+- keep frontend checkout mutation disabled;
+- retain current read-only server price/inventory verification;
+- enable order/payment mutation only after #42 is fixed and runtime provider/config verification passes;
+- integrate through the designated staging process, not direct production.
 
 ## Remaining non-blocking caveats
 - Product imagery still comes from `images.unsplash.com`; for maximum Iran resilience/performance, local/R2-owned product media should replace runtime third-party image dependency in the asset workstream.
-- There is no committed npm lockfile in `veloura-next`; CI deliberately generates one before `npm ci`, and Next itself is pinned, but a committed lockfile would improve total dependency reproducibility.
+- `veloura-next/package-lock.json` is now committed (lockfile v3), and CI runs `npm ci` directly from the committed dependency graph.
 - Catalog values are still the current project catalog/seed until the final production merchandising source is approved.
 
 ## Non-interference / promotion rules
