@@ -1,10 +1,42 @@
 {
   "name": "VELOURA Beauty Store",
-  "version": "1.6.0",
-  "status": "verified-checkpoint",
-  "quality": {"eslint": "pass", "typescript": "pass", "next_build_typescript": "pass", "build": "pass"},
-  "cloudflare": {"wrangler_dry_run": "pass", "assets_read": 1069, "headers_file": true, "not_found_handling": "404-page", "html_handling": "auto-trailing-slash"},
-  "security": ["nosniff", "referrer-policy", "same-origin framing", "permissions-policy", "COOP", "CSP"],
-  "cache": {"fingerprinted_next_static": "immutable-1y"},
-  "notes": ["ignoreBuildErrors removed", "React strict mode enabled", "Cloudflare Workers Static Assets config added", "quality and deploy scripts added"]
+  "version": "1.7.0",
+  "status": "git-guarded-checkpoint",
+  "inherited_from": "1.6.0",
+  "quality_baseline": {
+    "eslint": "pass",
+    "typescript": "pass",
+    "next_build_typescript": "pass",
+    "build": "pass"
+  },
+  "cloudflare": {
+    "wrangler_dry_run": "pass",
+    "assets_read": 1069,
+    "headers_file": true,
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "security": [
+    "nosniff",
+    "referrer-policy",
+    "same-origin framing",
+    "permissions-policy",
+    "COOP",
+    "CSP"
+  ],
+  "cache": {
+    "fingerprinted_next_static": "immutable-1y"
+  },
+  "release_guards": [
+    "branch-scoped GitHub Actions quality workflow",
+    "npm ci lockfile install",
+    "lint",
+    "typecheck",
+    "production build",
+    "release checklist"
+  ],
+  "notes": [
+    "No production branch changes",
+    "No remote-server build required for this versioning step"
+  ]
 }
