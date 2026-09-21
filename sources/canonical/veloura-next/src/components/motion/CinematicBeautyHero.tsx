@@ -1,0 +1,139 @@
+"use client";
+
+import Image from "next/image";
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import HeroStage from "@/components/motion/HeroStage";
+
+gsap.registerPlugin(ScrollTrigger);
+
+export default function CinematicBeautyHero() {
+  const root = useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
+      gsap.set(".chapter-two, .chapter-three, .chapter-four", { opacity: 0, y: 34 });
+      gsap.set(".cinematic-progress-fill", { scaleY: 0, transformOrigin: "50% 0%" });
+
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.9,
+          invalidateOnRefresh: true
+        }
+      });
+
+      tl.to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
+        .to(".cinematic-product-frame", { scale: 1.06, rotate: 1.5, yPercent: -3, duration: 0.9 }, 0.05)
+        .to(".chapter-one", { opacity: 0, y: -28, duration: 0.28 }, 0.62)
+        .to(".cinematic-stage-one", { opacity: 0.12, scale: 1.08, duration: 0.45 }, 0.64)
+        .to(".cinematic-stage-two", { opacity: 1, scale: 1, duration: 0.48 }, 0.72)
+        .to(".chapter-two", { opacity: 1, y: 0, duration: 0.34 }, 0.78)
+
+        .to(".chapter-two", { opacity: 0, y: -28, duration: 0.28 }, 1.48)
+        .to(".cinematic-stage-two", { opacity: 0.08, scale: 1.07, duration: 0.45 }, 1.50)
+        .to(".cinematic-stage-three", { opacity: 1, scale: 1, duration: 0.48 }, 1.58)
+        .to(".chapter-three", { opacity: 1, y: 0, duration: 0.34 }, 1.64)
+
+        .to(".chapter-three", { opacity: 0, y: -28, duration: 0.28 }, 2.34)
+        .to(".cinematic-stage-three", { opacity: 0.1, scale: 1.07, duration: 0.45 }, 2.36)
+        .to(".cinematic-stage-four", { opacity: 1, scale: 1, duration: 0.52 }, 2.44)
+        .to(".chapter-four", { opacity: 1, y: 0, duration: 0.36 }, 2.50)
+        .to(".cinematic-stage-four img", { scale: 1.035, duration: 1.18 }, 2.64)
+        .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.0 }, 2.70);
+    });
+
+    return () => mm.revert();
+  }, { scope: root });
+
+  return (
+    <section className="cinematic-hero" ref={root} aria-labelledby="cinematic-title">
+      <div className="cinematic-sticky">
+        <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
+          <div className="cinematic-product-frame">
+            <HeroStage />
+          </div>
+        </div>
+
+        <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
+          <Image
+            src="/editorial-hero.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
+
+        <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
+          <Image
+            src="/date-night-makeup-set.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+          />
+        </div>
+
+        <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
+          <Image
+            src="/signature-collection-set.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+          />
+        </div>
+
+        <div className="cinematic-final-glow" aria-hidden="true" />
+        <div className="cinematic-vignette" aria-hidden="true" />
+        <div className="cinematic-grain" aria-hidden="true" />
+
+        <div className="cinematic-copy">
+          <article className="cinematic-chapter chapter-one">
+            <span className="cinematic-kicker">01 · ORIGIN</span>
+            <h1 id="cinematic-title">VELOURA</h1>
+            <p className="cinematic-subtitle">زیبایی، وقتی دقیق می‌شود.</p>
+            <small>نور · پوست · بافت · حضور</small>
+          </article>
+
+          <article className="cinematic-chapter chapter-two">
+            <span className="cinematic-kicker">02 · TEXTURE</span>
+            <h2>بافت را ببین.<br/><em>لمسش را تصور کن.</em></h2>
+            <p>فرمول‌های سبک، پرداخت تمیز و جزئیاتی که از نزدیک معنا پیدا می‌کنند.</p>
+          </article>
+
+          <article className="cinematic-chapter chapter-three">
+            <span className="cinematic-kicker">03 · COLOR</span>
+            <h2>رنگ،<br/><em>در لحظه‌ی درست.</em></h2>
+            <p>از رنگ‌های روزمره تا انتخاب‌های جسور؛ بدون شلوغی، فقط تمرکز روی خود محصول.</p>
+          </article>
+
+          <article className="cinematic-chapter chapter-four">
+            <span className="cinematic-kicker">04 · INVITATION</span>
+            <h2>انتخاب کن.<br/><em>نزدیک شو. بدرخش.</em></h2>
+            <p>کالکشن ولورا را بر اساس پوست، آرایش، عطر و مو کشف کن.</p>
+            <div className="cinematic-actions">
+              <a href="#products">کشف کالکشن</a>
+              <a href="/shop/">ورود به فروشگاه ↗</a>
+            </div>
+          </article>
+        </div>
+
+        <div className="cinematic-progress" aria-hidden="true">
+          <span>01</span>
+          <i><b className="cinematic-progress-fill" /></i>
+          <span>04</span>
+        </div>
+
+        <span className="cinematic-scroll-cue">SCROLL TO DISCOVER</span>
+      </div>
+    </section>
+  );
+}
