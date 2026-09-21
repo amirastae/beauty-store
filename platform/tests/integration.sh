@@ -20,6 +20,17 @@ v2="$(curl -fsS -X POST "$BASE/api/v1/compat/veloura-v2/resolve"   -H 'content-t
 printf '%s\n' "$v2" | grep -q '"variant_id":"var_v2_lip_rose"' || fail "veloura v2 resolver"
 printf '%s\n' "$v2" | grep -q '"currency_code":"IRR"' || fail "veloura v2 currency"
 
+v21_last="$(curl -fsS -X POST "$BASE/api/v1/compat/veloura-v2/resolve" \
+  -H 'content-type: application/json' \
+  -d '{"product_id":"veloura-56"}')"
+printf '%s\n' "$v21_last" | grep -q '"variant_id":"var_v21_56_default"' || fail "full v2.1 catalog resolver"
+printf '%s\n' "$v21_last" | grep -q '"currency_code":"IRR"' || fail "full v2.1 catalog currency"
+
+v21_shade="$(curl -fsS -X POST "$BASE/api/v1/compat/veloura-v2/resolve" \
+  -H 'content-type: application/json' \
+  -d '{"product_id":"veloura-21","shade_id":"deep"}')"
+printf '%s\n' "$v21_shade" | grep -q '"variant_id":"var_v21_21_deep"' || fail "v2.1 shade resolver"
+
 shop="$(curl -fsS -X POST "$BASE/api/v1/compat/shop-v1/resolve"   -H 'content-type: application/json'   -d '{"product_id":1}')"
 printf '%s\n' "$shop" | grep -q '"variant_id":"var_shop_1_default"' || fail "shop v1 resolver"
 printf '%s\n' "$shop" | grep -q '"currency_code":"USD"' || fail "shop v1 currency"
