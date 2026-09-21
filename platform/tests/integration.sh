@@ -53,6 +53,7 @@ payload='{"email":"qa@example.com","shipping_address":{"full_name":"QA User","li
 first="$(curl -fsS -X POST "$BASE/api/v1/checkout/$cart_id"   -H 'content-type: application/json'   -H "Idempotency-Key: $idem"   -d "$payload")"
 printf '%s\n' "$first" | grep -q '"payment_status":"requires_provider"' || fail "checkout"
 printf '%s\n' "$first" | grep -q '"shipping_minor":0' || fail "USD shipping policy"
+usd_order_number="$(printf '%s' "$first" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["order_number"])')"
 
 second="$(curl -fsS -X POST "$BASE/api/v1/checkout/$cart_id"   -H 'content-type: application/json'   -H "Idempotency-Key: $idem"   -d "$payload")"
 [ "$first" = "$second" ] || fail "idempotent response mismatch"
@@ -93,6 +94,8 @@ bad_status="$(curl -sS -o /tmp/bad-receipt.json -w '%{http_code}' -X POST "$BASE
 [ "$bad_status" = "404" ] || fail "unknown order receipt must be hidden"
 
 irr_order_id="$(printf '%s' "$irr_checkout" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["order_id"])')"
+irr_order_number="$(printf '%s' "$irr_checkout" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["order_number"])')"
+[ "$irr_order_number" -gt "$usd_order_number" ] || fail "order numbers must come from monotonic sequence"
 payment_code="$(curl -sS -o /tmp/payment-unconfigured.json -w '%{http_code}' -X POST "$BASE/api/v1/payments/$irr_order_id/start" -H 'content-type: application/json')"
 [ "$payment_code" = "503" ] || fail "disabled payment provider must return 503"
 grep -q 'PAYMENT_PROVIDER_NOT_CONFIGURED' /tmp/payment-unconfigured.json || fail "disabled payment provider code"

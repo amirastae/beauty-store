@@ -27,10 +27,16 @@ function id(prefix: string) {
   return prefix + '_' + crypto.randomUUID().replaceAll('-', '')
 }
 
-function orderNumber() {
-  const bytes = new Uint32Array(1)
-  crypto.getRandomValues(bytes)
-  return 100000000 + (bytes[0] % 900000000)
+async function nextOrderNumber(db: D1Database) {
+  const row = await db.prepare(
+    `INSERT INTO order_sequences (name, next_value)
+     VALUES ('order', 100000000)
+     ON CONFLICT(name) DO UPDATE SET next_value = next_value + 1
+     RETURNING next_value`
+  ).first<{ next_value: number }>()
+
+  if (!row) throw new Error('ORDER_SEQUENCE_UNAVAILABLE')
+  return row.next_value
 }
 
 function receiptToken() {
@@ -264,7 +270,7 @@ checkout.post('/checkout/:cartId', async (c) => {
     const paymentExpiresAt = new Date(Date.now() + 30 * 60_000).toISOString()
     const orderId = id('ord')
     const paymentId = id('pay')
-    const orderNo = orderNumber()
+    const orderNo = await nextOrderNumber(db)
     const receipt = receiptToken()
     const receiptHash = await sha256Hex(receipt)
 
@@ -343,6 +349,11 @@ checkout.post('/checkout/:cartId', async (c) => {
     statements.push(
       db.prepare(`UPDATE carts SET status = 'completed', email = ?, phone = ?, updated_at = ? WHERE id = ?`)
         .bind(email || null, phone || null, now, cartId)
+    )
+
+    statements.push(
+      db.prepare(`DELETE FROM checkout_claims WHERE cart_id = ? AND idempotency_key = ?`)
+        .bind(cartId, idem)
     )
 
     statements.push(
