@@ -46,7 +46,9 @@ carts.post('/:id/items', async (c) => {
   const db = c.env.DB
   if (!db) return fail('DB_NOT_BOUND', 'Cart database is not bound in this environment.', 503)
 
-  const body = await c.req.json<{ variant_id?: string; quantity?: number }>().catch(() => ({}))
+  const body = await c.req.json<{ variant_id?: string; quantity?: number }>().catch(
+    (): { variant_id?: string; quantity?: number } => ({})
+  )
   const variantId = body.variant_id
   const quantity = Math.floor(Number(body.quantity ?? 1))
 
