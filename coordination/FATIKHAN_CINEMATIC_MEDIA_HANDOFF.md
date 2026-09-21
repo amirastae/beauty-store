@@ -1,3 +1,6 @@
+> **READ FIRST:** `coordination/00_READ_FIRST_FATIKHAN_GOLESTAN.md`
+> All supporting workstreams must integrate into this FATIKHAN/Golestan cinematic direction; do not create a competing homepage.
+
 # FATIKHAN Cinematic Media Handoff
 
 - Source branch: `fatikan-cinematic-polish-v2`
