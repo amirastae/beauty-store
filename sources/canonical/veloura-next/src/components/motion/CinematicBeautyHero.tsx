@@ -128,16 +128,25 @@ export default function CinematicBeautyHero() {
           trailingSeek = window.setTimeout(applySeek, seekIntervalMs - elapsed);
         };
 
+        const syncFromProgress = (self: ScrollTrigger) => {
+          targetTime = self.progress * Math.max(0, media.duration - 0.04);
+          scheduleSeek();
+        };
+
         const seekTrigger = ScrollTrigger.create({
           trigger: root.current,
           start: "top top",
           end: "bottom bottom",
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            targetTime = self.progress * Math.max(0, media.duration - 0.04);
-            scheduleSeek();
-          }
+          onUpdate: syncFromProgress,
+          onRefresh: syncFromProgress
         });
+
+        // If the scrub master finishes loading after the user has already
+        // entered the hero, align it immediately instead of flashing frame 0
+        // until the next wheel/touch event.
+        targetTime = seekTrigger.progress * Math.max(0, media.duration - 0.04);
+        applySeek();
 
         const copyTl = gsap.timeline({
           defaults: { ease: "none" },
@@ -208,6 +217,7 @@ export default function CinematicBeautyHero() {
       ref={root}
       aria-labelledby="cinematic-title"
       data-video-state={videoReady ? "ready" : videoFailed || !videoEligible ? "fallback" : "loading"}
+      data-cinematic-runtime="blob-throttle-v3"
     >
       <div className="cinematic-sticky">
         {VIDEO_SCRUB_ENABLED && videoEligible && <video
