@@ -27,9 +27,10 @@ branchهای دیگر **سایت جدا نیستند**؛ فقط donor/reference/
 - شناسه‌های فنی `veloura-*` و compat API تا migration مستقل داخلی می‌مانند.
 - هر قابلیت نهایی باید در همین canonical سایت ادغام شود، نه اینکه فقط روی branch خودش بماند.
 
-## وضعیت فعلی
-- integration-staging: `725624bd540bba6ab1bcca31e7e7e40bd20b8111`
-- commerce-core-v1: `fb1b5a18ce7c971a21a0fd73623adba82d683519`
-- cloudflare-site: `1276b6448e470179523b8c12887ef46f30400668`
+## وضعیت زنده
+SHAها را از پیام‌های قدیمی کپی نکن. درست قبل از هر write، head زنده‌ی `integration-staging`، branch donor و فایل هدف را از GitHub دوباره بخوان.
+
+## جلوگیری از کار تکراری
+قبل از شروع هر قابلیت، `coordination/DONOR_RECONCILIATION.md` و `coordination/SINGLE_SITE_STATE.md` را بخوان. اگر قابلیت قبلاً روی canonical آمده، دوباره ساخته نشود.
 
 آخرین قاعده: **هر کاری که انجام می‌شود باید همین سایت اصلی را بهتر کند؛ اگر خروجی فقط روی branch جانبی بماند، کار تمام‌شده محسوب نمی‌شود.**

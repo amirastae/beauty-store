@@ -11,7 +11,8 @@
     "verify:cinematic": "node scripts/verify-cinematic-assets.mjs",
     "verify:source": "node scripts/audit-source.mjs",
     "verify:static": "node scripts/audit-static.mjs",
-    "quality": "npm run typecheck && npm run verify:source && npm run build && npm run verify:static"
+    "quality": "npm run typecheck && npm run verify:source && npm run build && npm run verify:static && npm run verify:cloudflare",
+    "verify:cloudflare": "wrangler deploy --dry-run --config wrangler.jsonc"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

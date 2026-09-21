@@ -1,8 +1,5 @@
 # ACTIVE WORKSTREAMS — one FATIKHAN site
 
-Reconciled at integration checkpoint:
-`725624bd540bba6ab1bcca31e7e7e40bd20b8111`
-
 ## هدف مشترک
 همه چت‌ها روی **همان سایت اصلی FATIKHAN Golestan-style** کار می‌کنند. هیچ branchی محصول جدا نیست.
 
@@ -11,10 +8,10 @@ Reconciled at integration checkpoint:
 | Canonical site | `integration-staging/sources/canonical/veloura-next` | **تنها frontend source of truth** |
 | Final source mirror | `integration-staging/sources/final/veloura-next` | باید دقیقاً mirror canonical باشد |
 | Generated site | `integration-staging/public/**` | فقط build artifact |
-| Commerce | `commerce-core-v1@fb1b5a18ce7c971a21a0fd73623adba82d683519` → `services/commerce` | backend همان سایت؛ payment/inventory/order source of truth |
-| Iran UX donor | `iranian-commerce-ux-v1@ded01952d37df848a3533230798e73f3bb41e90b` | donor/reference؛ wholesale merge ممنوع |
-| v2.5 donor | `veloura-v2.5-routine@41dc1339f8b3f946292be9e01c10bdb997660d73` | donor/reference؛ قابلیت‌های مفید باید selectively وارد canonical شوند |
-| Production | `cloudflare-site@1276b6448e470179523b8c12887ef46f30400668` | live baseline؛ feature chat مستقیم ویرایش نکند |
+| Commerce | `commerce-core-v1` (resolve live head) → `services/commerce` | backend همان سایت؛ payment/inventory/order source of truth |
+| Iran UX donor | `iranian-commerce-ux-v1` (donor; resolve live head) | donor/reference؛ wholesale merge ممنوع |
+| v2.5 donor | `veloura-v2.5-routine` (donor; resolve live head) | donor/reference؛ قابلیت‌های مفید باید selectively وارد canonical شوند |
+| Production | `cloudflare-site` (production; resolve live head) | live baseline؛ feature chat مستقیم ویرایش نکند |
 
 ## قفل‌شده / تکرار نکن
 - storefront یا homepage دوم.
@@ -48,3 +45,11 @@ Commerce/SEO/Search نباید render اولیه Hero را block کند.
 
 ## تعریف Done
 Done یعنی قابلیت روی **همین canonical سایت** ادغام شده، build/test شده و handoff دارد. branch جانبیِ سالم به‌تنهایی Done نیست.
+
+
+## Donor reconciliation
+Before starting overlapping work, read `coordination/DONOR_RECONCILIATION.md`.
+It records which parallel-chat patches are already integrated so they are not rebuilt or merged wholesale.
+
+## قاعده SHA زنده
+هیچ چت نباید SHA قدیمی را از حافظه/پیام قبلی برای write استفاده کند. درست قبل از هر patch، head همان branch دوباره از GitHub خوانده شود.

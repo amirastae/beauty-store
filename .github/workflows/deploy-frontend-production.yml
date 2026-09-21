@@ -27,18 +27,24 @@ jobs:
       LIVE_URL: https://beauty-store.nayererohalamini.workers.dev
     steps:
       - name: Checkout production
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
-      - name: Require Cloudflare credentials
+      - name: Detect Cloudflare deploy mode
+        id: cloudflare
         run: |
           set -euo pipefail
-          test -n "$CLOUDFLARE_API_TOKEN"
-          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "direct=true" >> "$GITHUB_OUTPUT"
+            echo "CLOUDFLARE_DEPLOY_MODE=direct"
+          else
+            echo "direct=false" >> "$GITHUB_OUTPUT"
+            echo "CLOUDFLARE_DEPLOY_MODE=external-git-integration"
+          fi
 
       - name: Verify production payload
         run: |
@@ -47,32 +53,50 @@ jobs:
           test -s public/cinematic/fatikhan-hero.mp4
           test -s public/cinematic/fatikhan-hero.webm
           test -s public/cinematic/fatikhan-poster.jpg
+          test -s public/manifest.webmanifest
+          test -s public/sw.js
+          test -s public/_headers
+          test -s public/robots.txt
+          test -s public/sitemap.xml
           grep -qi "FATIKHAN" public/index.html
           test "$(stat -c%s public/cinematic/fatikhan-hero.mp4)" -lt 26214400
           test "$(stat -c%s public/cinematic/fatikhan-hero.webm)" -lt 26214400
           echo "PRODUCTION_PAYLOAD=PASS"
 
       - name: Deploy Cloudflare Worker assets
+        if: steps.cloudflare.outputs.direct == 'true'
         run: npx --yes wrangler@4.0.0 deploy --config wrangler.jsonc
+
+      - name: Wait for external Cloudflare Git deployment
+        if: steps.cloudflare.outputs.direct != 'true'
+        run: echo "Waiting for the connected Cloudflare Git integration; live verification below is the deployment gate."
 
       - name: Verify live homepage and routes
         run: |
           set -euo pipefail
-          for i in $(seq 1 24); do
-            if curl -fsS --max-time 8 "$LIVE_URL/" -o /tmp/home.html; then
-              break
+          live_ready=0
+          for i in $(seq 1 36); do
+            if curl -fsS --max-time 8 "$LIVE_URL/?release=$GITHUB_SHA" -o /tmp/home.html; then
+              if grep -qi "FATIKHAN" /tmp/home.html && grep -q 'data-cinematic-runtime="blob-throttle-v3"' /tmp/home.html; then
+                live_ready=1
+                break
+              fi
             fi
-            sleep 3
+            sleep 5
           done
+          test "$live_ready" -eq 1
           test -s /tmp/home.html
-          grep -qi "FATIKHAN" /tmp/home.html
 
-          for route in /shop/ /cart/ /checkout/ /wishlist/ /search/; do
+          for route in /shop/ /cart/ /checkout/ /wishlist/ /search/ /offline/; do
             curl -fsS --max-time 8 "$LIVE_URL$route" -o /dev/null
           done
 
           curl -fsSI --max-time 8 "$LIVE_URL/cinematic/fatikhan-hero.mp4" | grep -qiE '^HTTP/.* 200'
           curl -fsSI --max-time 8 "$LIVE_URL/cinematic/fatikhan-hero.webm" | grep -qiE '^HTTP/.* 200'
+          curl -fsS --max-time 8 "$LIVE_URL/manifest.webmanifest" | grep -qi "FATIKHAN"
+          curl -fsS --max-time 8 "$LIVE_URL/sw.js" | grep -q 'veloura-v2.6.0'
+          curl -fsSI --max-time 8 "$LIVE_URL/sw.js" | grep -qiE 'cache-control:.*no-cache'
+          curl -fsSI --max-time 8 "$LIVE_URL/manifest.webmanifest" | grep -qiE 'cache-control:.*no-cache'
 
           echo "LIVE_FRONTEND=PASS"
           echo "LIVE_URL=$LIVE_URL"
