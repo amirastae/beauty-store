@@ -4,6 +4,7 @@ import MobileDock from "@/components/navigation/MobileDock";
 import SiteFooter from "@/components/navigation/SiteFooter";
 import PWARegister from "@/components/pwa/PWARegister";
 import CompareTray from "@/components/compare/CompareTray";
+import { STORE_SUPPORT_EMAIL } from "@/config/store";
 
 export const metadata: Metadata = {
   title: "FATIKHAN — زیبایی، در دقیق‌ترین حالتش",
@@ -34,7 +35,14 @@ const organization = {
   "@type": "Organization",
   name: "FATIKHAN",
   url: "https://beauty-store.nayererohalamini.workers.dev/",
-  description: "فروشگاه پریمیوم فارسی زیبایی و لوازم آرایشی."
+  description: "فروشگاه پریمیوم فارسی زیبایی و لوازم آرایشی.",
+  email: STORE_SUPPORT_EMAIL,
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    email: STORE_SUPPORT_EMAIL,
+    availableLanguage: ["fa"]
+  }
 };
 
 export default function RootLayout({

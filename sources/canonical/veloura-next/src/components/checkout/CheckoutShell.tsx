@@ -85,10 +85,13 @@ export default function CheckoutShell(){
     const payment=params.get("payment");
     if(payment==="success"||payment==="failed"||payment==="cancelled"){
       setPaymentReturn(payment);
-      clearCheckoutIdempotency();
-      try{sessionStorage.removeItem(pendingKey)}catch{}
-      setPending(null);
-      if(payment==="success") clearCart();
+      // Query parameters describe the provider return path, not authoritative payment proof.
+      // Keep cart/pending state intact until a server-side receipt/status lookup is available.
+      if(payment==="failed"||payment==="cancelled"){
+        clearCheckoutIdempotency();
+        try{sessionStorage.removeItem(pendingKey)}catch{}
+        setPending(null);
+      }
     }
   },[clearCart]);
 
@@ -201,8 +204,10 @@ export default function CheckoutShell(){
         <p className="checkout-intro">{commerceEnabled?"قیمت، موجودی، ارسال و سفارش توسط هسته واقعی فروشگاه پردازش می‌شود و پرداخت فقط از درگاه متصل ادامه پیدا می‌کند.":"اطلاعات فعلاً فقط روی مرورگر ذخیره می‌شود؛ هیچ سفارش یا پرداختی ساخته نمی‌شود."}</p>
 
         {paymentReturn&&<div className={"payment-return "+paymentReturn} role={paymentReturn==="success"?"status":"alert"}>
-          <strong>{paymentReturn==="success"?"پرداخت با موفقیت تأیید شد.":paymentReturn==="cancelled"?"پرداخت لغو شد.":"پرداخت تأیید نشد."}</strong>
-          <span>{paymentReturn==="success"?"سبد خرید پاک شد و سفارش برای پردازش ثبت شده است.":"موجودی رزروشده آزاد شده و می‌توانی سفارش جدید بسازی."}</span>
+          <strong>{paymentReturn==="success"?"بازگشت از مسیر پرداخت موفق بود.":paymentReturn==="cancelled"?"پرداخت لغو شد.":"بازگشت از مسیر پرداخت ناموفق بود."}</strong>
+          <span>{paymentReturn==="success"
+            ?"این پیام به‌تنهایی تأیید نهایی پرداخت نیست. وضعیت قطعی باید از هسته تجارت استعلام شود؛ سبد خرید فعلاً پاک نمی‌شود."
+            :"اگر وجهی کسر شده یا وضعیت نامشخص است، قبل از ثبت سفارش جدید با پشتیبانی تماس بگیر."}</span>
         </div>}
 
         {pending&&<div className="checkout-resume">
