@@ -31,6 +31,13 @@ const files=[
   ])
 ];
 
+const unsupportedClaims = [
+  "ضمانت اصالت کالا",
+  "ارسال سریع و قابل پیگیری",
+  "REAL RITUALS",
+  "COMMUNITY / 2026"
+];
+
 const secretPatterns=[
   ["private key",/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
   ["GitHub token",/(?:ghp_|github_pat_)[A-Za-z0-9_]{30,}/],
@@ -52,6 +59,9 @@ for (const file of files) {
   if (/\b(?:TODO|FIXME)\b/.test(text)) failures.push(`unfinished marker in ${rel}`);
   if (/500K|Happy Customers|Verified Purchase|Founder & CEO|reviewsData/.test(text)) {
     failures.push(`unsupported social-proof residue in ${rel}`);
+  }
+  for (const claim of unsupportedClaims) {
+    if (text.includes(claim)) failures.push(`unsupported visible claim "${claim}" in ${rel}`);
   }
 
   if (text.includes("VELOURA")) failures.push(`legacy VELOURA display brand in ${rel}`);
