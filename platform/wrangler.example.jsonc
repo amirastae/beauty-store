@@ -1,0 +1,24 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "veloura-commerce-core",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-21",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "preview"
+  }
+
+  // Add these bindings only after the resources exist:
+  // "d1_databases": [{
+  //   "binding": "DB",
+  //   "database_name": "veloura-commerce",
+  //   "database_id": "<D1_DATABASE_ID>",
+  //   "migrations_dir": "db/migrations"
+  // }],
+  // "r2_buckets": [{
+  //   "binding": "MEDIA",
+  //   "bucket_name": "veloura-media"
+  // }]
+}
