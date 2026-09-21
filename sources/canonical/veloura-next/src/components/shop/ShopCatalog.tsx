@@ -137,7 +137,7 @@ export default function ShopCatalog() {
             <input type="checkbox" checked={shadeOnly} onChange={(e)=>setShadeOnly(e.target.checked)} />
             <span>فقط محصولات دارای انتخاب رنگ</span>
           </label>
-          {activeCount > 0 && <button className="reset-filters" onClick={reset}>پاک کردن {fa.format(activeCount)} فیلتر</button>}
+          {activeCount > 0 && <button type="button" className="reset-filters" onClick={reset}>پاک کردن {fa.format(activeCount)} فیلتر</button>}
         </div>
 
         <div className="chips">
@@ -148,7 +148,7 @@ export default function ShopCatalog() {
       </section>
 
       <section className="shop-results">
-        <div className="shop-result-head">
+        <div className="shop-result-head" aria-live="polite">
           <span>{fa.format(visible.length)} محصول</span>
           <small>{activeCount ? fa.format(activeCount) + " فیلتر فعال" : "کل کاتالوگ FATIKHAN"}</small>
         </div>
@@ -169,7 +169,7 @@ export default function ShopCatalog() {
                   {product.ingredients[0] && <span>{product.ingredients[0]}</span>}
                 </div>
                 <div className="card-actions">
-                  <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
+                  <button type="button" onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
                   <button type="button" className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"} aria-pressed={wishlistIds.includes(product.id)} onClick={()=>toggleWishlist(product.id)}>♡</button>
                   <button type="button" className={compareIds.includes(product.id)?"compare-toggle active":"compare-toggle"} aria-pressed={compareIds.includes(product.id)} onClick={()=>toggleCompare(product.id)}>{compareIds.includes(product.id)?"مقایسه ✓":"مقایسه"}</button>
                 </div>
@@ -182,7 +182,7 @@ export default function ShopCatalog() {
           <div className="empty-state">
             <h2>ترکیب این فیلترها نتیجه‌ای ندارد.</h2>
             <p>یکی از محدودیت‌ها را بردار یا کل فیلترها را پاک کن.</p>
-            <button onClick={reset}>پاک کردن فیلترها</button>
+            <button type="button" onClick={reset}>پاک کردن فیلترها</button>
           </div>
         )}
       </section>
