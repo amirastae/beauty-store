@@ -1,0 +1,78 @@
+name: Deploy Frontend Production
+
+on:
+  push:
+    branches:
+      - cloudflare-site
+    paths:
+      - "public/**"
+      - "wrangler.jsonc"
+      - ".github/workflows/deploy-frontend-production.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      LIVE_URL: https://beauty-store.nayererohalamini.workers.dev
+    steps:
+      - name: Checkout production
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Require Cloudflare credentials
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Verify production payload
+        run: |
+          set -euo pipefail
+          test -s public/index.html
+          test -s public/cinematic/fatikhan-hero.mp4
+          test -s public/cinematic/fatikhan-hero.webm
+          test -s public/cinematic/fatikhan-poster.jpg
+          grep -qi "FATIKHAN" public/index.html
+          test "$(stat -c%s public/cinematic/fatikhan-hero.mp4)" -lt 26214400
+          test "$(stat -c%s public/cinematic/fatikhan-hero.webm)" -lt 26214400
+          echo "PRODUCTION_PAYLOAD=PASS"
+
+      - name: Deploy Cloudflare Worker assets
+        run: npx --yes wrangler@4.0.0 deploy --config wrangler.jsonc
+
+      - name: Verify live homepage and routes
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 24); do
+            if curl -fsS --max-time 8 "$LIVE_URL/" -o /tmp/home.html; then
+              break
+            fi
+            sleep 3
+          done
+          test -s /tmp/home.html
+          grep -qi "FATIKHAN" /tmp/home.html
+
+          for route in /shop/ /cart/ /checkout/ /wishlist/ /search/; do
+            curl -fsS --max-time 8 "$LIVE_URL$route" -o /dev/null
+          done
+
+          curl -fsSI --max-time 8 "$LIVE_URL/cinematic/fatikhan-hero.mp4" | grep -qiE '^HTTP/.* 200'
+          curl -fsSI --max-time 8 "$LIVE_URL/cinematic/fatikhan-hero.webm" | grep -qiE '^HTTP/.* 200'
+
+          echo "LIVE_FRONTEND=PASS"
+          echo "LIVE_URL=$LIVE_URL"
