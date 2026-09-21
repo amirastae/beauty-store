@@ -1,51 +1,58 @@
 {
-  "updated_at": "2026-09-21T05:44:00+03:30",
+  "updated_at": "2026-09-21T03:01:00Z",
   "topology": {
     "production": "cloudflare-site",
     "integration": "integration-staging",
-    "control_plane": "main"
+    "control_plane": "main",
+    "production_pr": 31
   },
   "branches": {
-    "cloudflare-site": "4683bc2fdbfda6e7ded412941eab86283c45c708",
-    "integration-staging": "4683bc2fdbfda6e7ded412941eab86283c45c708",
+    "cloudflare-site": "a535a06b7a96595a10c9d0b06b4f4e800757932c",
+    "integration-staging": "de51b2dfdd63aeb86bca3aace1aaa2c196f8c289",
     "beauty-v2-foundation": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
     "veloura-v2.1-polish": "46c6612c85c902de679dcf10cb4a6be1db91434d",
     "shop-v1.1.0-work": "12dd4e0624dfb437bf2e405b8e6d6eb3594fab3d",
-    "commerce-core-v1": "3dbd71ed196ac61ed62062a7105d33b013706fb6",
-    "commerce-infrastructure-lab": "6878025abbf770a8e1deb47b3542615d8bcf814d",
-    "main": "64478559829ca2579cae16fa825a8c3c9ea171f3"
+    "commerce-core-v1": "cf9edc4060c4cfa5db51c725735067eca5e95268",
+    "main": "b3241d71bb2bfe21d294f518f30e7c398b67479f"
   },
-  "ownership": {
-    "beauty-v2-foundation": "frontend-foundation",
-    "veloura-v2.1-polish": "ui-polish",
-    "shop-v1.1.0-work": "shop-catalog-assets",
-    "commerce-core-v1": "backend-commerce-core",
-    "commerce-infrastructure-lab": "reference-only"
+  "production_observed": {
+    "sha": "a535a06b7a96595a10c9d0b06b4f4e800757932c",
+    "label": "VELOURA v2.1.0 full local catalog",
+    "smoke": {
+      "root": 200,
+      "shop": 200,
+      "cart": 200,
+      "checkout": 200,
+      "wishlist": 200,
+      "product_scalp_therapy_shampoo": 200,
+      "robots": 200,
+      "sitemap": 200
+    }
+  },
+  "staging": {
+    "canonical_frontend_source": "sources/polish/veloura-next",
+    "commerce_service": "services/commerce",
+    "canonical_build_workflow": "build-canonical-staging.yml",
+    "verify_workflow": "integration-staging-verify.yml"
   },
   "commerce_contract": {
     "backend_branch": "commerce-core-v1",
-    "backend_sha": "3dbd71ed196ac61ed62062a7105d33b013706fb6",
-    "supported_frontends": [
-      {
-        "namespace": "veloura-v2.1",
-        "currency": "IRR",
-        "refs": 12
-      },
-      {
-        "namespace": "shop-v1.1.0",
-        "currency": "USD",
-        "refs": 112
-      }
+    "backend_sha": "cf9edc4060c4cfa5db51c725735067eca5e95268",
+    "aggregate_products": 120,
+    "aggregate_variants": 129,
+    "veloura_v21_refs": 133,
+    "shop_v11_refs": 112,
+    "currencies": [
+      "IRR",
+      "USD"
     ],
-    "catalog_snapshot": {
-      "products": 68,
-      "variants": 72
-    },
-    "rules": [
-      "frontend branches never hard-code backend variant ids",
-      "carts reject mixed currencies",
-      "integration happens only on integration-staging",
-      "production promotion occurs only after staging verification"
-    ]
+    "mixed_currency_cart": "rejected"
+  },
+  "rules": {
+    "only_integration_target": "integration-staging",
+    "only_production_source": "cloudflare-site",
+    "production_release_pr": 31,
+    "direct_workstream_to_production": false,
+    "production_requires_staging_verify": true
   }
 }
