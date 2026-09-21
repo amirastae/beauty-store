@@ -119,7 +119,8 @@ export default function CinematicBeautyHero() {
         };
       }
 
-      gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
+      gsap.set(".chapter-one", { opacity: 1, y: 0 });
+            gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
 
       const fallbackTl = gsap.timeline({
         defaults: { ease: "none" },
