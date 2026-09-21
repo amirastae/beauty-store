@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Product } from "@/data/products";
+import { products, type Product } from "@/data/products";
 
 export type CartLine = {
   product: Product;
@@ -18,6 +18,8 @@ type CartState = {
   clear: () => void;
 };
 
+const clampQty = (qty: number) => Math.max(1, Math.min(20, Math.floor(qty)));
+
 export const useCart = create<CartState>()(
   persist(
     (set) => ({
@@ -32,7 +34,7 @@ export const useCart = create<CartState>()(
           }
           return {
             lines: state.lines.map((line, i) =>
-              i === index ? { ...line, qty: Math.min(line.qty + 1, 20) } : line
+              i === index ? { ...line, qty: clampQty(line.qty + 1) } : line
             )
           };
         }),
@@ -56,7 +58,29 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "veloura-cart-v1",
-      version: 2
+      version: 3,
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<CartState>;
+        const lines = Array.isArray(saved.lines)
+          ? saved.lines.flatMap((line) => {
+              const fresh = products.find((product) => product.id === line?.product?.id);
+              if (!fresh) return [];
+
+              const shadeId =
+                line.shadeId && fresh.shades?.some((shade) => shade.id === line.shadeId)
+                  ? line.shadeId
+                  : fresh.shades?.[0]?.id;
+
+              return [{
+                product: fresh,
+                qty: clampQty(Number(line.qty) || 1),
+                shadeId
+              }];
+            })
+          : [];
+
+        return { ...current, lines };
+      }
     }
   )
 );
