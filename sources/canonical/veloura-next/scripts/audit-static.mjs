@@ -33,7 +33,7 @@ if(!fs.existsSync(root)){
 
 for(const required of [
   "index.html","shop/index.html","cart/index.html","checkout/index.html",
-  "wishlist/index.html","robots.txt","sitemap.xml","manifest.webmanifest","_headers",
+  "wishlist/index.html","robots.txt","sitemap.xml","manifest.webmanifest","sw.js","_headers",
   "cinematic/fatikhan-hero.mp4","cinematic/fatikhan-hero.webm","cinematic/fatikhan-poster.jpg"
 ]){
   if(!exists(required)) failures.push(`missing required output: ${required}`);
@@ -135,6 +135,27 @@ for(const requiredHeader of [
   "Cache-Control: public, max-age=31536000, immutable"
 ]){
   if(!headers.includes(requiredHeader)) failures.push(`_headers missing expected policy: ${requiredHeader}`);
+}
+
+
+const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.webmanifest"),"utf8"));
+if(manifest.name?.includes("FATIKHAN")!==true) failures.push("manifest visible name is not FATIKHAN");
+if(manifest.start_url!=="/") failures.push("manifest start_url must be /");
+if(manifest.display!=="standalone") failures.push("manifest display must be standalone");
+for(const icon of manifest.icons||[]){
+  if(icon.src?.startsWith("/")&&!exists(icon.src)) failures.push(`manifest icon missing: ${icon.src}`);
+}
+
+const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");
+if(!sw.includes('const CACHE="veloura-v2.6.0"')) failures.push("PWA service worker cache version is stale");
+if(!sw.includes("/cinematic/fatikhan-poster.jpg")) failures.push("PWA core cache missing cinematic poster");
+if(!sw.includes("/offline/")) failures.push("PWA core cache missing offline route");
+
+if(!headers.includes("/sw.js")||!headers.includes("no-cache, no-store, must-revalidate")){
+  failures.push("_headers does not force service-worker revalidation");
+}
+if(!headers.includes("/manifest.webmanifest")||!headers.includes("Cache-Control: no-cache")){
+  failures.push("_headers does not prevent stale manifest caching");
 }
 
 console.log(JSON.stringify({
