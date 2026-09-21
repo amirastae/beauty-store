@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
+import { useWishlist } from "@/store/wishlist";
 import HeroStage from "@/components/motion/HeroStage";
 import SignatureStory from "@/components/motion/SignatureStory";
 
@@ -21,6 +22,8 @@ export default function Storefront() {
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedShade, setSelectedShade] = useState<Record<string, string>>({});
   const { lines, add, remove } = useCart();
+  const wishlistIds = useWishlist((state) => state.ids);
+  const toggleWishlist = useWishlist((state) => state.toggle);
 
   const visibleProducts = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("fa");
@@ -53,11 +56,11 @@ export default function Storefront() {
           سبد <span className="cart-count">{toman.format(cartCount)}</span>
         </button>
         <nav className="nav-links" aria-label="ناوبری اصلی">
-          <a href="#products">محصولات</a>
+          <Link href="/shop/">فروشگاه</Link>
           <a href="#story">داستان ولورا</a>
-          <a href="#club">باشگاه زیبایی</a>
+          <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
-        <a className="brand" href="#" aria-label="ولورا">VELOURA</a>
+        <Link className="brand" href="/" aria-label="ولورا">VELOURA</Link>
         <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
@@ -151,6 +154,14 @@ export default function Storefront() {
                   <strong>{price(product.price)}</strong>
                 </div>
                 <div className="rating">★ {product.rating} <span>({toman.format(product.reviewCount)})</span></div>
+                <div className="card-actions home-card-actions">
+                  <button onClick={() => addProduct(product)}>+ سبد</button>
+                  <button
+                    className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
+                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    onClick={() => toggleWishlist(product.id)}
+                  >♡</button>
+                </div>
                 {product.shades && (
                   <div className="swatches" aria-label="انتخاب رنگ">
                     {product.shades.map((shade) => (
@@ -217,7 +228,7 @@ export default function Storefront() {
         <div className="drawer-total">
           <span>جمع</span><strong>{price(cartTotal)}</strong>
         </div>
-        <button className="button button-dark checkout" disabled={!lines.length}>ادامه خرید</button>
+        {lines.length ? <Link className="button button-dark checkout" href="/checkout/">ادامه به پرداخت</Link> : <button className="button button-dark checkout" disabled>ادامه به پرداخت</button>}
       </aside>
       {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
@@ -235,10 +246,10 @@ export default function Storefront() {
           <div className="search-count">{toman.format(visibleProducts.length)} نتیجه</div>
           <div className="search-mini-grid">
             {visibleProducts.slice(0, 4).map((product) => (
-              <button key={product.id} onClick={() => { setSearchOpen(false); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }}>
+              <Link key={product.id} href={"/product/" + product.slug} onClick={() => setSearchOpen(false)}>
                 <Image src={product.image} alt="" width={62} height={72} />
                 <span>{product.nameFa}<small>{price(product.price)}</small></span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
