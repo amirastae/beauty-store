@@ -17,12 +17,9 @@
   "d1_databases": [
     {
       "binding": "DB",
+      "database_name": "veloura-commerce-temp-full-db",
+      "database_id": "874ad304-65ef-49d1-9733-ba6f70c3b456",
       "migrations_dir": "db/migrations"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA"
     }
   ]
 }
