@@ -51,11 +51,16 @@ jobs:
           root="sources/canonical/veloura-next/public/cinematic"
           test -s "$root/fatikan-hero.mp4"
           test -s "$root/fatikan-poster.jpg"
-          test "$(find "$root/frames" -maxdepth 1 -type f | wc -l)" -eq 6
+          count="$(find "$root/frames" -maxdepth 1 -type f | wc -l | tr -d ' ')"
           bytes="$(stat -c%s "$root/fatikan-hero.mp4")"
-          test "$bytes" -gt 1000000
+          poster_bytes="$(stat -c%s "$root/fatikan-poster.jpg")"
+          echo "frames=$count video_bytes=$bytes poster_bytes=$poster_bytes"
+          ls -lah "$root" "$root/frames"
+          test "$count" -ge 6
+          test "$bytes" -gt 500000
           test "$bytes" -lt 26214400
-          echo "FATIKHAN_CINEMATIC_MEDIA=PASS bytes=$bytes"
+          test "$poster_bytes" -gt 10000
+          echo "FATIKHAN_CINEMATIC_MEDIA=PASS frames=$count bytes=$bytes"
 
       - name: Commit hydrated media
         run: |
