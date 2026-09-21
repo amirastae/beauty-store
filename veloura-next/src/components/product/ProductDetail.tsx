@@ -117,10 +117,27 @@ export default function ProductDetail({ product }: { product: Product }) {
         <article><span>03</span><h2>جزئیات فرمول</h2><p>اطلاعات کامل ترکیبات، سازگاری و نکات محصول در نسخه داده واقعی از کاتالوگ نمایش داده می‌شود.</p></article>
       </section>
 
+      <section className="pdp-review-shell">
+        <div>
+          <p className="eyebrow">REVIEWS · VERIFIED PURCHASES</p>
+          <h2>{product.rating} <span>/ 5</span></h2>
+          <p>{fa.format(product.reviewCount)} امتیاز ثبت‌شده برای این محصول.</p>
+        </div>
+        <div className="review-policy">
+          <strong>دیدگاه واقعی، نه متن ساختگی.</strong>
+          <p>متن دیدگاه‌های خریداران پس از اتصال سیستم سفارش و تایید خرید نمایش داده می‌شود. تا آن زمان فقط امتیاز تجمیعی کاتالوگ نشان داده می‌شود.</p>
+        </div>
+      </section>
+
       <section className="pdp-editorial">
         <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
         <span>03 / PRODUCT STORY</span>
       </section>
+
+      <div className="pdp-mobile-buy">
+        <div><small>{shade?.nameFa ?? product.category}</small><strong>{money(product.price)}</strong></div>
+        <button onClick={addToCart}>{added ? "اضافه شد ✓" : "افزودن به سبد"}</button>
+      </div>
     </main>
   );
 }
