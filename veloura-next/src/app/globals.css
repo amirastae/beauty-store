@@ -427,3 +427,15 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   .info-hero{padding:60px 20px 54px}.info-hero h1{font-size:68px}.info-grid{grid-template-columns:1fr}.info-grid article{padding:48px 20px;min-height:auto}.info-cta{padding:62px 20px;align-items:flex-start;flex-direction:column}
   .faq-list{padding:32px 20px 90px}.faq-list summary{grid-template-columns:34px 1fr auto;font-size:15px}.faq-list details>p{margin:0 48px 24px 0}
 }
+
+
+/* v2.2 checkout draft */
+.checkout-status{display:flex;align-items:center;gap:10px;padding:18px 6vw;border-bottom:1px solid var(--line);background:#efe4dc;font:600 8px Arial,sans-serif;letter-spacing:.08em;color:var(--muted)}
+.checkout-status i{height:1px;width:48px;background:var(--line)}.checkout-status .done,.checkout-status .active{color:var(--ink)}
+.checkout-intro{max-width:720px;color:var(--muted);font-size:12px;line-height:1.9;margin:-12px 0 28px}
+.checkout-safety{margin-top:24px;padding:16px 18px;border:1px solid var(--line);border-radius:15px;background:#f1e5dd}.checkout-safety b{font-size:11px}.checkout-safety p{margin:6px 0 0;font-size:10px;line-height:1.8;color:var(--muted)}
+.checkout-note.success{border-color:rgba(64,111,77,.32);background:rgba(213,235,218,.45);color:#365d40}
+.order-summary>small{display:block;color:var(--muted);font-size:9px;line-height:1.7;margin-top:12px}.summary-empty{color:var(--muted);font-size:10px}
+@media(max-width:560px){
+  .checkout-status{padding:14px 18px;gap:7px}.checkout-status i{width:22px}.checkout-intro{font-size:11px}
+}
