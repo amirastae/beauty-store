@@ -24,5 +24,10 @@
     {
       "binding": "MEDIA"
     }
-  ]
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
 }
