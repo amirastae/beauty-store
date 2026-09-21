@@ -1,8 +1,8 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested source commit: `f4f14e9e14dfa78373341178c22e782655c0fbd9`
-- Verification run: `35558992289`
+- Tested source commit: `27608040d27e7004882ad13d8f19a03a0031036f`
+- Verification run: `35559122817`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
 - Scope: Persian/Iran commerce UX and safety only; homepage motion/editorial and production deployment remain untouched.
 
@@ -20,6 +20,8 @@
 
 ### Cart
 - Persistent Zustand cart with explicit post-mount rehydration to prevent hydration mismatch.
+- Persisted cart lines are reconciled against the fresh catalog on hydration; removed products are dropped, quantities are clamped, and invalid shades fall back safely.
+- Persisted wishlist/compare IDs are filtered against the current catalog, and compare remains capped at 4.
 - Quantity stepper bounded to 1..99.
 - Per-line shade awareness.
 - Clear-cart action.
