@@ -6,10 +6,7 @@ const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   trailingSlash: true,
   images: {
-    unoptimized: true,
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" }
-    ]
+    unoptimized: true
   }
 };
 
