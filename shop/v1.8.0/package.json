@@ -7,10 +7,11 @@
     "dev": "next dev",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "quality": "npm run lint && npm run typecheck && npm run build && npm run audit:static",
+    "quality": "npm run lint && npm run typecheck && npm run audit:source && npm run build && npm run audit:static",
     "deploy:cloudflare": "npx wrangler deploy",
     "ci": "npm ci --ignore-scripts && npm run quality",
-    "audit:static": "node scripts/audit-static.mjs"
+    "audit:static": "node scripts/audit-static.mjs",
+    "audit:source": "node scripts/audit-source.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
