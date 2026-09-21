@@ -6,8 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
-      disallow: ["/cart/", "/checkout/", "/wishlist/", "/compare/"]
+      allow: "/"
     },
     sitemap: "https://beauty-store.nayererohalamini.workers.dev/sitemap.xml"
   };

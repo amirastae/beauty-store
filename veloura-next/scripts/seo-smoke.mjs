@@ -55,9 +55,10 @@ for (const blocked of ["/cart/", "/checkout/", "/wishlist/", "/compare/"]) {
 }
 
 const robots = read("robots.txt");
-for (const blocked of ["/cart/", "/checkout/", "/wishlist/", "/compare/"]) {
-  check(robots.includes(blocked), `robots must disallow ${blocked}`);
+for (const utility of ["/cart/", "/checkout/", "/wishlist/", "/compare/"]) {
+  check(!robots.includes("Disallow: " + utility), `robots must allow crawling ${utility} so meta noindex can be seen`);
 }
+check(robots.includes("Allow: /"), "robots should allow normal crawling");
 check(robots.includes("sitemap.xml"), "robots sitemap declaration missing");
 
 if (failures.length) {
