@@ -57,6 +57,12 @@ async function releaseIdempotencyLock(db: D1Database, key: string) {
   ).bind(new Date().toISOString(), key).run()
 }
 
+async function releaseCheckoutClaim(db: D1Database, cartId: string, idem: string) {
+  await db.prepare(
+    `DELETE FROM checkout_claims WHERE cart_id = ? AND idempotency_key = ?`
+  ).bind(cartId, idem).run()
+}
+
 checkout.post('/checkout/:cartId', async (c) => {
   const db = c.env.DB
   if (!db) return fail('DB_NOT_BOUND', 'Checkout database is not bound in this environment.', 503)
@@ -168,6 +174,21 @@ checkout.post('/checkout/:cartId', async (c) => {
     return fail('CART_EMPTY', 'Cart is empty.', 409)
   }
 
+  const claimNow = new Date().toISOString()
+  await db.prepare(
+    `DELETE FROM checkout_claims WHERE cart_id = ? AND expires_at <= ?`
+  ).bind(cartId, claimNow).run()
+
+  try {
+    await db.prepare(
+      `INSERT INTO checkout_claims (cart_id, idempotency_key, expires_at, created_at)
+       VALUES (?, ?, ?, ?)`
+    ).bind(cartId, idem, new Date(Date.now() + 300_000).toISOString(), claimNow).run()
+  } catch {
+    await releaseIdempotencyLock(db, idem)
+    return fail('CART_CHECKOUT_IN_PROGRESS', 'This cart already has a checkout in progress or completed.', 409)
+  }
+
   const reserved: CartLine[] = []
   for (const line of lines) {
     const result = await db.prepare(
@@ -178,6 +199,7 @@ checkout.post('/checkout/:cartId', async (c) => {
 
     if ((result.meta.changes ?? 0) !== 1) {
       await releaseReservations(db, reserved)
+      await releaseCheckoutClaim(db, cartId, idem)
       await releaseIdempotencyLock(db, idem)
       return fail('INSUFFICIENT_STOCK', `Insufficient stock for variant ${line.variant_id}.`, 409)
     }
@@ -295,6 +317,7 @@ checkout.post('/checkout/:cartId', async (c) => {
     })
   } catch (error) {
     await releaseReservations(db, reserved)
+    await releaseCheckoutClaim(db, cartId, idem)
     await releaseIdempotencyLock(db, idem)
     console.error('checkout failed', error)
     return fail('CHECKOUT_FAILED', 'Checkout could not be completed.', 500)
