@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-09-21T04:55:00Z",
+  "production": {
+    "branch": "cloudflare-site",
+    "sha": "f133f7e2ad82d442107b0aa9d8ad0cf610e273d0",
+    "label": "Deploy VELOURA v2.3.0 compare and PWA release"
+  },
+  "canonical_frontend": {
+    "branch": "veloura-v2.5-routine",
+    "sha": "41dc1339f8b3f946292be9e01c10bdb997660d73",
+    "path": "sources/canonical/veloura-next",
+    "tree": "f016db45a5b8de75a4486d93b90446cbac46e4e8"
+  },
+  "comparison_sources": [
+    {
+      "branch": "beauty-v2-foundation",
+      "sha": "0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f",
+      "path": "sources/foundation/veloura-next"
+    },
+    {
+      "branch": "iranian-commerce-ux-v1",
+      "sha": "59c77a3e0cf3025b31b72e0eb58d8eb60940ddf1",
+      "path": "sources/iranian-ux/veloura-next",
+      "tree": "4ac22d23e02bbb71671d384ed9355188d3c3ada5"
+    },
+    {
+      "branch": "shop-v1.9.0-work",
+      "sha": "813e450f69336928481f4ec09b7cc071c048b62d",
+      "path": "sources/shop-latest",
+      "tree": "8fb31f790b251af60cbb1001333cd8c3f29bede5"
+    }
+  ],
+  "commerce": {
+    "branch": "commerce-core-v1",
+    "sha": "2da6c3876e6170de97e4f23f586172f4c560c486",
+    "path": "services/commerce",
+    "verified": {
+      "local_typecheck": true,
+      "local_migrations_1_8": true,
+      "temporary_cloudflare_d1_checkout": true,
+      "temporary_cloudflare_phone_only_irr_checkout": true,
+      "shipping_policy_preview": true,
+      "r2_preview": "blocked_by_temporary_token_permission"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "veloura-commerce-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "dev:preview": "wrangler dev --config wrangler.preview.jsonc --local --ip 127.0.0.1 --port 8787",
+    "deploy:preview": "wrangler deploy --config wrangler.preview.jsonc",
+    "db:apply:temporary": "for f in db/migrations/*.sql; do wrangler d1 execute DB --config wrangler.temporary.jsonc --remote --temporary --file \\\"$f\\\" || exit 1; done && wrangler d1 execute DB --config wrangler.temporary.jsonc --remote --temporary --file db/seed.sql",
+    "db:migrate:preview-local": "wrangler d1 migrations apply DB --config wrangler.preview.jsonc --local",
+    "db:seed:preview-local": "wrangler d1 execute DB --config wrangler.preview.jsonc --local --file db/seed.sql",
+    "test:integration": "bash tests/integration.sh",
+    "test:checkout-race": "node tests/concurrent-checkout.mjs"
+  },
+  "dependencies": {
+    "hono": "^4.9.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260918.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.135.0"
+  }
+}

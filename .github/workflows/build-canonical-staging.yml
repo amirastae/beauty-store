@@ -1,0 +1,73 @@
+name: Build Canonical Staging Frontend
+
+on:
+  push:
+    branches:
+      - integration-staging
+    paths:
+      - "sources/canonical/veloura-next/**"
+      - ".github/workflows/build-canonical-staging.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-staging-build
+  cancel-in-progress: true
+
+jobs:
+  build-and-sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout staging
+        uses: actions/checkout@v4
+        with:
+          ref: integration-staging
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install canonical frontend
+        working-directory: sources/canonical/veloura-next
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Typecheck canonical frontend
+        working-directory: sources/canonical/veloura-next
+        run: npm run typecheck
+
+      - name: Build canonical static export
+        working-directory: sources/canonical/veloura-next
+        run: npm run build
+
+      - name: Replace staging public atomically
+        run: |
+          test -s sources/canonical/veloura-next/out/index.html
+          rm -rf public.next
+          cp -a sources/canonical/veloura-next/out public.next
+          rm -rf public
+          mv public.next public
+
+      - name: Static route smoke
+        run: |
+          test -s public/index.html
+          test -s public/shop/index.html
+          test -s public/cart/index.html
+          test -s public/checkout/index.html
+          test -s public/wishlist/index.html
+          test -s public/robots.txt
+          test -s public/sitemap.xml
+
+      - name: Compare generated output with staged public
+        run: |
+          if diff -qr public sources/canonical/veloura-next/out >/tmp/veloura-public-diff.txt; then
+            echo "CANONICAL_PUBLIC_MATCH=PASS"
+          else
+            echo "CANONICAL_PUBLIC_MATCH=DIFF"
+            head -80 /tmp/veloura-public-diff.txt
+          fi

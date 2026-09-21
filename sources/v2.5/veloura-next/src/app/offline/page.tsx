@@ -1,0 +1,12 @@
+import Link from "next/link";
+
+export default function OfflinePage(){
+  return <main className="offline-page">
+    <div className="offline-card">
+      <p className="eyebrow">OFFLINE · VELOURA</p>
+      <h1>اتصال قطع شده.</h1>
+      <p>صفحه‌های بازشده قبلی ممکن است هنوز در دسترس باشند. برای دیدن تازه‌ترین محصولات دوباره به اینترنت وصل شو.</p>
+      <div><Link className="button button-dark" href="/">خانه</Link><Link href="/shop/" className="text-link">فروشگاه ←</Link></div>
+    </div>
+  </main>;
+}

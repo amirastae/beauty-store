@@ -1,0 +1,33 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "beauty-store-commerce-preview",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-21",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "preview",
+    "AUTO_BOOTSTRAP": "0",
+    "SHIPPING_FLAT_MINOR_USD": "800",
+    "SHIPPING_FREE_THRESHOLD_MINOR_USD": "7500",
+    "SHIPPING_FLAT_MINOR_IRR": "1200000",
+    "SHIPPING_FREE_THRESHOLD_MINOR_IRR": "30000000"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "VELOURA Beauty Store",
+  "version": "1.6.0",
+  "status": "verified-checkpoint",
+  "quality": {"eslint": "pass", "typescript": "pass", "next_build_typescript": "pass", "build": "pass"},
+  "cloudflare": {"wrangler_dry_run": "pass", "assets_read": 1069, "headers_file": true, "not_found_handling": "404-page", "html_handling": "auto-trailing-slash"},
+  "security": ["nosniff", "referrer-policy", "same-origin framing", "permissions-policy", "COOP", "CSP"],
+  "cache": {"fingerprinted_next_static": "immutable-1y"},
+  "notes": ["ignoreBuildErrors removed", "React strict mode enabled", "Cloudflare Workers Static Assets config added", "quality and deploy scripts added"]
+}

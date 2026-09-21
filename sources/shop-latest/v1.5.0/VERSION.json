@@ -1,0 +1,11 @@
+{
+  "name": "VELOURA Beauty Store",
+  "version": "1.5.0",
+  "status": "verified-checkpoint",
+  "quality": {"eslint": "pass", "typescript": "pass", "build": "pass"},
+  "accessibility": {"img_missing_alt": 0, "button_missing_name": 0, "skip_target_missing": 0},
+  "integrity": {"missing_routes": 0, "missing_assets": 0, "dollar_prices": 0, "fake_social_proof": 0},
+  "seo": {"indexable_missing_canonical": 0, "sitemap_urls": 79},
+  "build": {"routes": 95, "output_mb": 19, "files": 966},
+  "features": ["accessible global skip link", "accessible product actions", "unified real cart grids", "shop and shop-all cleanup", "skincare and makeup cleanup", "zero unnamed buttons in generated HTML"]
+}

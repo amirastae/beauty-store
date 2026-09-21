@@ -1,0 +1,36 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "veloura-commerce-temp-full",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-21",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "temporary-cloudflare-preview",
+    "AUTO_BOOTSTRAP": "0",
+    "SHIPPING_FLAT_MINOR_USD": "800",
+    "SHIPPING_FREE_THRESHOLD_MINOR_USD": "7500",
+    "SHIPPING_FLAT_MINOR_IRR": "1200000",
+    "SHIPPING_FREE_THRESHOLD_MINOR_IRR": "30000000"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "veloura-commerce-temp-full-db",
+      "database_id": "874ad304-65ef-49d1-9733-ba6f70c3b456",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "veloura-commerce-temp-media"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
+}

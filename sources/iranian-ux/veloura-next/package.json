@@ -1,0 +1,40 @@
+{
+  "name": "veloura-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "seo:check": "node scripts/seo-smoke.mjs",
+    "links:check": "node scripts/link-smoke.mjs",
+    "catalog:check": "node scripts/catalog-smoke.mjs",
+    "deploy": "npm run build && wrangler deploy --config wrangler.jsonc",
+    "a11y:check": "node scripts/a11y-smoke.mjs",
+    "security:check": "node scripts/security-smoke.mjs",
+    "performance:check": "node scripts/performance-smoke.mjs",
+    "mutation-safety:check": "node scripts/mutation-safety-smoke.mjs",
+    "brand:check": "node scripts/brand-smoke.mjs",
+    "trust:check": "node scripts/trust-smoke.mjs"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "gsap": "^3.13.0",
+    "next": "16.3.5",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "three": "^0.180.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.180.0",
+    "typescript": "^5.9.0",
+    "wrangler": "^4.0.0"
+  }
+}

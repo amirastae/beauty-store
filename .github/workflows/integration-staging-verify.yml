@@ -1,0 +1,96 @@
+name: Integration Staging Verify
+
+on:
+  push:
+    branches:
+      - integration-staging
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify production-shaped static routes
+        run: |
+          test -s public/index.html
+          test -s public/shop/index.html
+          test -s public/cart/index.html
+          test -s public/checkout/index.html
+          test -s public/wishlist/index.html
+          test -s public/robots.txt
+          test -s public/sitemap.xml
+          echo "STATIC_ROUTE_SMOKE=PASS"
+
+  canonical-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: sources/canonical/veloura-next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run build
+
+  commerce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: services/commerce
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Migration syntax smoke
+        run: |
+          python3 - <<'PY'
+          import sqlite3, pathlib
+          db=sqlite3.connect("/tmp/veloura-stage.db")
+          for p in sorted(pathlib.Path("db/migrations").glob("*.sql")):
+              db.executescript(p.read_text())
+          db.executescript(pathlib.Path("db/seed.sql").read_text())
+          fk=db.execute("pragma foreign_key_check").fetchall()
+          products=db.execute("select count(*) from products").fetchone()[0]
+          variants=db.execute("select count(*) from product_variants").fetchone()[0]
+          assert not fk, fk
+          assert products >= 120, products
+          assert variants >= 129, variants
+          print(f"COMMERCE_DB_SMOKE=PASS products={products} variants={variants}")
+          PY
+      - name: Local Cloudflare commerce integration
+        run: |
+          rm -rf .wrangler/state
+          npm run db:migrate:preview-local
+          npm run db:seed:preview-local
+          npm run dev:preview > /tmp/veloura-commerce-dev.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health >/tmp/veloura-commerce-health.json; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then
+            cat /tmp/veloura-commerce-dev.log
+            exit 1
+          fi
+          bash tests/integration.sh http://127.0.0.1:8787
+          node tests/concurrent-checkout.mjs http://127.0.0.1:8787
