@@ -10,10 +10,7 @@ import HeroStage from "@/components/motion/HeroStage";
 gsap.registerPlugin(ScrollTrigger);
 
 type NavigatorWithConnection = Navigator & {
-  connection?: {
-    saveData?: boolean;
-    effectiveType?: "slow-2g" | "2g" | "3g" | "4g" | string;
-  };
+  connection?: { saveData?: boolean };
 };
 
 const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO !== "0";
@@ -21,68 +18,19 @@ const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO !==
 export default function CinematicBeautyHero() {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
-  const [videoEligible, setVideoEligible] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     if (!VIDEO_SCRUB_ENABLED) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const connection = (navigator as NavigatorWithConnection).connection;
-    const saveData = connection?.saveData === true;
-    const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
-
-    setVideoEligible(!(reducedMotion || saveData || slowNetwork));
-  }, []);
-
-  useEffect(() => {
-    if (!VIDEO_SCRUB_ENABLED || !videoEligible) return;
-
     const media = video.current;
     if (!media) return;
 
-    const controller = new AbortController();
-    let objectUrl = "";
-    const sources = media.canPlayType("video/webm")
-      ? ["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]
-      : ["/cinematic/fatikhan-hero.mp4"];
-    let sourceIndex = 0;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
 
-    const revokeObjectUrl = () => {
-      if (!objectUrl) return;
-      URL.revokeObjectURL(objectUrl);
-      objectUrl = "";
-    };
-
-    const loadSource = async (index: number): Promise<void> => {
-      const source = sources[index];
-      if (!source) {
-        setVideoReady(false);
-        setVideoFailed(true);
-        return;
-      }
-
-      try {
-        const response = await fetch(source, {
-          cache: "force-cache",
-          signal: controller.signal
-        });
-        if (!response.ok) throw new Error("cinematic master fetch failed");
-
-        const blob = await response.blob();
-        if (controller.signal.aborted) return;
-
-        revokeObjectUrl();
-        objectUrl = URL.createObjectURL(blob);
-        media.src = objectUrl;
-        media.load();
-      } catch {
-        if (controller.signal.aborted) return;
-        sourceIndex = index + 1;
-        await loadSource(sourceIndex);
-      }
-    };
+    if (reducedMotion || saveData) return;
 
     const onReady = () => {
       if (!Number.isFinite(media.duration) || media.duration <= 0 || media.readyState < 2) return;
@@ -92,32 +40,20 @@ export default function CinematicBeautyHero() {
     };
     const onError = () => {
       setVideoReady(false);
-      if (controller.signal.aborted) return;
-
-      if (sourceIndex + 1 < sources.length) {
-        sourceIndex += 1;
-        revokeObjectUrl();
-        void loadSource(sourceIndex);
-        return;
-      }
-
       setVideoFailed(true);
     };
 
     media.addEventListener("loadeddata", onReady);
     media.addEventListener("canplay", onReady);
     media.addEventListener("error", onError);
-
-    void loadSource(sourceIndex);
+    media.load();
 
     return () => {
-      controller.abort();
       media.removeEventListener("loadeddata", onReady);
       media.removeEventListener("canplay", onReady);
       media.removeEventListener("error", onError);
-      revokeObjectUrl();
     };
-  }, [videoEligible]);
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -128,53 +64,28 @@ export default function CinematicBeautyHero() {
 
       if (videoReady && video.current) {
         const media = video.current;
-        let targetTime = media.currentTime;
-        let lastSeekAt = 0;
-        let trailingSeek = 0;
-        const seekIntervalMs = 45;
+        let pendingFrame = 0;
+        let targetTime = 0;
 
         gsap.set(".cinematic-scrub-video", { opacity: 1 });
-
-        const applySeek = () => {
-          trailingSeek = 0;
-          if (media.readyState < 1) return;
-          if (Math.abs(media.currentTime - targetTime) < 1 / 30) return;
-
-          lastSeekAt = performance.now();
-          media.currentTime = targetTime;
-        };
-
-        const scheduleSeek = () => {
-          const elapsed = performance.now() - lastSeekAt;
-          if (elapsed >= seekIntervalMs) {
-            if (trailingSeek) window.clearTimeout(trailingSeek);
-            applySeek();
-            return;
-          }
-
-          if (trailingSeek) return;
-          trailingSeek = window.setTimeout(applySeek, seekIntervalMs - elapsed);
-        };
-
-        const syncFromProgress = (self: ScrollTrigger) => {
-          targetTime = self.progress * Math.max(0, media.duration - 0.04);
-          scheduleSeek();
-        };
+        gsap.set(".cinematic-stage", { opacity: 0 });
 
         const seekTrigger = ScrollTrigger.create({
           trigger: root.current,
           start: "top top",
           end: "bottom bottom",
           invalidateOnRefresh: true,
-          onUpdate: syncFromProgress,
-          onRefresh: syncFromProgress
+          onUpdate: (self) => {
+            targetTime = self.progress * Math.max(0, media.duration - 0.04);
+            if (pendingFrame) return;
+            pendingFrame = window.requestAnimationFrame(() => {
+              pendingFrame = 0;
+              if (Math.abs(media.currentTime - targetTime) > 0.016) {
+                media.currentTime = targetTime;
+              }
+            });
+          }
         });
-
-        // If the scrub master finishes loading after the user has already
-        // entered the hero, align it immediately instead of flashing frame 0
-        // until the next wheel/touch event.
-        targetTime = seekTrigger.progress * Math.max(0, media.duration - 0.04);
-        applySeek();
 
         const copyTl = gsap.timeline({
           defaults: { ease: "none" },
@@ -198,7 +109,7 @@ export default function CinematicBeautyHero() {
           .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.05 }, 2.70);
 
         return () => {
-          if (trailingSeek) window.clearTimeout(trailingSeek);
+          if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
           seekTrigger.kill();
           copyTl.kill();
         };
@@ -244,11 +155,10 @@ export default function CinematicBeautyHero() {
       className={videoReady ? "cinematic-hero video-active" : "cinematic-hero"}
       ref={root}
       aria-labelledby="cinematic-title"
-      data-video-state={videoReady ? "ready" : videoFailed || !videoEligible ? "fallback" : "loading"}
-      data-cinematic-runtime="blob-throttle-v3"
+      data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
     >
       <div className="cinematic-sticky">
-        {VIDEO_SCRUB_ENABLED && videoEligible && <video
+        {VIDEO_SCRUB_ENABLED && <video
           ref={video}
           className="cinematic-scrub-video"
           muted
@@ -257,27 +167,28 @@ export default function CinematicBeautyHero() {
           poster="/cinematic/fatikhan-poster.jpg"
           aria-hidden="true"
           tabIndex={-1}
-        />}
+        >
+          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
+          <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
+        </video>}
 
-        {!videoReady && <>
-          <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
-            <div className="cinematic-product-frame">
-              <HeroStage allow3D={!videoEligible} />
-            </div>
+        <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
+          <div className="cinematic-product-frame">
+            <HeroStage />
           </div>
+        </div>
 
-          <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
-            <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
-          </div>
+        <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
+          <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
+        </div>
 
-          <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
-            <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
-          </div>
+        <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
+          <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
+        </div>
 
-          <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
-            <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
-          </div>
-        </>}
+        <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
+          <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
+        </div>
 
         <div className="cinematic-final-glow" aria-hidden="true" />
         <div className="cinematic-vignette" aria-hidden="true" />
