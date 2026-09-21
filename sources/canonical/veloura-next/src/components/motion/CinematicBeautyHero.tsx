@@ -70,31 +70,26 @@ export default function CinematicBeautyHero() {
 
       if (videoReady && video.current) {
         const media = video.current;
-        let pendingFrame = 0;
         let targetTime = media.currentTime;
         let seekInFlight = false;
 
         gsap.set(".cinematic-scrub-video", { opacity: 1 });
 
-        const queueSeek = () => {
-          if (pendingFrame || seekInFlight) return;
-          pendingFrame = window.requestAnimationFrame(() => {
-            pendingFrame = 0;
-            if (seekInFlight || media.readyState < 1) return;
+        const seekToTarget = () => {
+          if (seekInFlight || media.readyState < 1) return;
 
-            // Collapse fast wheel/trackpad updates into one seek. Issuing a new
-            // currentTime while the previous seek is unresolved causes visible
-            // frame starvation in Chromium/WebKit.
-            if (Math.abs(media.currentTime - targetTime) < 1 / 30) return;
+          // Collapse fast wheel/trackpad updates into one seek. Issuing a new
+          // currentTime while the previous seek is unresolved causes visible
+          // frame starvation in Chromium/WebKit.
+          if (Math.abs(media.currentTime - targetTime) < 1 / 30) return;
 
-            seekInFlight = true;
-            media.currentTime = targetTime;
-          });
+          seekInFlight = true;
+          media.currentTime = targetTime;
         };
 
         const onSeeked = () => {
           seekInFlight = false;
-          queueSeek();
+          seekToTarget();
         };
         media.addEventListener("seeked", onSeeked);
 
@@ -105,7 +100,7 @@ export default function CinematicBeautyHero() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             targetTime = self.progress * Math.max(0, media.duration - 0.04);
-            queueSeek();
+            seekToTarget();
           }
         });
 
@@ -131,7 +126,6 @@ export default function CinematicBeautyHero() {
           .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.05 }, 2.70);
 
         return () => {
-          if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
           media.removeEventListener("seeked", onSeeked);
           seekTrigger.kill();
           copyTl.kill();
