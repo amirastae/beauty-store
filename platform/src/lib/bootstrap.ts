@@ -908,10 +908,13 @@ INSERT OR IGNORE INTO external_refs (namespace,external_id,resource_type,resourc
 `,
   `CREATE TABLE IF NOT EXISTS checkout_claims (
   cart_id TEXT PRIMARY KEY REFERENCES carts(id) ON DELETE CASCADE,
-  idempotency_key TEXT NOT NULL UNIQUE,
+  idempotency_key TEXT NOT NULL,
   expires_at TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_checkout_claims_idempotency
+ON checkout_claims(idempotency_key);
 
 CREATE INDEX IF NOT EXISTS idx_checkout_claims_expires
 ON checkout_claims(expires_at);
@@ -967,12 +970,18 @@ export async function ensurePreviewDatabase(env: Env) {
       .first()
 
     if (!exists) {
-      for (const migration of MIGRATIONS) await env.DB!.exec(migration)
+      for (const migration of MIGRATIONS) {
+        await env.DB!.exec(migration)
+      }
       await env.DB!.exec(SEED)
     }
 
     ready = true
   })()
 
-  try { await inflight } finally { inflight = null }
+  try {
+    await inflight
+  } finally {
+    inflight = null
+  }
 }
