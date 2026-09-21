@@ -10,6 +10,8 @@ const money=(v:number)=>fa.format(v)+" تومان";
 export default function CartPage(){
   const lines=useCart((state)=>state.lines);
   const remove=useCart((state)=>state.remove);
+  const add=useCart((state)=>state.add);
+  const decrement=useCart((state)=>state.decrement);
   const total=lines.reduce((sum,line)=>sum+line.product.price*line.qty,0);
 
   return <main className="utility-page">
@@ -22,7 +24,7 @@ export default function CartPage(){
             const shade=line.product.shades?.find((s)=>s.id===line.shadeId);
             return <article className="cart-page-line" key={line.product.id+"-"+(line.shadeId||"default")}>
               <Image src={line.product.image} alt={line.product.imageAlt} width={120} height={150}/>
-              <div><Link href={"/product/"+line.product.slug}>{line.product.nameFa}</Link><span>{shade?.nameFa||line.product.category}</span><small>تعداد: {fa.format(line.qty)}</small></div>
+              <div><Link href={"/product/"+line.product.slug}>{line.product.nameFa}</Link><span>{shade?.nameFa||line.product.category}</span><div className="qty-stepper" aria-label="تعداد محصول"><button aria-label="کم کردن" onClick={()=>decrement(line.product.id,line.shadeId)}>−</button><span>{fa.format(line.qty)}</span><button aria-label="زیاد کردن" onClick={()=>add(line.product,line.shadeId)}>+</button></div></div>
               <strong>{money(line.product.price*line.qty)}</strong>
               <button onClick={()=>remove(line.product.id,line.shadeId)}>حذف</button>
             </article>

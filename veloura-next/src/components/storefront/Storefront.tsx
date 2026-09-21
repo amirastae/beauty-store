@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
@@ -25,7 +25,7 @@ export default function Storefront() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedShade, setSelectedShade] = useState<Record<string, string>>({});
-  const { lines, add, remove } = useCart();
+  const { lines, add, decrement, remove } = useCart();
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
 
@@ -39,11 +39,31 @@ export default function Storefront() {
           .toLocaleLowerCase("fa")
           .includes(q);
       return categoryMatch && queryMatch;
-    });
+    }).slice(0, 8);
   }, [category, query]);
 
   const cartCount = lines.reduce((sum, line) => sum + line.qty, 0);
   const cartTotal = lines.reduce((sum, line) => sum + line.product.price * line.qty, 0);
+
+  useEffect(() => {
+    const opened = cartOpen || searchOpen;
+    if (!opened) return;
+
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setCartOpen(false);
+      setSearchOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [cartOpen, searchOpen]);
 
   const addProduct = (product: Product) => {
     const shadeId = selectedShade[product.id] ?? product.shades?.[0]?.id;
@@ -92,7 +112,7 @@ export default function Storefront() {
       </section>
 
       <section className="category-strip" aria-label="دسته‌بندی">
-        {["لب", "پوست", "عطر", "چشم"].map((item, index) => (
+        {["پوست", "آرایش", "عطر", "مو"].map((item, index) => (
           <Link href={"/shop/?category=" + encodeURIComponent(item)} key={item}><span>0{index + 1}</span>{item}</Link>
         ))}
       </section>
@@ -208,7 +228,7 @@ export default function Storefront() {
         </div>
       </footer>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen}>
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
         <div className="drawer-head">
           <h2>سبد خرید</h2>
           <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
@@ -223,7 +243,8 @@ export default function Storefront() {
                 <Image src={line.product.image} alt="" width={74} height={92} />
                 <div>
                   <strong>{line.product.nameFa}</strong>
-                  <span>{shade?.nameFa ?? line.product.category} · ×{toman.format(line.qty)}</span>
+                  <span>{shade?.nameFa ?? line.product.category}</span>
+                  <div className="drawer-qty"><button aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
                   <small>{price(line.product.price * line.qty)}</small>
                 </div>
                 <button onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
@@ -238,7 +259,7 @@ export default function Storefront() {
       </aside>
       {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen}>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
         <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
           <p className="eyebrow">SEARCH VELOURA</p>

@@ -19,11 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: product.nameFa + " — VELOURA",
     description: product.nameFa + " از " + product.brand + "؛ خرید آنلاین با تجربه پریمیوم ولورا.",
+    alternates: { canonical: "/product/" + product.slug + "/" },
     openGraph: {
       title: product.nameFa + " — VELOURA",
       description: product.nameEn,
       images: [product.image],
-      type: "website"
+      type: "website",
+      url: "/product/" + product.slug + "/"
     }
   };
 }

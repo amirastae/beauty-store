@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const concerns=[
-  ["آبرسانی","پوستی نرم‌تر و شاداب‌تر"],
-  ["درخشش","برای جلوه روشن و شفاف"],
-  ["سد دفاعی","تقویت روتین روزانه"],
-  ["رنگ لب","از نود تا بری عمیق"]
+  ["آبرسانی","پوستی نرم‌تر و شاداب‌تر","/shop/?category=پوست"],
+  ["درخشش","برای جلوه روشن و شفاف","/shop/?category=پوست"],
+  ["سد دفاعی","تقویت روتین روزانه","/shop/?category=پوست"],
+  ["رنگ لب","از نود تا بری عمیق","/shop/?category=آرایش"]
 ];
 
 export default function DiscoverySections(){
@@ -13,7 +13,7 @@ export default function DiscoverySections(){
     <section className="concern-section">
       <div className="concern-head"><p className="eyebrow">SHOP BY MOOD</p><h2>با نیازت شروع کن.</h2><p>به‌جای گشتن بین ده‌ها کارت، از نتیجه‌ای که می‌خواهی شروع کن.</p></div>
       <div className="concern-grid">
-        {concerns.map(([title,desc],i)=><Link key={title} href={"/shop/?q="+encodeURIComponent(title)}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p><b>کشف ←</b></Link>)}
+        {concerns.map(([title,desc,href],i)=><Link key={title} href={href}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p><b>کشف ←</b></Link>)}
       </div>
     </section>
 
