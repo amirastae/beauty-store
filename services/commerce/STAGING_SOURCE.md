@@ -1,21 +1,16 @@
 # Commerce service staging snapshot
 
 Source branch: `commerce-core-v1`
-Source commit: `cf9edc4060c4cfa5db51c725735067eca5e95268`
+Source commit: `de18de948e4459f7495f2a3146ec18937ddc81e4`
 
-Current compatibility coverage:
-- full VELOURA v2.1 production catalog: 56 products, shade-aware
-- shop-v1.1.0 catalog: 56 products
-- legacy VELOURA compatibility preserved
-- currency-safe USD/IRR cart boundaries
+Current verified state:
+- migrations 0001-0007
+- full VELOURA v2.1 compatibility
+- Shop v1.1 compatibility
+- currency-safe carts
+- idempotent checkout
+- per-cart checkout claim against duplicate concurrent orders
+- real Cloudflare temporary Worker + D1 verification completed
+- runtime DB bootstrap disabled in deployed configs
 
-Verified locally:
-- TypeScript PASS
-- migrations 0001-0006 PASS
-- foreign-key check PASS
-- 120 products / 129 variants in aggregate compatibility database
-- VELOURA v2.1 refs: 133
-- Shop v1.1 refs: 112
-- Wrangler API preview dry-run PASS
-
-Local workerd startup remains an environment-level blocker on this server; do not treat it as an application regression.
+Permanent Cloudflare account authentication is still required for long-lived D1/R2 preview resources.

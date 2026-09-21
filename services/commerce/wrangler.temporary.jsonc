@@ -1,24 +1,19 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  "name": "beauty-store-commerce-preview",
+  "name": "veloura-commerce-temp",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-21",
   "observability": {
     "enabled": true
   },
   "vars": {
-    "APP_ENV": "preview",
+    "APP_ENV": "temporary-cloudflare-preview",
     "AUTO_BOOTSTRAP": "0"
   },
   "d1_databases": [
     {
       "binding": "DB",
       "migrations_dir": "db/migrations"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA"
     }
   ]
 }

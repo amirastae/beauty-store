@@ -905,6 +905,16 @@ INSERT OR IGNORE INTO product_variants (id,product_id,sku,title,status,price_min
 INSERT OR IGNORE INTO inventory_items (variant_id,stock_on_hand,reserved,updated_at) VALUES ('var_v21_56_default',100,0,datetime('now'));
 INSERT OR IGNORE INTO external_refs (namespace,external_id,resource_type,resource_id,metadata_json,created_at) VALUES ('veloura-v2.1','veloura-56:default','variant','var_v21_56_default','{}',datetime('now'));
 INSERT OR IGNORE INTO external_refs (namespace,external_id,resource_type,resource_id,metadata_json,created_at) VALUES ('veloura-v2.1','veloura-56','product','prod_v21_56','{}',datetime('now'));
+`,
+  `CREATE TABLE IF NOT EXISTS checkout_claims (
+  cart_id TEXT PRIMARY KEY REFERENCES carts(id) ON DELETE CASCADE,
+  idempotency_key TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_checkout_claims_expires
+ON checkout_claims(expires_at);
 `
 ]
 
@@ -957,18 +967,12 @@ export async function ensurePreviewDatabase(env: Env) {
       .first()
 
     if (!exists) {
-      for (const migration of MIGRATIONS) {
-        await env.DB!.exec(migration)
-      }
+      for (const migration of MIGRATIONS) await env.DB!.exec(migration)
       await env.DB!.exec(SEED)
     }
 
     ready = true
   })()
 
-  try {
-    await inflight
-  } finally {
-    inflight = null
-  }
+  try { await inflight } finally { inflight = null }
 }
