@@ -1,10 +1,11 @@
 name: Veloura Next CI
 
 on:
-  push:
-    branches: [beauty-v2-foundation]
   pull_request:
     branches: [main]
+    paths:
+      - "veloura-next/**"
+      - ".github/workflows/veloura-next-ci.yml"
 
 jobs:
   verify:
@@ -18,7 +19,6 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: veloura-next/package-lock.json
       - run: npm install --package-lock-only
       - run: npm ci
       - run: npm run typecheck
