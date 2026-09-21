@@ -116,7 +116,7 @@ export default function CheckoutShell(){
   };
 
   return <main className="checkout-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
 
     <div className="checkout-status" aria-label="مراحل سفارش">
       <span className="done">01 · سبد</span><i/><span className="active">02 · اطلاعات</span><i/><span>03 · پرداخت</span>
