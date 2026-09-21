@@ -73,4 +73,6 @@ jobs:
             exit 0
           fi
           git commit -m "build(staging): sync canonical VELOURA v2.2 export [generated]"
+          git fetch origin integration-staging
+          git rebase origin/integration-staging
           git push origin HEAD:integration-staging
