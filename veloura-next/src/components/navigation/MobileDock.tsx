@@ -22,6 +22,7 @@ export default function MobileDock(){
   return <nav className="mobile-dock" aria-label="ناوبری سریع موبایل">
     {item("/","خانه","⌂")}
     {item("/shop/","فروشگاه","◫")}
+    {item("/search/","جستجو","⌕")}
     {item("/wishlist/","علاقه‌مندی","♡",wishCount)}
     {item("/cart/","سبد","◌",cartCount)}
   </nav>;
