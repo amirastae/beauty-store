@@ -1,65 +1,80 @@
 # Handoff — Iranian Commerce UX v1
 
 - Source branch: `iranian-commerce-ux-v1`
-- Tested source commit: `27608040d27e7004882ad13d8f19a03a0031036f`
-- Verification run: `35559122817`
+- Tested code commit: `1475be847dbc5c4d2e5d4ebb1fe9a132456b5de2`
+- Verification run: `35559498538`
 - Base workstream: `beauty-v2-foundation@0e1c78f1dfd1a4822a74cced49cc8130b85e4b1f`
-- Scope: Persian/Iran commerce UX and safety only; homepage motion/editorial and production deployment remain untouched.
+- Scope: Persian/Iran commerce UX, trust, SEO, accessibility, static-response security and low-risk performance hardening. Homepage motion/editorial and production deployment remain untouched.
 
 ## Applied
 
 ### Shop and discovery
 - Persian number/Toman formatting.
 - Search normalization for Persian/Arabic keyboard variants: ی/ي, ک/ك, half-space, diacritics and extra whitespace.
-- Category, sale-only and price/discount sorting.
+- Category, sale-only, price and discount sorting.
 - Search/filter state reflected in query parameters.
-- Persistent wishlist and product compare (maximum 4).
+- Persistent wishlist and product compare, capped at 4.
 - Responsive compare table for price/category/brand/shades.
-- Live cart counter on shop/wishlist.
+- Live reactive cart counters on shop, wishlist, product and compare routes.
 - AM/PM skincare routine guide as an isolated public route.
 
-### Cart
-- Persistent Zustand cart with explicit post-mount rehydration to prevent hydration mismatch.
-- Persisted cart lines are reconciled against the fresh catalog on hydration; removed products are dropped, quantities are clamped, and invalid shades fall back safely.
-- Persisted wishlist/compare IDs are filtered against the current catalog, and compare remains capped at 4.
-- Quantity stepper bounded to 1..99.
-- Per-line shade awareness.
-- Clear-cart action.
-- Savings display derived only from current catalog compare-at values.
-- Checkout handoff without fake fulfillment/payment success.
+### Cart/state
+- Zustand cart/wishlist/compare hydration is explicitly deferred until mount to avoid SSR hydration mismatch.
+- Persisted cart lines are reconciled against the current catalog on hydration.
+- Removed products are dropped.
+- Quantities are clamped to 1..99.
+- Invalid/removed shades fall back safely.
+- Wishlist/compare IDs are filtered against the current catalog.
+- Quantity stepper and clear-cart action.
+- Savings display is derived only from current local compare-at values.
 
 ### Checkout
 - Iranian mobile normalization/validation.
 - 31-province selector, city, 10-digit postal code, full address and order note.
 - Native required-field validation restored.
-- Optional commerce-core verification via `NEXT_PUBLIC_COMMERCE_API_BASE`.
-- Verification is read-only: resolves compatibility IDs, reads server price and inventory, and reports stale local prices or insufficient stock.
-- It does not create backend carts, reserve stock, create orders, or mark payments successful.
-- When API is absent/unavailable, UI explicitly states that no order/payment was created.
+- Payment wording explicitly states that the real gateway is not connected yet.
+- Optional commerce-core verification through `NEXT_PUBLIC_COMMERCE_API_BASE`.
+- Verification is read-only: resolve compatibility ID -> read server price -> read available inventory.
+- Server-verified line totals and subtotal replace stale local values in the summary after verification.
+- Insufficient stock, stale price, missing mapping and backend-unavailable states are surfaced without creating an order.
+- No backend cart creation, reservation, order creation or payment mutation is enabled from this branch.
+- If Commerce API is absent, UI explicitly states that no order/payment was created.
 
-### Product UX
+### Product/trust
 - Toman and compare-at display.
 - Shade selection.
 - Persistent wishlist/compare actions.
 - Web Share API with clipboard fallback.
 - Canonical/OpenGraph/Twitter metadata.
 - Product + Breadcrumb JSON-LD.
-- Removed unverified inventory assertion from Schema.
-- Removed seed/demo rating, review-count and “popular/bestseller” social proof from commerce-facing UI and Product structured data.
+- JSON-LD script payloads escape `<` as `\\u003c`.
+- Removed unverified `InStock` assertion.
+- Removed seed/demo ratings, review counts and bestseller/popularity social proof from commerce-facing UI and Product structured data.
+- Trust copy does not claim live nationwide fulfillment/tracking before providers exist.
 
-### SEO and trust
+### SEO
 - Canonicals on public routes.
 - `noindex` for cart, checkout, wishlist and compare.
-- Public sitemap excludes private/utility commerce routes.
-- robots disallows cart/checkout/wishlist/compare.
-- Trust copy avoids asserting live nationwide fulfillment/tracking before providers are connected.
+- Utility routes are excluded from sitemap.
+- robots allows those pages to be crawled so crawlers can actually observe their meta `noindex` directives; they are not blocked with `Disallow`.
 - Routine route is public and included in sitemap.
+
+### Security / performance
+- Next.js pinned to stable `16.3.5` instead of a floating `^16.0.0` range.
+- Cloudflare static response headers in `public/_headers`:
+  - `X-Content-Type-Options: nosniff`
+  - `X-Frame-Options: DENY`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+  - `X-Permitted-Cross-Domain-Policies: none`
+- Hashed `/_next/static/*` assets use `Cache-Control: public, max-age=31536000, immutable`.
+- CSP and HSTS are intentionally not guessed in this workstream; those should be finalized with the production domain/runtime policy.
 
 ## Automated verification gates
 
 Workflow: `.github/workflows/iranian-commerce-ux-verify.yml`
 
-Exact run `35558992289` on tested code commit `f4f14e9e14dfa78373341178c22e782655c0fbd9`:
+Exact run `35559498538` on tested code commit `1475be847dbc5c4d2e5d4ebb1fe9a132456b5de2`:
 - dependency preparation: PASS
 - `npm ci`: PASS
 - `npm run typecheck`: PASS
@@ -68,18 +83,22 @@ Exact run `35558992289` on tested code commit `f4f14e9e14dfa78373341178c22e78265
 - `npm run links:check`: PASS
 - `npm run catalog:check`: PASS
 - `npm run a11y:check`: PASS
+- `npm run security:check`: PASS
 
 The custom gates cover:
 - canonical/noindex/robots/sitemap/JSON-LD expectations,
 - internal broken links across static output,
 - product structured-data integrity and unique canonicals,
-- prohibition of unsupported inventory and aggregate-rating claims,
-- lang/dir, one-H1, image alt, button accessible names, duplicate IDs and mobile zoom restrictions.
+- prohibition of unsupported inventory/aggregate-rating claims,
+- lang/dir, exactly one H1, image alt, button accessible names, duplicate IDs and mobile zoom restrictions,
+- presence of Cloudflare response security headers,
+- presence of immutable caching for hashed Next static assets.
 
-## Key added paths
+## Key paths
 - `.github/workflows/iranian-commerce-ux-verify.yml`
 - `veloura-next/.env.example`
-- `veloura-next/scripts/{seo-smoke,link-smoke,catalog-smoke,a11y-smoke}.mjs`
+- `veloura-next/public/_headers`
+- `veloura-next/scripts/{seo-smoke,link-smoke,catalog-smoke,a11y-smoke,security-smoke}.mjs`
 - `veloura-next/src/app/{compare,routine}/...`
 - `veloura-next/src/app/iranian-commerce.css`
 - `veloura-next/src/components/beauty/RoutineGuide.tsx`
@@ -88,34 +107,43 @@ The custom gates cover:
 - `veloura-next/src/lib/{locale,commerce-verify}.ts`
 - `veloura-next/src/store/compare.ts`
 
-## Commerce-core integration status
+## Current commerce-core integration status
 
-Current backend contract observed on `commerce-core-v1@cf9edc4060c4cfa5db51c725735067eca5e95268`:
+Rechecked parallel backend branch:
+- `commerce-core-v1@cecea343cd17ab75e237eb573db3d0533c36efa7`
+
+Relevant endpoints still present:
 - `POST /api/v1/compat/veloura-v2/resolve`
 - `GET /api/v1/inventory/:variantId`
 - `POST /api/v1/carts`
 - `POST /api/v1/carts/:id/items`
 - `POST /api/v1/checkout/:cartId`
 
-This UI branch intentionally consumes only the two read/resolve endpoints for safe verification.
+This UI branch intentionally consumes only the read/resolve path for safe verification.
 
-### Blocking issue before mutating checkout is enabled
-The current commerce-core checkout computes shipping with a fixed rule:
-`subtotal >= 7500 ? 0 : 800`
-while the same engine supports multiple currencies. That rule is not currency-aware and is unsafe to promote as an IRR shipping charge without an explicit shipping policy/service.
-
-Payment is also intentionally `requires_provider` until a real provider adapter confirms it.
+### Blockers before mutating checkout is enabled
+1. Shipping is still computed in commerce-core with a currency-agnostic fixed rule:
+   `subtotal >= 7500 ? 0 : 800`
+   while carts may be USD or IRR. This must become currency-aware or be replaced by the real shipping service/policy.
+2. Backend checkout currently requires a valid email, while this Iran-focused UI treats email as optional and mobile as the primary contact. The contract must be aligned before mutation checkout is enabled.
+3. Payment remains `requires_provider` / unconfigured until a real provider adapter and verified webhook flow exist.
 
 Therefore:
-1. do not enable frontend cart/order mutation yet;
-2. fix currency-aware shipping or attach the real shipping provider first;
-3. attach and verify the real payment provider/webhook flow;
-4. then integrate through `integration-staging`, not directly to production.
+- do not enable frontend cart/order mutation yet;
+- fix the shipping policy/service;
+- decide the email-vs-mobile checkout contract;
+- attach and verify the real payment provider/webhook;
+- integrate only through `integration-staging`, not directly to production.
+
+## Remaining non-blocking caveats
+- Product imagery still comes from `images.unsplash.com`; for maximum Iran resilience/performance, local/R2-owned product media should replace runtime third-party image dependency in the asset workstream.
+- There is no committed npm lockfile in `veloura-next`; CI deliberately generates one before `npm ci`, and Next itself is pinned, but a committed lockfile would improve total dependency reproducibility.
+- Catalog values are still the current project catalog/seed until the final production merchandising source is approved.
 
 ## Non-interference / promotion rules
 - Do not merge this branch wholesale into production.
-- Do not overwrite current homepage/motion/design work from other chats.
-- Review overlapping frontend files in integration staging.
+- Do not overwrite homepage/motion/design work from other chats.
+- Review overlapping frontend files in `integration-staging`.
 - Commerce-core remains source of truth for final price, inventory, shipping and payment.
 - Production branch `cloudflare-site` was not modified by this workstream.
 - No production deploy was performed from this branch.
