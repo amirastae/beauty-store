@@ -62,22 +62,31 @@ export default function CinematicBeautyHero() {
     media.addEventListener("error", onError);
 
     const loadScrubMaster = async () => {
-      try {
-        const response = await fetch("/cinematic/fatikhan-hero.mp4", {
-          cache: "force-cache",
-          signal: controller.signal
-        });
-        if (!response.ok) throw new Error("cinematic master fetch failed");
+      const sources = media.canPlayType("video/webm")
+        ? ["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]
+        : ["/cinematic/fatikhan-hero.mp4"];
 
-        const blob = await response.blob();
-        if (controller.signal.aborted) return;
+      for (const source of sources) {
+        try {
+          const response = await fetch(source, {
+            cache: "force-cache",
+            signal: controller.signal
+          });
+          if (!response.ok) continue;
 
-        objectUrl = URL.createObjectURL(blob);
-        media.src = objectUrl;
-        media.load();
-      } catch {
-        if (!controller.signal.aborted) onError();
+          const blob = await response.blob();
+          if (controller.signal.aborted) return;
+
+          objectUrl = URL.createObjectURL(blob);
+          media.src = objectUrl;
+          media.load();
+          return;
+        } catch {
+          if (controller.signal.aborted) return;
+        }
       }
+
+      onError();
     };
 
     void loadScrubMaster();

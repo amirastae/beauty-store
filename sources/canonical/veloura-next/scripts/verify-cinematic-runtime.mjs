@@ -14,6 +14,7 @@ const required = [
   ["ScrollTrigger.create(", "ScrollTrigger scrub driver"],
   ["media.currentTime = targetTime", "video currentTime scrub mapping"],
   ["setVideoEligible(!(reducedMotion || saveData || slowNetwork))", "mobile-safe eligibility rule"],
+  ['["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]', "WebM-first scrub source order"],
 ];
 
 for (const [needle, label] of required) {

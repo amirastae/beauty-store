@@ -50,3 +50,11 @@ The connected Higgsfield workspace currently has 9.1 credits on the Free plan. S
 - The staging commerce workstream does not overlap these paths.
 - Temporary one-shot media workflows were removed after the assets were committed.
 - Promotion still goes through `integration-staging` verification only.
+
+
+## Latest canonical runtime hardening
+
+- Removed the stale mobile viewport probe from the canonical hero so the locked mobile scrub invariant is unambiguous.
+- The blob-backed cinematic loader now prefers the smaller WebM master and falls back to MP4 only when needed.
+- Runtime CI now locks the WebM -> MP4 source order in addition to the existing mobile/desktop scroll-scrub invariant.
+- This changes transport efficiency only; the approved Descent -> Reveal -> Burst -> Impact -> Formula -> Ritual choreography is unchanged.
