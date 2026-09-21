@@ -7,6 +7,10 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+function serializeJsonLd(value: unknown) {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
