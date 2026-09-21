@@ -2,10 +2,19 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { commerce, commerceConfigured, CommerceApiError, irrToToman } from "@/lib/commerce-client";
-import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode, normalizeIranianMobile, normalizePostalCode } from "@/lib/locale";
-import { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 import { useCart } from "@/store/cart";
+import {
+  checkoutFingerprint,
+  checkoutIdempotencyKey,
+  clearCheckoutIdempotency,
+  commerceEnabled,
+  commerceHealth,
+  createCommerceOrder,
+  irrMinorToToman,
+  startCommercePayment,
+  getCommerceOrderStatus
+} from "@/lib/commerce";
+import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
 
 const provinces = [
   "آذربایجان شرقی","آذربایجان غربی","اردبیل","اصفهان","البرز","ایلام","بوشهر","تهران",
@@ -14,219 +23,287 @@ const provinces = [
   "گلستان","گیلان","لرستان","مازندران","مرکزی","هرمزگان","همدان","یزد"
 ];
 
-type PendingOrder = {
-  order_id: string;
-  order_number: number;
-  payment_expires_at: string;
+type Draft={
+  name:string;
+  phone:string;
+  email:string;
+  province:string;
+  address:string;
+  city:string;
+  postal:string;
+  note:string;
 };
 
-const pendingKey = "veloura-pending-payment-v1";
+type PendingOrder={
+  orderId:string;
+  orderNumber:number;
+  expiresAt:string;
+  receiptToken?:string;
+};
 
-function errorMessage(error: unknown) {
-  if (!(error instanceof CommerceApiError)) return "خطای غیرمنتظره رخ داد. دوباره تلاش کن.";
-  const map: Record<string,string> = {
-    COMMERCE_API_NOT_CONFIGURED: "هسته سفارش فروشگاه در این build متصل نیست.",
-    PAYMENT_PROVIDER_NOT_CONFIGURED: "درگاه واقعی فروشگاه هنوز روی سرور فعال نشده است.",
-    PAYMENT_PROVIDER_UNAVAILABLE: "ارتباط با درگاه پرداخت موقتاً برقرار نشد. سفارش تکراری ساخته نمی‌شود؛ دوباره تلاش کن.",
-    PAYMENT_PROVIDER_REJECTED: "درگاه پرداخت درخواست را نپذیرفت. کمی بعد دوباره تلاش کن.",
-    FRONTEND_VARIANT_NOT_FOUND: "یکی از محصولات سبد با کاتالوگ سرور هماهنگ نیست.",
-    INSUFFICIENT_STOCK: "موجودی یکی از محصولات برای این تعداد کافی نیست.",
-    CURRENCY_MISMATCH: "ارز یکی از اقلام با سبد سازگار نیست.",
-    ORDER_EXPIRED: "مهلت رزرو این سفارش تمام شده؛ دوباره سفارش را ایجاد کن.",
-    SHIPPING_POLICY_NOT_CONFIGURED: "هزینه ارسال برای این روش هنوز روی سرور تنظیم نشده است."
+const emptyDraft:Draft={name:"",phone:"",email:"",province:"",address:"",city:"",postal:"",note:""};
+const draftSessionKey="veloura-checkout-draft-session-v1";
+const legacyDraftStorageKey="veloura-checkout-draft-v2";
+const pendingKey="veloura-pending-payment-v1";
+
+function commerceErrorMessage(error: unknown) {
+  const code=typeof error==="object"&&error&&"code" in error?String((error as {code?:unknown}).code||""):"";
+  const messages:Record<string,string>={
+    COMMERCE_NOT_CONFIGURED:"هسته سفارش در این build متصل نیست.",
+    PAYMENT_PROVIDER_NOT_CONFIGURED:"درگاه پرداخت واقعی هنوز روی سرور فعال نشده است.",
+    PAYMENT_PROVIDER_UNAVAILABLE:"ارتباط با درگاه موقتاً برقرار نشد. سفارش تکراری ساخته نمی‌شود؛ دوباره ادامه پرداخت را بزن.",
+    PAYMENT_PROVIDER_REJECTED:"درگاه پرداخت درخواست را نپذیرفت. کمی بعد دوباره تلاش کن.",
+    FRONTEND_VARIANT_NOT_FOUND:"یکی از محصولات سبد با کاتالوگ سرور هماهنگ نیست.",
+    INSUFFICIENT_STOCK:"موجودی یکی از محصولات کافی نیست.",
+    ORDER_EXPIRED:"مهلت رزرو سفارش تمام شده است؛ سفارش جدید بساز.",
+    CURRENCY_MISMATCH:"ارز یکی از اقلام سبد معتبر نیست.",
+    SHIPPING_POLICY_NOT_CONFIGURED:"هزینه ارسال برای این سفارش روی سرور تنظیم نشده است."
   };
-  return map[error.code] || error.message || "تکمیل سفارش انجام نشد.";
+  return messages[code]||(code?"تکمیل سفارش انجام نشد ("+code+").":"ارتباط با سرویس سفارش برقرار نشد.");
 }
 
 export default function CheckoutShell(){
-  const lines = useCart((state)=>state.lines);
-  const clear = useCart((state)=>state.clear);
-  const localTotal = lines.reduce((sum,line)=>sum+line.product.price*line.qty,0);
-
-  const [busy,setBusy] = useState(false);
-  const [message,setMessage] = useState("");
-  const [pending,setPending] = useState<PendingOrder|null>(null);
-  const [paymentReturn,setPaymentReturn] = useState<{status:"success"|"failed"|"cancelled";order?:string}|null>(null);
-  const [serverSummary,setServerSummary] = useState<{subtotal:number;shipping:number;total:number}|null>(null);
+  const lines=useCart((state)=>state.lines);
+  const clearCart=useCart((state)=>state.clear);
+  const localTotal=lines.reduce((sum,line)=>sum+line.product.price*line.qty,0);
+  const [draft,setDraft]=useState<Draft>(emptyDraft);
+  const [submitting,setSubmitting]=useState(false);
+  const [message,setMessage]=useState("");
+  const [mobileError,setMobileError]=useState("");
+  const [postalError,setPostalError]=useState("");
+  const [serverTotal,setServerTotal]=useState<number|null>(null);
+  const [serverShipping,setServerShipping]=useState<number|null>(null);
+  const [pending,setPending]=useState<PendingOrder|null>(null);
+  const [paymentReturn,setPaymentReturn]=useState<"success"|"failed"|"cancelled"|"pending"|"unverified"|null>(null);
 
   useEffect(()=>{
-    try {
-      const saved=sessionStorage.getItem(pendingKey);
-      if(saved) setPending(JSON.parse(saved));
-    } catch {}
+    let savedPending:PendingOrder|null=null;
+    try{
+      let draftRaw=sessionStorage.getItem(draftSessionKey);
+      if(!draftRaw){
+        const legacyRaw=localStorage.getItem(legacyDraftStorageKey);
+        if(legacyRaw){
+          draftRaw=legacyRaw;
+          sessionStorage.setItem(draftSessionKey,legacyRaw);
+        }
+      }
+      localStorage.removeItem(legacyDraftStorageKey);
+      if(draftRaw) setDraft({...emptyDraft,...JSON.parse(draftRaw)});
+
+      const pendingRaw=sessionStorage.getItem(pendingKey);
+      if(pendingRaw){
+        savedPending=JSON.parse(pendingRaw) as PendingOrder;
+        setPending(savedPending);
+      }
+    }catch{}
 
     const params=new URLSearchParams(window.location.search);
-    const status=params.get("payment");
-    if(status==="success"||status==="failed"||status==="cancelled"){
-      const order=(params.get("order")||"").replace(/[^0-9]/g,"").slice(0,20);
-      setPaymentReturn({status,...(order?{order}:{})});
-      if(status==="success"){
-        clear();
-        try{sessionStorage.removeItem(pendingKey)}catch{}
-        setPending(null);
-      }
-    }
-  },[clear]);
+    const returned=params.get("payment");
+    if(returned!=="success"&&returned!=="failed"&&returned!=="cancelled") return;
 
-  const redirectToPayment = async (order: PendingOrder) => {
-    const payment=await commerce.startPayment(order.order_id);
-    window.location.assign(payment.redirect_url);
+    if(!commerceEnabled||!savedPending?.receiptToken){
+      setPaymentReturn("unverified");
+      return;
+    }
+
+    let cancelled=false;
+    void (async()=>{
+      try{
+        const status=await getCommerceOrderStatus(savedPending!.receiptToken!);
+        if(cancelled) return;
+
+        if(status.payment_status==="paid"){
+          setPaymentReturn("success");
+          clearCheckoutIdempotency();
+          try{
+            sessionStorage.removeItem(pendingKey);
+            sessionStorage.removeItem(draftSessionKey);
+            localStorage.removeItem(legacyDraftStorageKey);
+          }catch{}
+          setDraft(emptyDraft);
+          setPending(null);
+          clearCart();
+          return;
+        }
+
+        if(status.payment_status==="cancelled"){
+          setPaymentReturn("cancelled");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        if(status.payment_status==="failed"||status.payment_status==="expired"){
+          setPaymentReturn("failed");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        setPaymentReturn("pending");
+      }catch{
+        if(!cancelled) setPaymentReturn("unverified");
+      }
+    })();
+
+    return()=>{cancelled=true};
+  },[clearCart]);
+
+  const update=(key:keyof Draft,value:string)=>{
+    setDraft((state)=>({...state,[key]:value}));
+    setMessage("");
+    setServerTotal(null);
+    setServerShipping(null);
+    clearCheckoutIdempotency();
   };
 
-  const retryPayment = async () => {
+  const continuePendingPayment=async()=>{
     if(!pending) return;
-    setBusy(true);
+    setSubmitting(true);
     setMessage("");
     try{
-      await redirectToPayment(pending);
+      const payment=await startCommercePayment(pending.orderId);
+      window.location.assign(payment.redirect_url);
     }catch(error){
-      setMessage(errorMessage(error));
-      setBusy(false);
+      const code=typeof error==="object"&&error&&"code" in error?String((error as {code?:unknown}).code||""):"";
+      if(code==="ORDER_EXPIRED"){
+        try{sessionStorage.removeItem(pendingKey)}catch{}
+        setPending(null);
+        clearCheckoutIdempotency();
+      }
+      setMessage(commerceErrorMessage(error));
+      setSubmitting(false);
     }
   };
 
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
+  const submit=async(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     const form=event.currentTarget;
     setMessage("");
+    setServerTotal(null);
+    setServerShipping(null);
 
     if(!form.checkValidity()){
       form.reportValidity();
       return;
     }
-    if(!lines.length){
-      setMessage("سبد خرید خالی است.");
+
+    const mobileValid=isIranianMobile(draft.phone);
+    const postalValid=isIranianPostalCode(draft.postal);
+    setMobileError(mobileValid?"":"شماره موبایل معتبر ایران وارد کن.");
+    setPostalError(postalValid?"":"کد پستی باید ۱۰ رقم باشد.");
+    if(!mobileValid||!postalValid||!lines.length) return;
+
+    try{ sessionStorage.setItem(draftSessionKey,JSON.stringify(draft)); }catch{}
+
+    if(!commerceEnabled){
+      setMessage("اطلاعات فقط برای همین نشست مرورگر نگه‌داری شد؛ سرویس سفارش واقعی در این build فعال نیست و هیچ سفارش یا پرداختی ساخته نشد.");
       return;
     }
 
-    const data=new FormData(form);
-    const mobile=String(data.get("mobile")||"");
-    const postal=String(data.get("postalCode")||"");
-    if(!isIranianMobile(mobile)){
-      setMessage("شماره موبایل معتبر ایران وارد کن.");
-      return;
-    }
-    if(!isIranianPostalCode(postal)){
-      setMessage("کد پستی باید دقیقاً ۱۰ رقم باشد.");
-      return;
-    }
-    if(!commerceConfigured){
-      setMessage("اتصال امن سفارش هنوز برای این نسخه فعال نشده است؛ هیچ سفارشی ساخته نشد.");
+    if(pending){
+      setMessage("یک سفارش در انتظار پرداخت داری؛ ابتدا همان پرداخت را ادامه بده یا تا پایان مهلت رزرو صبر کن.");
       return;
     }
 
-    setBusy(true);
-
+    setSubmitting(true);
     try{
-      const health=await commerce.health();
-      if(!health.database_bound) throw new CommerceApiError("DB_NOT_BOUND","دیتابیس سفارش متصل نیست.",503);
-      if(!health.payment_provider_configured) throw new CommerceApiError("PAYMENT_PROVIDER_NOT_CONFIGURED","درگاه پرداخت متصل نیست.",503);
+      const health=await commerceHealth();
+      if(!health.database_bound) throw Object.assign(new Error("Database is not bound."),{code:"DB_NOT_BOUND"});
+      if(!health.payment_provider_configured) throw Object.assign(new Error("Payment provider is not configured."),{code:"PAYMENT_PROVIDER_NOT_CONFIGURED"});
 
-      const cart=await commerce.createCart();
-      let verifiedSubtotalIrr=0;
-
-      for(const line of lines){
-        const resolved=await commerce.resolveVariant(line.product.id,line.shadeId);
-        if(resolved.currency_code!=="IRR"){
-          throw new CommerceApiError("CURRENCY_MISMATCH","ارز محصول معتبر نیست.",409);
-        }
-        verifiedSubtotalIrr += resolved.price_minor*line.qty;
-        await commerce.addItem(cart.id,resolved.variant_id,line.qty);
-      }
-
-      const order=await commerce.checkout(
-        cart.id,
-        {
-          phone:normalizeIranianMobile(mobile),
-          email:String(data.get("email")||"").trim()||undefined,
-          shipping_address:{
-            full_name:String(data.get("fullName")||"").trim(),
-            province:String(data.get("province")||"").trim(),
-            city:String(data.get("city")||"").trim(),
-            postal_code:normalizePostalCode(postal),
-            line1:String(data.get("address")||"").trim(),
-            note:String(data.get("note")||"").trim()
-          }
-        },
-        crypto.randomUUID()
-      );
+      const fingerprint=await checkoutFingerprint(lines,draft);
+      const key=checkoutIdempotencyKey(fingerprint);
+      const order=await createCommerceOrder(lines,{
+        email:draft.email.trim()||undefined,
+        fullName:draft.name.trim(),
+        phone:draft.phone.trim(),
+        province:draft.province,
+        address:draft.address.trim(),
+        city:draft.city.trim(),
+        postal:draft.postal.trim(),
+        note:draft.note.trim()
+      },key);
 
       const pendingOrder:PendingOrder={
-        order_id:order.order_id,
-        order_number:order.order_number,
-        payment_expires_at:order.payment_expires_at
+        orderId:order.order_id,
+        orderNumber:order.order_number,
+        expiresAt:order.payment_expires_at,
+        receiptToken:order.receipt_token
       };
       setPending(pendingOrder);
-      setServerSummary({
-        subtotal:irrToToman(order.subtotal_minor),
-        shipping:irrToToman(order.shipping_minor),
-        total:irrToToman(order.total_minor)
-      });
       try{sessionStorage.setItem(pendingKey,JSON.stringify(pendingOrder))}catch{}
 
-      if(order.subtotal_minor!==verifiedSubtotalIrr){
-        console.warn("server subtotal differs from resolved variant subtotal");
-      }
+      setServerShipping(irrMinorToToman(order.shipping_minor));
+      setServerTotal(irrMinorToToman(order.total_minor));
 
-      await redirectToPayment(pendingOrder);
+      const payment=await startCommercePayment(order.order_id);
+      window.location.assign(payment.redirect_url);
     }catch(error){
-      setMessage(errorMessage(error));
-      setBusy(false);
+      setMessage(commerceErrorMessage(error));
+      setSubmitting(false);
     }
   };
 
   return <main className="checkout-page">
-    <header className="shop-nav">
-      <Link href="/" className="brand">VELOURA</Link>
-      <Link href="/cart/">بازگشت به سبد ←</Link>
-    </header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/cart/">بازگشت به سبد ←</Link></header>
 
     <div className="checkout-status" aria-label="مراحل سفارش">
-      <span className="done">۰۱ · سبد</span><i/><span className="active">۰۲ · اطلاعات و پرداخت</span><i/><span>۰۳ · تأیید</span>
+      <span className="done">01 · سبد</span><i/><span className="active">02 · اطلاعات</span><i/><span>03 · پرداخت</span>
     </div>
 
     <div className="checkout-layout">
       <section>
-        <p className="eyebrow">SECURE IRAN CHECKOUT</p>
-        <h1>تکمیل سفارش</h1>
-        <p className="checkout-intro">قیمت و موجودی از سرور تأیید می‌شود، سپس سفارش با رزرو موقت موجودی ساخته شده و فقط به درگاه واقعی هدایت می‌شوی.</p>
+        <p className="eyebrow">SECURE CHECKOUT · STEP 02</p>
+        <h1>اطلاعات تحویل</h1>
+        <p className="checkout-intro">{commerceEnabled?"قیمت، موجودی، ارسال و سفارش توسط هسته واقعی فروشگاه پردازش می‌شود و پرداخت فقط از درگاه متصل ادامه پیدا می‌کند.":"اطلاعات فعلاً فقط روی مرورگر ذخیره می‌شود؛ هیچ سفارش یا پرداختی ساخته نمی‌شود."}</p>
 
-        {paymentReturn && <div className={"payment-return "+paymentReturn.status} role={paymentReturn.status==="success"?"status":"alert"}>
-          <strong>{paymentReturn.status==="success"?"پرداخت با موفقیت تأیید شد.":paymentReturn.status==="cancelled"?"پرداخت لغو شد.":"پرداخت تأیید نشد."}</strong>
-          {paymentReturn.order && <span>شماره سفارش: {paymentReturn.order}</span>}
-          {paymentReturn.status!=="success" && <small>اگر هنوز مهلت سفارش باقی مانده باشد می‌توانی دوباره تلاش کنی؛ در غیر این صورت سفارش جدید بساز.</small>}
+        {paymentReturn&&<div className={"payment-return "+paymentReturn} role={paymentReturn==="success"?"status":"alert"}>
+          <strong>{
+            paymentReturn==="success"?"پرداخت از سرور تأیید شد.":
+            paymentReturn==="cancelled"?"لغو پرداخت از سرور تأیید شد.":
+            paymentReturn==="failed"?"عدم موفقیت پرداخت از سرور تأیید شد.":
+            paymentReturn==="pending"?"وضعیت پرداخت هنوز نهایی نشده است.":
+            "نتیجه برگشت درگاه هنوز از سرور قابل تأیید نیست."
+          }</strong>
+          <span>{
+            paymentReturn==="success"?"سبد خرید فقط بعد از تأیید واقعی پرداخت پاک شد و سفارش برای پردازش ثبت شده است.":
+            paymentReturn==="cancelled"||paymentReturn==="failed"?"وضعیت نمایش‌داده‌شده از رکورد معتبر سفارش خوانده شده است.":
+            paymentReturn==="pending"?"سفارش هنوز در حالت انتظار است؛ نتیجه URL به‌تنهایی اثبات پرداخت نیست.":
+            "برای امنیت، پارامترهای آدرس صفحه به‌تنهایی به‌عنوان موفقیت پرداخت پذیرفته نمی‌شوند."
+          }</span>
         </div>}
 
-        {pending && paymentReturn?.status!=="success" && <div className="checkout-resume">
-          <div><b>سفارش در انتظار پرداخت</b><span>شماره {formatFaNumber(pending.order_number)}</span></div>
-          <button type="button" className="button" disabled={busy} onClick={retryPayment}>ادامه پرداخت</button>
+        {pending&&<div className="checkout-resume">
+          <div><b>سفارش در انتظار پرداخت</b><span>شماره {formatFaNumber(pending.orderNumber)}</span></div>
+          <button type="button" className="button" disabled={submitting} onClick={continuePendingPayment}>ادامه پرداخت</button>
         </div>}
 
         <form className="checkout-form" onSubmit={submit}>
-          <label>نام و نام خانوادگی<input name="fullName" required autoComplete="name"/></label>
-          <label>شماره موبایل<input name="mobile" required inputMode="tel" autoComplete="tel" placeholder="۰۹۱۲۱۲۳۴۵۶۷"/></label>
-          <label>ایمیل — اختیاری<input name="email" type="email" autoComplete="email"/></label>
-          <label>استان<select name="province" required defaultValue=""><option value="" disabled>انتخاب استان</option>{provinces.map((p)=><option key={p} value={p}>{p}</option>)}</select></label>
-          <label>شهر<input name="city" required autoComplete="address-level2"/></label>
-          <label>کد پستی<input name="postalCode" required inputMode="numeric" maxLength={10} autoComplete="postal-code"/></label>
-          <label className="wide">آدرس کامل<textarea name="address" required rows={3} autoComplete="street-address"/></label>
-          <label className="wide">توضیحات سفارش<textarea name="note" rows={2} placeholder="پلاک، واحد یا توضیح لازم برای ارسال"/></label>
-          <button className="button button-dark wide" disabled={busy||!lines.length}>{busy?"در حال آماده‌سازی پرداخت…":"ثبت سفارش و رفتن به درگاه"}</button>
+          <label>نام و نام خانوادگی<input required autoComplete="name" value={draft.name} onChange={(e)=>update("name",e.target.value)}/></label>
+          <label>شماره موبایل<input required inputMode="tel" autoComplete="tel" value={draft.phone} onChange={(e)=>update("phone",e.target.value)} aria-invalid={Boolean(mobileError)}/>{mobileError&&<span className="checkout-field-error">{mobileError}</span>}</label>
+          <label>ایمیل — اختیاری<input type="email" autoComplete="email" value={draft.email} onChange={(e)=>update("email",e.target.value)}/></label>
+          <label>استان<select required value={draft.province} onChange={(e)=>update("province",e.target.value)}><option value="" disabled>انتخاب استان</option>{provinces.map((p)=><option key={p} value={p}>{p}</option>)}</select></label>
+          <label>شهر<input required autoComplete="address-level2" value={draft.city} onChange={(e)=>update("city",e.target.value)}/></label>
+          <label>کد پستی<input required inputMode="numeric" autoComplete="postal-code" maxLength={10} value={draft.postal} onChange={(e)=>update("postal",e.target.value)} aria-invalid={Boolean(postalError)}/>{postalError&&<span className="checkout-field-error">{postalError}</span>}</label>
+          <label className="wide">آدرس کامل<textarea required rows={3} autoComplete="street-address" value={draft.address} onChange={(e)=>update("address",e.target.value)}/></label>
+          <label className="wide">توضیح سفارش<textarea rows={2} value={draft.note} onChange={(e)=>update("note",e.target.value)} placeholder="پلاک، واحد یا توضیح لازم برای ارسال"/></label>
+          <button className="button button-dark wide" disabled={!lines.length||submitting}>{submitting?"در حال آماده‌سازی پرداخت…":commerceEnabled?"ثبت سفارش و رفتن به درگاه":"ذخیره اطلاعات"}</button>
         </form>
 
-        {message && <div className="checkout-error" role="alert">{message}</div>}
-        {!commerceConfigured && <div className="checkout-note">این build هنوز آدرس Commerce API ندارد؛ برای جلوگیری از سفارش نمایشی، دکمه پرداخت سفارش ایجاد نمی‌کند.</div>}
-        <p className="checkout-support">پشتیبانی: <a href={STORE_SUPPORT_MAILTO}>{STORE_SUPPORT_EMAIL}</a></p>
+        <div className="checkout-safety"><b>پرداخت نمایشی نداریم.</b><p>اطلاعات کارت در FATIKHAN دریافت یا ذخیره نمی‌شود. پیش‌نویس اطلاعات تحویل فقط در همین نشست مرورگر نگه‌داری می‌شود و بعد از پرداخت تأییدشده پاک می‌شود.</p></div>
+        <div className={message?"checkout-note success":"checkout-note"} aria-live="polite">{message||"شماره موبایل، آدرس و مبلغ نهایی قبل از پرداخت روی سرور بررسی می‌شوند."}</div>
       </section>
 
       <aside className="order-summary">
         <h2>سفارش شما</h2>
         {lines.length?lines.map((line)=><div key={line.product.id+"-"+(line.shadeId||"default")}><span>{line.product.nameFa} × {formatFaNumber(line.qty)}</span><strong>{formatToman(line.product.price*line.qty)}</strong></div>):<p className="summary-empty">سبد خرید خالی است.</p>}
-        <hr/>
-        <div><span>جمع کالاها</span><strong>{formatToman(serverSummary?.subtotal??localTotal)}</strong></div>
-        <div><span>ارسال</span><strong>{serverSummary?formatToman(serverSummary.shipping):"محاسبه امن روی سرور"}</strong></div>
-        {serverSummary && <div><span>مبلغ نهایی</span><strong>{formatToman(serverSummary.total)}</strong></div>}
-        <small>مبلغ نهایی و وضعیت پرداخت فقط از Commerce API و callback تأییدشده درگاه پذیرفته می‌شود.</small>
+        <hr/><div><span>جمع کالاها</span><strong>{formatToman(localTotal)}</strong></div>
+        <div><span>ارسال</span><strong>{serverShipping===null?"هنگام ثبت از سرور":formatToman(serverShipping)}</strong></div>
+        {serverTotal!==null&&<div><span>مبلغ نهایی سرور</span><strong>{formatToman(serverTotal)}</strong></div>}
+        <small>مبلغ معتبر نهایی فقط از هسته تجارت دریافت می‌شود.</small>
       </aside>
     </div>
   </main>;

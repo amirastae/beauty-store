@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return {};
 
   return {
-    title: product.nameFa + " — VELOURA",
-    description: product.nameFa + " از " + product.brand + "؛ جزئیات، ترکیبات و خرید آنلاین در ولورا.",
+    title: product.nameFa + " — FATIKHAN",
+    description: product.nameFa + " از " + product.brand + "؛ جزئیات، ترکیبات و خرید آنلاین در FATIKHAN.",
     alternates: { canonical: "/product/" + product.slug + "/" },
     openGraph: {
-      title: product.nameFa + " — VELOURA",
+      title: product.nameFa + " — FATIKHAN",
       description: product.nameEn,
       images: [product.image],
       type: "website",
@@ -37,7 +37,6 @@ export default async function ProductPage({ params }: Props) {
 
   const related = products
     .filter((item) => item.category === product.category && item.id !== product.id)
-    .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
     .slice(0, 4);
 
   const schema = {
@@ -60,13 +59,7 @@ export default async function ProductPage({ params }: Props) {
           "@type": "Offer",
           priceCurrency: "IRR",
           price: product.price * 10,
-          availability: "https://schema.org/InStock",
           url: "https://beauty-store.nayererohalamini.workers.dev/product/" + product.slug + "/"
-        },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: product.rating,
-          reviewCount: product.reviewCount
         }
       },
       {

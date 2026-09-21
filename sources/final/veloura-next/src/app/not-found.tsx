@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound(){
   return <main className="not-found">
     <div>
-      <p className="eyebrow">404 · VELOURA</p>
+      <p className="eyebrow">404 · FATIKHAN</p>
       <h1>این صفحه<br/><em>اینجا نیست.</em></h1>
       <p>مسیر عوض شده یا محصول دیگر در این آدرس نیست.</p>
       <div className="not-found-actions">

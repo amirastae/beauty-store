@@ -15,7 +15,7 @@ export default function CartPage(){
   const total=lines.reduce((sum,line)=>sum+line.product.price*line.qty,0);
 
   return <main className="utility-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/shop/">ادامه خرید ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/shop/">ادامه خرید ←</Link></header>
     <section className="utility-head"><p className="eyebrow">YOUR BAG</p><h1>سبد خرید</h1><p>{fa.format(lines.reduce((s,l)=>s+l.qty,0))} آیتم</p></section>
     <section className="cart-page-grid">
       <div className="cart-page-lines">
