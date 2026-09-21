@@ -13,7 +13,7 @@ type NavigatorWithConnection = Navigator & {
   connection?: { saveData?: boolean };
 };
 
-const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO === "1";
+const VIDEO_SCRUB_ENABLED = process.env.NEXT_PUBLIC_FATIKHAN_CINEMATIC_VIDEO !== "0";
 
 export default function CinematicBeautyHero() {
   const root = useRef<HTMLElement>(null);
@@ -167,7 +167,6 @@ export default function CinematicBeautyHero() {
           aria-hidden="true"
           tabIndex={-1}
         >
-          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
           <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
         </video>}
 
