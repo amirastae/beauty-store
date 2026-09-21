@@ -1,36 +1,20 @@
 # Commerce Infrastructure Lab
 
-This branch is an isolated research/vendor lab for the beauty-store project.
+This isolated branch is a large-scale architecture library for the beauty-store project. It keeps production untouched while pinning major open-source commerce engines, storefronts and platform primitives at exact commits.
 
-It intentionally does **not** modify the production Cloudflare branch. The goal is to keep proven, large-scale open-source commerce infrastructure available for architecture study, selective reuse, benchmarking, and future migration.
+## Scope
 
-## Included stacks
+**Commerce engines:** Medusa, Saleor, Spree, Solidus, Sylius, Bagisto, Aimeos, Vendure, Magento Open Source, WooCommerce, PrestaShop, Shopware, nopCommerce and OpenCart.
 
-### Commerce engines / platforms
-- Medusa — modular TypeScript/Node commerce platform
-- Saleor Core — high-performance Python/GraphQL headless commerce
-- Spree — Ruby commerce platform for DTC/B2B/marketplaces
-- Solidus — Ruby commerce platform
-- Sylius — PHP/Symfony headless commerce
-- Bagisto — Laravel commerce platform
-- Aimeos — Laravel/PHP scalable commerce framework
-- Vendure — TypeScript/NestJS headless commerce
-- Magento Open Source — Adobe/Magento PHP commerce platform
-- WooCommerce — WordPress commerce platform
-- PrestaShop — PHP commerce platform
-- Shopware — PHP/Symfony commerce platform
-- nopCommerce — ASP.NET Core commerce platform
-- OpenCart — PHP commerce platform
+**Storefront architecture:** Vercel Commerce and Shopify Hydrogen.
 
-### Storefront architecture
-- Vercel Commerce — Next.js commerce storefront architecture
-- Shopify Hydrogen — React/Remix headless storefront architecture for Shopify
+**Platform primitives:** Supabase, Strapi, Payload, Meilisearch, Better Auth, Next.js, Cloudflare Workers SDK and Hono.
 
-## Why submodules instead of copying millions of files
+That gives the repository a broad reference base for catalog, checkout, orders, admin, auth, CMS, search, database, edge runtime, APIs and modern storefront architecture.
 
-Each upstream is pinned to an exact audited commit via a Git submodule. This preserves original history, license attribution, and source provenance while preventing the beauty-store repository itself from exploding to multiple gigabytes.
+## Storage strategy
 
-A clone with submodules gives you the full source trees locally:
+The upstream projects are pinned as Git submodules instead of copying millions of files into the parent Git object database. A normal recursive clone materializes the full sources locally while preserving upstream history and license provenance.
 
 ```bash
 git clone --recurse-submodules https://github.com/amirastae/beauty-store.git
@@ -39,18 +23,17 @@ git checkout commerce-infrastructure-lab
 git submodule update --init --recursive
 ```
 
-Or from an existing clone:
+Existing clone:
 
 ```bash
 git checkout commerce-infrastructure-lab
 ./infrastructure/bootstrap.sh
 ```
 
-## Production isolation
+## Isolation
 
-Cloudflare production should continue tracking `cloudflare-site`.
-Do not point Cloudflare at `commerce-infrastructure-lab`; these projects have incompatible runtimes and are intentionally isolated.
+Cloudflare production remains on `cloudflare-site`. Do not deploy this lab branch directly. These stacks use mutually incompatible runtimes and are for selective extraction, benchmarking and future architecture work.
 
-## License rule
+## License safety
 
-Do not merge an upstream tree into the production application just because it exists in this lab. Review that upstream's exact license first. Permissive, copyleft and source-available licenses have different obligations. The manifest records the current pinned repository and commit; the upstream repository remains the source of truth for its license.
+Every submodule remains under its upstream license. Before moving any implementation into production, verify the exact license and third-party notices at the pinned commit. This branch deliberately keeps copyleft/source-available projects isolated from the production codebase.

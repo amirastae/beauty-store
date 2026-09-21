@@ -62,3 +62,35 @@
 	path = infrastructure/engines/opencart
 	url = https://github.com/opencart/opencart.git
 	branch = master
+[submodule "infrastructure/platform/supabase"]
+	path = infrastructure/platform/supabase
+	url = https://github.com/supabase/supabase.git
+	branch = master
+[submodule "infrastructure/platform/strapi"]
+	path = infrastructure/platform/strapi
+	url = https://github.com/strapi/strapi.git
+	branch = develop
+[submodule "infrastructure/platform/payload"]
+	path = infrastructure/platform/payload
+	url = https://github.com/payloadcms/payload.git
+	branch = main
+[submodule "infrastructure/platform/meilisearch"]
+	path = infrastructure/platform/meilisearch
+	url = https://github.com/meilisearch/meilisearch.git
+	branch = main
+[submodule "infrastructure/platform/better-auth"]
+	path = infrastructure/platform/better-auth
+	url = https://github.com/better-auth/better-auth.git
+	branch = main
+[submodule "infrastructure/platform/nextjs"]
+	path = infrastructure/platform/nextjs
+	url = https://github.com/vercel/next.js.git
+	branch = canary
+[submodule "infrastructure/platform/workers-sdk"]
+	path = infrastructure/platform/workers-sdk
+	url = https://github.com/cloudflare/workers-sdk.git
+	branch = main
+[submodule "infrastructure/platform/hono"]
+	path = infrastructure/platform/hono
+	url = https://github.com/honojs/hono.git
+	branch = main

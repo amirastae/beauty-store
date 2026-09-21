@@ -1,22 +1,33 @@
-# Stack map
+# Infrastructure map
 
-| Stack | Role | Runtime / language | Pinned branch | Integration posture |
-|---|---|---|---|---|
-| Medusa | composable commerce engine | TypeScript / Node | develop | strong candidate for headless backend |
-| Saleor Core | headless commerce API | Python / GraphQL | main | strong API benchmark |
-| Spree | full commerce platform | Ruby | main | marketplace/B2B reference |
-| Solidus | full commerce platform | Ruby | main | mature commerce reference |
-| Sylius | headless platform | PHP / Symfony | 2.3 | modular enterprise reference |
-| Bagisto | commerce platform | PHP / Laravel | 2.4 | Laravel reference |
-| Aimeos | scalable commerce framework | PHP / Laravel | master | performance/marketplace reference |
-| Vendure | headless platform | TypeScript / NestJS | master | plugin architecture reference |
-| Magento Open Source | enterprise commerce | PHP | 2.4-develop | large-scale catalog/admin reference |
-| WooCommerce | commerce platform | PHP / WordPress | trunk | ecosystem/plugin reference |
-| PrestaShop | commerce platform | PHP | develop | mature monolith reference |
-| Shopware | commerce platform | PHP / Symfony | trunk | modern platform reference |
-| nopCommerce | commerce platform | ASP.NET Core | develop | .NET architecture reference |
-| OpenCart | commerce platform | PHP | master | lightweight monolith reference |
-| Vercel Commerce | storefront | Next.js / TypeScript | main | UI/performance reference |
-| Shopify Hydrogen | storefront | React / Remix | main | headless storefront reference |
+## Commerce engines
+- Medusa — modular TypeScript/Node commerce primitives and workflows.
+- Saleor Core — Python/GraphQL headless API.
+- Spree — Ruby DTC/B2B/marketplace stack.
+- Solidus — mature Ruby commerce architecture.
+- Sylius — PHP/Symfony headless and modular commerce.
+- Bagisto — Laravel commerce.
+- Aimeos — high-scale Laravel/PHP commerce and marketplace patterns.
+- Vendure — TypeScript/NestJS headless commerce and plugin architecture.
+- Magento Open Source — large enterprise catalog/admin/order architecture.
+- WooCommerce — WordPress commerce ecosystem.
+- PrestaShop — mature PHP commerce monolith.
+- Shopware — modern PHP/Symfony commerce.
+- nopCommerce — ASP.NET Core commerce.
+- OpenCart — lightweight PHP commerce.
 
-The pinned commits are stored in `manifest.json` and in the submodule gitlinks themselves.
+## Storefronts
+- Vercel Commerce — Next.js storefront, caching and modern React commerce patterns.
+- Shopify Hydrogen — React/Remix headless storefront patterns.
+
+## Platform primitives
+- Supabase — Postgres platform, auth, storage, realtime and API patterns.
+- Strapi — headless CMS architecture.
+- Payload — TypeScript headless CMS/application framework.
+- Meilisearch — product-search engine architecture.
+- Better Auth — modern authentication primitives.
+- Next.js — production React web framework internals.
+- Cloudflare Workers SDK — Wrangler/Workers/edge tooling.
+- Hono — lightweight edge API framework.
+
+Use `manifest.json` for exact upstream repository, branch and pinned commit information.
