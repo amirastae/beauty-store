@@ -808,3 +808,22 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 @media(prefers-reduced-motion:reduce){
   .cinematic-scrub-video{display:none!important}
 }
+
+/* FATIKHAN support + recovery */
+.contact-page{min-height:72vh;background:var(--paper);display:grid;align-items:center}
+.contact-hero{padding:92px 7vw 110px;max-width:980px}
+.contact-hero h1{margin:0;font-size:clamp(58px,8vw,116px);line-height:.88;letter-spacing:-.06em;font-weight:500}
+.contact-hero h1 em{font-family:Georgia,"Times New Roman",serif;font-weight:500}
+.contact-hero>p:not(.eyebrow){max-width:620px;margin:28px 0;color:var(--muted);font-size:13px;line-height:1.95}
+.contact-hero .text-link{margin-inline-start:18px}
+.error-page{min-height:70vh;background:var(--paper);padding:70px 6vw;display:flex;align-items:center}
+.error-panel{max-width:760px}
+.error-panel h1{margin:8px 0 18px;font-size:clamp(48px,7vw,92px);line-height:.95;font-weight:500;letter-spacing:-.045em}
+.error-panel>p:not(.eyebrow){max-width:560px;color:var(--muted);line-height:1.9}
+.club-status{margin:12px auto 0;max-width:560px;font-size:10px;line-height:1.8;opacity:.72}
+@media(max-width:560px){
+  .contact-hero{padding:66px 20px 84px}
+  .contact-hero .button{width:100%}
+  .contact-hero .text-link{display:inline-block;margin:18px 0 0}
+  .error-page{padding:48px 20px}
+}
