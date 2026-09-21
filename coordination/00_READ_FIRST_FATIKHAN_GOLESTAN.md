@@ -120,3 +120,12 @@ Current release checkpoints:
 - commerce `commerce-core-v1@ffccdebd769b5a77ac32800b1f2e09952ae3e6e7`
 
 Visible brand remains **FATIKHAN**. Technical compatibility names such as `veloura-next`, `veloura-*` storage keys and `/api/v1/compat/veloura-v2/resolve` remain internal until an explicit migration is approved.
+
+
+## Canonical quality guard
+
+Before touching canonical frontend reliability, SEO, accessibility, security headers, or generated output checks, read:
+
+- `coordination/CANONICAL_QUALITY_HANDOFF.md`
+
+The old `shop/v1.x` experiments are reference-only and must never become a parallel storefront or replace the FATIKHAN Golestan cinematic system.

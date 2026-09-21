@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - integration-staging
+  pull_request:
+    branches:
+      - integration-staging
+    paths:
+      - "sources/canonical/veloura-next/**"
+      - ".github/workflows/integration-staging-verify.yml"
+      - "coordination/**"
   workflow_dispatch:
 
 permissions:
@@ -38,8 +45,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
-      - run: npm run typecheck
-      - run: npm run build
+      - run: npm run quality
 
   commerce:
     runs-on: ubuntu-latest
