@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-09-21",
+  "strategy": "git-submodules-pinned",
+  "production_branch": "cloudflare-site",
+  "lab_branch": "commerce-infrastructure-lab",
+  "stacks": [
+    {
+      "name": "medusa",
+      "repo": "medusajs/medusa",
+      "branch": "develop",
+      "sha": "48a8812735f6630bcc12b3997b6d1d1f559cd492",
+      "path": "infrastructure/engines/medusa",
+      "license_note": "MIT core; upstream also contains separately licensed enterprise material"
+    },
+    {
+      "name": "saleor",
+      "repo": "saleor/saleor",
+      "branch": "main",
+      "sha": "4cb1609a90eade14b6275a407bc7a00c35698090",
+      "path": "infrastructure/engines/saleor",
+      "license_note": "BSD-3-Clause core"
+    },
+    {
+      "name": "spree",
+      "repo": "spree/spree",
+      "branch": "main",
+      "sha": "0b89171d135f88f01bb9504c6975708a18749999",
+      "path": "infrastructure/engines/spree",
+      "license_note": "BSD-3-Clause"
+    },
+    {
+      "name": "solidus",
+      "repo": "solidusio/solidus",
+      "branch": "main",
+      "sha": "e0a625aad4eaa62c7c50f8e549f38c31d8239b0c",
+      "path": "infrastructure/engines/solidus",
+      "license_note": "BSD-style Spree license; verify upstream"
+    },
+    {
+      "name": "sylius",
+      "repo": "Sylius/Sylius",
+      "branch": "2.3",
+      "sha": "6b24cc10fab893e2448c0c274775121b7e0b047a",
+      "path": "infrastructure/engines/sylius",
+      "license_note": "MIT"
+    },
+    {
+      "name": "bagisto",
+      "repo": "bagisto/bagisto",
+      "branch": "2.4",
+      "sha": "9beff85ece6fe13378a97e6f84765b50647d3327",
+      "path": "infrastructure/engines/bagisto",
+      "license_note": "MIT"
+    },
+    {
+      "name": "aimeos",
+      "repo": "aimeos/aimeos",
+      "branch": "master",
+      "sha": "919720089ad5ff6e63eee9c0aaf4a42c2cc27340",
+      "path": "infrastructure/engines/aimeos",
+      "license_note": "MIT/LGPL components; verify upstream"
+    },
+    {
+      "name": "vendure",
+      "repo": "vendurehq/vendure",
+      "branch": "master",
+      "sha": "d20b08abb290cfc0a0b2ba5b63c80aa61231ab54",
+      "path": "infrastructure/engines/vendure",
+      "license_note": "GPLv3 by default or commercial license"
+    },
+    {
+      "name": "magento2",
+      "repo": "magento/magento2",
+      "branch": "2.4-develop",
+      "sha": "874f1f5cdf3bc52b61c3d66becf159cc16345d7a",
+      "path": "infrastructure/engines/magento2",
+      "license_note": "OSL-3.0 / applicable upstream terms"
+    },
+    {
+      "name": "vercel-commerce",
+      "repo": "vercel/commerce",
+      "branch": "main",
+      "sha": "3761e52e60df9c6a316e067dbfd7032e494d3634",
+      "path": "infrastructure/storefronts/vercel-commerce",
+      "license_note": "MIT"
+    },
+    {
+      "name": "shopify-hydrogen",
+      "repo": "Shopify/hydrogen",
+      "branch": "main",
+      "sha": "15cc3dfee387fd2ada3476d7f441a498e45f87e8",
+      "path": "infrastructure/storefronts/shopify-hydrogen",
+      "license_note": "MIT"
+    },
+    {
+      "name": "woocommerce",
+      "repo": "woocommerce/woocommerce",
+      "branch": "trunk",
+      "sha": "cba0e92e181c95e61f03abe29fc37c474fae889c",
+      "path": "infrastructure/engines/woocommerce",
+      "license_note": "verify exact upstream license/third-party notices"
+    },
+    {
+      "name": "prestashop",
+      "repo": "PrestaShop/PrestaShop",
+      "branch": "develop",
+      "sha": "e5515d88ead3761a342c72bffb91446ba213ba13",
+      "path": "infrastructure/engines/prestashop",
+      "license_note": "verify exact upstream license/third-party notices"
+    },
+    {
+      "name": "shopware",
+      "repo": "shopware/shopware",
+      "branch": "trunk",
+      "sha": "8b0d48c8e5eca7d268544ee836ee6fecfc135ba2",
+      "path": "infrastructure/engines/shopware",
+      "license_note": "MIT per GitHub metadata; verify third-party notices"
+    },
+    {
+      "name": "nopcommerce",
+      "repo": "nopSolutions/nopCommerce",
+      "branch": "develop",
+      "sha": "381bc0a4c1b1f93f43198519d5922aab6942f135",
+      "path": "infrastructure/engines/nopcommerce",
+      "license_note": "verify exact upstream license/third-party notices"
+    },
+    {
+      "name": "opencart",
+      "repo": "opencart/opencart",
+      "branch": "master",
+      "sha": "25140f7c7dfe64c72cfd1b3a254192ada40ec41b",
+      "path": "infrastructure/engines/opencart",
+      "license_note": "verify exact upstream license/third-party notices"
+    }
+  ]
+}

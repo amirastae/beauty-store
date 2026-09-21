@@ -1,0 +1,64 @@
+[submodule "infrastructure/engines/medusa"]
+	path = infrastructure/engines/medusa
+	url = https://github.com/medusajs/medusa.git
+	branch = develop
+[submodule "infrastructure/engines/saleor"]
+	path = infrastructure/engines/saleor
+	url = https://github.com/saleor/saleor.git
+	branch = main
+[submodule "infrastructure/engines/spree"]
+	path = infrastructure/engines/spree
+	url = https://github.com/spree/spree.git
+	branch = main
+[submodule "infrastructure/engines/solidus"]
+	path = infrastructure/engines/solidus
+	url = https://github.com/solidusio/solidus.git
+	branch = main
+[submodule "infrastructure/engines/sylius"]
+	path = infrastructure/engines/sylius
+	url = https://github.com/Sylius/Sylius.git
+	branch = 2.3
+[submodule "infrastructure/engines/bagisto"]
+	path = infrastructure/engines/bagisto
+	url = https://github.com/bagisto/bagisto.git
+	branch = 2.4
+[submodule "infrastructure/engines/aimeos"]
+	path = infrastructure/engines/aimeos
+	url = https://github.com/aimeos/aimeos.git
+	branch = master
+[submodule "infrastructure/engines/vendure"]
+	path = infrastructure/engines/vendure
+	url = https://github.com/vendurehq/vendure.git
+	branch = master
+[submodule "infrastructure/engines/magento2"]
+	path = infrastructure/engines/magento2
+	url = https://github.com/magento/magento2.git
+	branch = 2.4-develop
+[submodule "infrastructure/storefronts/vercel-commerce"]
+	path = infrastructure/storefronts/vercel-commerce
+	url = https://github.com/vercel/commerce.git
+	branch = main
+[submodule "infrastructure/storefronts/shopify-hydrogen"]
+	path = infrastructure/storefronts/shopify-hydrogen
+	url = https://github.com/Shopify/hydrogen.git
+	branch = main
+[submodule "infrastructure/engines/woocommerce"]
+	path = infrastructure/engines/woocommerce
+	url = https://github.com/woocommerce/woocommerce.git
+	branch = trunk
+[submodule "infrastructure/engines/prestashop"]
+	path = infrastructure/engines/prestashop
+	url = https://github.com/PrestaShop/PrestaShop.git
+	branch = develop
+[submodule "infrastructure/engines/shopware"]
+	path = infrastructure/engines/shopware
+	url = https://github.com/shopware/shopware.git
+	branch = trunk
+[submodule "infrastructure/engines/nopcommerce"]
+	path = infrastructure/engines/nopcommerce
+	url = https://github.com/nopSolutions/nopCommerce.git
+	branch = develop
+[submodule "infrastructure/engines/opencart"]
+	path = infrastructure/engines/opencart
+	url = https://github.com/opencart/opencart.git
+	branch = master
