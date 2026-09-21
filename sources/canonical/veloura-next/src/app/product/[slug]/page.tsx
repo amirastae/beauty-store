@@ -37,7 +37,6 @@ export default async function ProductPage({ params }: Props) {
 
   const related = products
     .filter((item) => item.category === product.category && item.id !== product.id)
-    .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
     .slice(0, 4);
 
   const schema = {
@@ -60,13 +59,7 @@ export default async function ProductPage({ params }: Props) {
           "@type": "Offer",
           priceCurrency: "IRR",
           price: product.price * 10,
-          availability: "https://schema.org/InStock",
           url: "https://beauty-store.nayererohalamini.workers.dev/product/" + product.slug + "/"
-        },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: product.rating,
-          reviewCount: product.reviewCount
         }
       },
       {

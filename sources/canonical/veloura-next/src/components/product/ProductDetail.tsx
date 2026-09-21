@@ -74,7 +74,6 @@ export default function ProductDetail({ product, related }: { product: Product; 
               priority
               sizes="(max-width: 900px) 100vw, 58vw"
             />
-            {product.badge && <span className="badge">{product.badge}</span>}
           </div>
           <div className="pdp-media-meta">
             <span>{product.brand}</span>
@@ -87,8 +86,6 @@ export default function ProductDetail({ product, related }: { product: Product; 
           <p className="eyebrow">{product.brand} · {product.category}</p>
           <h1>{product.nameFa}</h1>
           <p className="pdp-en">{product.nameEn}</p>
-
-          <div className="pdp-rating">★ {product.rating} <span>{fa.format(product.reviewCount)} امتیاز</span></div>
 
           <div className="pdp-price">
             <strong>{money(product.price)}</strong>
@@ -148,9 +145,9 @@ export default function ProductDetail({ product, related }: { product: Product; 
           {compareIds.length > 0 && <Link className="compare-inline-link" href="/compare/">مشاهده مقایسه ({fa.format(compareIds.length)}/۳) ←</Link>}
 
           <div className="pdp-trust">
-            <span>ضمانت اصالت</span>
-            <span>ارسال قابل پیگیری</span>
-            <span>پرداخت امن پس از اتصال درگاه</span>
+            <span>ترکیبات و روش استفاده شفاف</span>
+            <span>اطلاعات کارت در FATIKHAN ذخیره نمی‌شود</span>
+            <span>پرداخت فقط پس از اتصال درگاه واقعی</span>
           </div>
         </aside>
       </section>
@@ -177,13 +174,13 @@ export default function ProductDetail({ product, related }: { product: Product; 
 
       <section className="pdp-review-shell">
         <div>
-          <p className="eyebrow">REVIEWS · VERIFIED PURCHASES</p>
-          <h2>{product.rating} <span>/ 5</span></h2>
-          <p>{fa.format(product.reviewCount)} امتیاز تجمیعی در کاتالوگ.</p>
+          <p className="eyebrow">REVIEWS · VERIFIED PURCHASES ONLY</p>
+          <h2>دیدگاه واقعی</h2>
+          <p>امتیاز و نظر عمومی تا زمان اتصال خرید تأییدشده نمایش داده نمی‌شود.</p>
         </div>
         <div className="review-policy">
-          <strong>دیدگاه واقعی، نه متن ساختگی.</strong>
-          <p>متن دیدگاه خریداران فقط بعد از اتصال سیستم سفارش و تایید خرید نمایش داده می‌شود. تا آن زمان هیچ testimonial ساختگی منتشر نمی‌شود.</p>
+          <strong>بدون امتیاز یا testimonial ساختگی.</strong>
+          <p>دیدگاه خریداران فقط بعد از اتصال سیستم سفارش و تأیید خرید منتشر می‌شود.</p>
         </div>
       </section>
 

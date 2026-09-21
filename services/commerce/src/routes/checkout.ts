@@ -33,6 +33,12 @@ function orderNumber() {
   return 100000000 + (bytes[0] % 900000000)
 }
 
+function receiptToken() {
+  const bytes = new Uint8Array(32)
+  crypto.getRandomValues(bytes)
+  return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 function normalizePhone(input: unknown) {
   const fa = '۰۱۲۳۴۵۶۷۸۹'
   const ar = '٠١٢٣٤٥٦٧٨٩'
@@ -259,6 +265,8 @@ checkout.post('/checkout/:cartId', async (c) => {
     const orderId = id('ord')
     const paymentId = id('pay')
     const orderNo = orderNumber()
+    const receipt = receiptToken()
+    const receiptHash = await sha256Hex(receipt)
 
     const payload = JSON.stringify({
       ok: true,
@@ -271,7 +279,8 @@ checkout.post('/checkout/:cartId', async (c) => {
         subtotal_minor: subtotal,
         shipping_minor: shipping,
         total_minor: total,
-        payment_expires_at: paymentExpiresAt
+        payment_expires_at: paymentExpiresAt,
+        receipt_token: receipt
       }
     })
 
@@ -313,6 +322,14 @@ checkout.post('/checkout/:cartId', async (c) => {
         ).bind(id('inv'), line.variant_id, line.quantity, orderId, now)
       )
     }
+
+    statements.push(
+      db.prepare(
+        `INSERT INTO order_receipts
+         (token_hash, order_id, created_at, expires_at)
+         VALUES (?, ?, ?, ?)`
+      ).bind(receiptHash, orderId, now, new Date(Date.now() + 7 * 24 * 60 * 60_000).toISOString())
+    )
 
     statements.push(
       db.prepare(

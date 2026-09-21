@@ -34,8 +34,6 @@ function score(product:Product, goal:Goal){
   for(const keyword of config.keywords){
     if(text.includes(keyword.toLowerCase())) value+=3;
   }
-  value+=product.rating;
-  value+=Math.min(product.reviewCount/250,2);
   return value;
 }
 

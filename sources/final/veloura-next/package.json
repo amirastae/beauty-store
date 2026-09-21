@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run verify:cinematic && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "deploy": "npm run build && wrangler deploy --config wrangler.jsonc"
+    "deploy": "npm run build && wrangler deploy --config wrangler.jsonc",
+    "verify:cinematic": "node scripts/verify-cinematic-assets.mjs",
+    "verify:source": "node scripts/audit-source.mjs",
+    "verify:static": "node scripts/audit-static.mjs",
+    "quality": "npm run typecheck && npm run verify:source && npm run build && npm run verify:static"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

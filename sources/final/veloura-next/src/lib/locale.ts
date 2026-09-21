@@ -1,31 +1,38 @@
-const faDigits = "۰۱۲۳۴۵۶۷۸۹"
-const arDigits = "٠١٢٣٤٥٦٧٨٩"
+const faNumber = new Intl.NumberFormat("fa-IR");
 
-export function toLatinDigits(value: string) {
-  return value
-    .replace(/[۰-۹]/g, (d) => String(faDigits.indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String(arDigits.indexOf(d)))
+export function formatFaNumber(value: number) {
+  return faNumber.format(value);
 }
 
-export function normalizeIranianMobile(value: string) {
-  let raw = toLatinDigits(value).replace(/[^0-9+]/g, "")
-  if (raw.startsWith("+98")) raw = "0" + raw.slice(3)
-  if (raw.startsWith("0098")) raw = "0" + raw.slice(4)
-  if (raw.startsWith("98") && raw.length === 12) raw = "0" + raw.slice(2)
-  return raw
+export function formatToman(value: number) {
+  return `${faNumber.format(value)} تومان`;
+}
+
+export function normalizeIranianDigits(value: string) {
+  return value
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
 }
 
 export function isIranianMobile(value: string) {
-  return /^09\d{9}$/.test(normalizeIranianMobile(value))
-}
-
-export function normalizePostalCode(value: string) {
-  return toLatinDigits(value).replace(/\D/g, "")
+  const normalized = normalizeIranianDigits(value).replace(/[\s-]/g, "");
+  return /^(?:\+98|0098|98|0)?9\d{9}$/.test(normalized);
 }
 
 export function isIranianPostalCode(value: string) {
-  return /^\d{10}$/.test(normalizePostalCode(value))
+  const normalized = normalizeIranianDigits(value).replace(/\D/g, "");
+  return /^\d{10}$/.test(normalized);
 }
 
-export const formatFaNumber = (value: number) => new Intl.NumberFormat("fa-IR").format(value)
-export const formatToman = (value: number) => formatFaNumber(value) + " تومان"
+
+export function normalizePersianSearch(value: string) {
+  return normalizeIranianDigits(value)
+    .normalize("NFKC")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("fa");
+}

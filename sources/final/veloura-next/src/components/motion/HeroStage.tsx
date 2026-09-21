@@ -8,9 +8,9 @@ const HeroProductScene = dynamic(() => import("@/scenes/HeroProductScene"), {
   loading: () => null
 });
 
-export default function HeroStage() {
+export default function HeroStage({ allow3D = true }: { allow3D?: boolean }) {
   const tier = useCapabilityTier();
-  const enable3D = tier !== "C";
+  const enable3D = allow3D && tier === "A";
 
   return (
     <div className="hero-object" aria-label="نمایش سینمایی محصول">
@@ -23,7 +23,7 @@ export default function HeroStage() {
           <div className="cap" />
           <div className="bottle">
             <span className="bottle-shine" />
-            <b>VELOURA</b>
+            <b>FATIKHAN</b>
             <small>PEARL BARRIER SERUM</small>
           </div>
         </div>
@@ -32,7 +32,7 @@ export default function HeroStage() {
       {enable3D && <div className="hero-r3f"><HeroProductScene /></div>}
 
       <div className="floating-note note-one"><b>01</b><span>سد دفاعی پوست</span></div>
-      <div className="floating-note note-two"><b>24H</b><span>آبرسانی سبک</span></div>
+      <div className="floating-note note-two"><b>02</b><span>بافت سبک</span></div>
     </div>
   );
 }

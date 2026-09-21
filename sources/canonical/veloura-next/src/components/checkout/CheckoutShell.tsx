@@ -11,7 +11,8 @@ import {
   commerceHealth,
   createCommerceOrder,
   irrMinorToToman,
-  startCommercePayment
+  startCommercePayment,
+  getCommerceOrderStatus
 } from "@/lib/commerce";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
 
@@ -37,10 +38,12 @@ type PendingOrder={
   orderId:string;
   orderNumber:number;
   expiresAt:string;
+  receiptToken?:string;
 };
 
 const emptyDraft:Draft={name:"",phone:"",email:"",province:"",address:"",city:"",postal:"",note:""};
-const storageKey="veloura-checkout-draft-v2";
+const draftSessionKey="veloura-checkout-draft-session-v1";
+const legacyDraftStorageKey="veloura-checkout-draft-v2";
 const pendingKey="veloura-pending-payment-v1";
 
 function commerceErrorMessage(error: unknown) {
@@ -71,25 +74,81 @@ export default function CheckoutShell(){
   const [serverTotal,setServerTotal]=useState<number|null>(null);
   const [serverShipping,setServerShipping]=useState<number|null>(null);
   const [pending,setPending]=useState<PendingOrder|null>(null);
-  const [paymentReturn,setPaymentReturn]=useState<"success"|"failed"|"cancelled"|null>(null);
+  const [paymentReturn,setPaymentReturn]=useState<"success"|"failed"|"cancelled"|"pending"|"unverified"|null>(null);
 
   useEffect(()=>{
+    let savedPending:PendingOrder|null=null;
     try{
-      const raw=localStorage.getItem(storageKey);
-      if(raw) setDraft({...emptyDraft,...JSON.parse(raw)});
+      let draftRaw=sessionStorage.getItem(draftSessionKey);
+      if(!draftRaw){
+        const legacyRaw=localStorage.getItem(legacyDraftStorageKey);
+        if(legacyRaw){
+          draftRaw=legacyRaw;
+          sessionStorage.setItem(draftSessionKey,legacyRaw);
+        }
+      }
+      localStorage.removeItem(legacyDraftStorageKey);
+      if(draftRaw) setDraft({...emptyDraft,...JSON.parse(draftRaw)});
+
       const pendingRaw=sessionStorage.getItem(pendingKey);
-      if(pendingRaw) setPending(JSON.parse(pendingRaw));
+      if(pendingRaw){
+        savedPending=JSON.parse(pendingRaw) as PendingOrder;
+        setPending(savedPending);
+      }
     }catch{}
 
     const params=new URLSearchParams(window.location.search);
-    const payment=params.get("payment");
-    if(payment==="success"||payment==="failed"||payment==="cancelled"){
-      setPaymentReturn(payment);
-      clearCheckoutIdempotency();
-      try{sessionStorage.removeItem(pendingKey)}catch{}
-      setPending(null);
-      if(payment==="success") clearCart();
+    const returned=params.get("payment");
+    if(returned!=="success"&&returned!=="failed"&&returned!=="cancelled") return;
+
+    if(!commerceEnabled||!savedPending?.receiptToken){
+      setPaymentReturn("unverified");
+      return;
     }
+
+    let cancelled=false;
+    void (async()=>{
+      try{
+        const status=await getCommerceOrderStatus(savedPending!.receiptToken!);
+        if(cancelled) return;
+
+        if(status.payment_status==="paid"){
+          setPaymentReturn("success");
+          clearCheckoutIdempotency();
+          try{
+            sessionStorage.removeItem(pendingKey);
+            sessionStorage.removeItem(draftSessionKey);
+            localStorage.removeItem(legacyDraftStorageKey);
+          }catch{}
+          setDraft(emptyDraft);
+          setPending(null);
+          clearCart();
+          return;
+        }
+
+        if(status.payment_status==="cancelled"){
+          setPaymentReturn("cancelled");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        if(status.payment_status==="failed"||status.payment_status==="expired"){
+          setPaymentReturn("failed");
+          clearCheckoutIdempotency();
+          try{sessionStorage.removeItem(pendingKey)}catch{}
+          setPending(null);
+          return;
+        }
+
+        setPaymentReturn("pending");
+      }catch{
+        if(!cancelled) setPaymentReturn("unverified");
+      }
+    })();
+
+    return()=>{cancelled=true};
   },[clearCart]);
 
   const update=(key:keyof Draft,value:string)=>{
@@ -137,10 +196,10 @@ export default function CheckoutShell(){
     setPostalError(postalValid?"":"کد پستی باید ۱۰ رقم باشد.");
     if(!mobileValid||!postalValid||!lines.length) return;
 
-    try{ localStorage.setItem(storageKey,JSON.stringify(draft)); }catch{}
+    try{ sessionStorage.setItem(draftSessionKey,JSON.stringify(draft)); }catch{}
 
     if(!commerceEnabled){
-      setMessage("اطلاعات روی همین دستگاه ذخیره شد؛ سرویس سفارش واقعی در این build فعال نیست و هیچ سفارش یا پرداختی ساخته نشد.");
+      setMessage("اطلاعات فقط برای همین نشست مرورگر نگه‌داری شد؛ سرویس سفارش واقعی در این build فعال نیست و هیچ سفارش یا پرداختی ساخته نشد.");
       return;
     }
 
@@ -171,7 +230,8 @@ export default function CheckoutShell(){
       const pendingOrder:PendingOrder={
         orderId:order.order_id,
         orderNumber:order.order_number,
-        expiresAt:order.payment_expires_at
+        expiresAt:order.payment_expires_at,
+        receiptToken:order.receipt_token
       };
       setPending(pendingOrder);
       try{sessionStorage.setItem(pendingKey,JSON.stringify(pendingOrder))}catch{}
@@ -201,8 +261,19 @@ export default function CheckoutShell(){
         <p className="checkout-intro">{commerceEnabled?"قیمت، موجودی، ارسال و سفارش توسط هسته واقعی فروشگاه پردازش می‌شود و پرداخت فقط از درگاه متصل ادامه پیدا می‌کند.":"اطلاعات فعلاً فقط روی مرورگر ذخیره می‌شود؛ هیچ سفارش یا پرداختی ساخته نمی‌شود."}</p>
 
         {paymentReturn&&<div className={"payment-return "+paymentReturn} role={paymentReturn==="success"?"status":"alert"}>
-          <strong>{paymentReturn==="success"?"پرداخت با موفقیت تأیید شد.":paymentReturn==="cancelled"?"پرداخت لغو شد.":"پرداخت تأیید نشد."}</strong>
-          <span>{paymentReturn==="success"?"سبد خرید پاک شد و سفارش برای پردازش ثبت شده است.":"موجودی رزروشده آزاد شده و می‌توانی سفارش جدید بسازی."}</span>
+          <strong>{
+            paymentReturn==="success"?"پرداخت از سرور تأیید شد.":
+            paymentReturn==="cancelled"?"لغو پرداخت از سرور تأیید شد.":
+            paymentReturn==="failed"?"عدم موفقیت پرداخت از سرور تأیید شد.":
+            paymentReturn==="pending"?"وضعیت پرداخت هنوز نهایی نشده است.":
+            "نتیجه برگشت درگاه هنوز از سرور قابل تأیید نیست."
+          }</strong>
+          <span>{
+            paymentReturn==="success"?"سبد خرید فقط بعد از تأیید واقعی پرداخت پاک شد و سفارش برای پردازش ثبت شده است.":
+            paymentReturn==="cancelled"||paymentReturn==="failed"?"وضعیت نمایش‌داده‌شده از رکورد معتبر سفارش خوانده شده است.":
+            paymentReturn==="pending"?"سفارش هنوز در حالت انتظار است؛ نتیجه URL به‌تنهایی اثبات پرداخت نیست.":
+            "برای امنیت، پارامترهای آدرس صفحه به‌تنهایی به‌عنوان موفقیت پرداخت پذیرفته نمی‌شوند."
+          }</span>
         </div>}
 
         {pending&&<div className="checkout-resume">
@@ -222,7 +293,7 @@ export default function CheckoutShell(){
           <button className="button button-dark wide" disabled={!lines.length||submitting}>{submitting?"در حال آماده‌سازی پرداخت…":commerceEnabled?"ثبت سفارش و رفتن به درگاه":"ذخیره اطلاعات"}</button>
         </form>
 
-        <div className="checkout-safety"><b>پرداخت نمایشی نداریم.</b><p>اطلاعات کارت در FATIKHAN دریافت یا ذخیره نمی‌شود. سفارش فقط بعد از callback تأییدشده درگاه، پرداخت‌شده محسوب می‌شود.</p></div>
+        <div className="checkout-safety"><b>پرداخت نمایشی نداریم.</b><p>اطلاعات کارت در FATIKHAN دریافت یا ذخیره نمی‌شود. پیش‌نویس اطلاعات تحویل فقط در همین نشست مرورگر نگه‌داری می‌شود و بعد از پرداخت تأییدشده پاک می‌شود.</p></div>
         <div className={message?"checkout-note success":"checkout-note"} aria-live="polite">{message||"شماره موبایل، آدرس و مبلغ نهایی قبل از پرداخت روی سرور بررسی می‌شوند."}</div>
       </section>
 

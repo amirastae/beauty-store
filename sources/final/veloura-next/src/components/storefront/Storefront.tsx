@@ -7,7 +7,8 @@ import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/data/products";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
-import HeroStage from "@/components/motion/HeroStage";
+import { normalizePersianSearch } from "@/lib/locale";
+import CinematicBeautyHero from "@/components/motion/CinematicBeautyHero";
 import ShadeLab from "@/components/beauty/ShadeLab";
 import DiscoverySections from "@/components/beauty/DiscoverySections";
 
@@ -30,13 +31,12 @@ export default function Storefront() {
   const toggleWishlist = useWishlist((state) => state.toggle);
 
   const visibleProducts = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("fa");
+    const q = normalizePersianSearch(query);
     return products.filter((product) => {
       const categoryMatch = category === "همه" || product.category === category;
       const queryMatch =
         !q ||
-        `${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`
-          .toLocaleLowerCase("fa")
+        normalizePersianSearch(`${product.nameFa} ${product.nameEn} ${product.brand} ${product.category}`)
           .includes(q);
       return categoryMatch && queryMatch;
     }).slice(0, 8);
@@ -73,43 +73,22 @@ export default function Storefront() {
 
   return (
     <main className="site-shell">
-      <div className="announcement">ارسال رایگان برای سفارش‌های منتخب · کالکشن ۲۰۲۶</div>
+      <div className="announcement">FATIKHAN · کالکشن زیبایی ۲۰۲۶</div>
 
       <header className="nav">
-        <button className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
+        <button type="button" className="nav-action" onClick={() => setCartOpen(true)} aria-label="سبد خرید">
           سبد <span className="cart-count">{toman.format(cartCount)}</span>
         </button>
         <nav className="nav-links" aria-label="ناوبری اصلی">
           <Link href="/shop/">فروشگاه</Link>
-          <a href="#story">داستان ولورا</a>
+          <a href="#story">داستان FATIKHAN</a>
           <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
         </nav>
-        <Link className="brand" href="/" aria-label="ولورا">VELOURA</Link>
-        <button className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
+        <Link className="brand" href="/" aria-label="FATIKHAN">FATIKHAN</Link>
+        <button type="button" className="nav-action" onClick={() => setSearchOpen(true)}>جستجو</button>
       </header>
 
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <p className="eyebrow">THE NEW BEAUTY EDIT · 2026</p>
-          <h1 id="hero-title">زیبایی،<br/><em>در دقیق‌ترین حالتش.</em></h1>
-          <p className="hero-lead">
-            ترکیبی از بافت‌های لوکس، رنگ‌های هوشمند و فرمول‌هایی که برای حضور واقعی ساخته شده‌اند.
-          </p>
-          <div className="hero-actions">
-            <a className="button button-dark" href="#products">خرید کالکشن</a>
-            <a className="text-link" href="#story">کشف دنیای ولورا ←</a>
-          </div>
-          <div className="hero-metrics">
-            <div><strong>۴.۹</strong><span>امتیاز جامعه</span></div>
-            <div><strong>۲۴H</strong><span>راحتی و ماندگاری</span></div>
-            <div><strong>100%</strong><span>بدون تست حیوانی</span></div>
-          </div>
-        </div>
-
-        <HeroStage />
-
-        <span className="scroll-cue">برای کشف بیشتر اسکرول کن ↓</span>
-      </section>
+      <CinematicBeautyHero />
 
       <section className="category-strip" aria-label="دسته‌بندی">
         {["پوست", "آرایش", "عطر", "مو"].map((item, index) => (
@@ -121,7 +100,7 @@ export default function Storefront() {
         <div className="editorial-media">
           <Image
             src="/editorial-hero.jpg"
-            alt="کمپین آرایشی ولورا"
+            alt="کمپین آرایشی FATIKHAN"
             fill
             sizes="(max-width: 900px) 100vw, 58vw"
           />
@@ -130,7 +109,7 @@ export default function Storefront() {
           <p className="eyebrow">CHAPTER 01 · TEXTURE</p>
           <h2>محصولی که فقط دیده نمی‌شود؛ <em>حس می‌شود.</em></h2>
           <p>
-            ولورا برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
+            FATIKHAN برای تجربه‌ای طراحی شده که بین فشن ادیتوریال و خرید دقیق قرار می‌گیرد:
             تصویر قوی، اطلاعات روشن و انتخابی سریع.
           </p>
           <a className="button button-light" href="#products">مشاهده انتخاب سردبیر</a>
@@ -141,13 +120,15 @@ export default function Storefront() {
         <div className="section-head">
           <div>
             <p className="eyebrow">CURATED FOR YOU</p>
-            <h2>انتخاب‌های ولورا</h2>
+            <h2>انتخاب‌های FATIKHAN</h2>
           </div>
           <div className="chips" role="group" aria-label="فیلتر دسته‌بندی">
             {categories.map((item) => (
               <button
                 key={item}
+                type="button"
                 className={category === item ? "chip active" : "chip"}
+                aria-pressed={category === item}
                 onClick={() => setCategory(item)}
               >
                 {item}
@@ -166,7 +147,6 @@ export default function Storefront() {
                   fill
                   sizes="(max-width: 600px) 50vw, (max-width: 1000px) 33vw, 25vw"
                 />
-                {product.badge && <span className="badge">{product.badge}</span>}
                 <span className="quick-add" aria-hidden="true">مشاهده محصول</span>
               </Link>
               <div className="product-info">
@@ -177,12 +157,13 @@ export default function Storefront() {
                   </div>
                   <strong>{price(product.price)}</strong>
                 </div>
-                <div className="rating">★ {product.rating} <span>({toman.format(product.reviewCount)})</span></div>
                 <div className="card-actions home-card-actions">
                   <button onClick={() => addProduct(product)}>+ سبد</button>
                   <button
+                    type="button"
                     className={wishlistIds.includes(product.id) ? "wish active" : "wish"}
-                    aria-label="افزودن به علاقه‌مندی‌ها"
+                    aria-label={wishlistIds.includes(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+                    aria-pressed={wishlistIds.includes(product.id)}
                     onClick={() => toggleWishlist(product.id)}
                   >♡</button>
                 </div>
@@ -193,6 +174,8 @@ export default function Storefront() {
                         key={shade.id}
                         title={shade.nameFa}
                         aria-label={shade.nameFa}
+                        type="button"
+                        aria-pressed={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id}
                         className={(selectedShade[product.id] ?? product.shades?.[0]?.id) === shade.id ? "swatch active" : "swatch"}
                         style={{ backgroundColor: shade.hex }}
                         onClick={() => setSelectedShade((state) => ({ ...state, [product.id]: shade.id }))}
@@ -211,19 +194,16 @@ export default function Storefront() {
       <DiscoverySections />
 
       <section className="club" id="club">
-        <p className="eyebrow">VELOURA PRIVATE LIST</p>
-        <h2>اولین نفر باش.</h2>
-        <p>دسترسی زودتر به کالکشن‌ها، رنگ‌های محدود و ادیت‌های جدید.</p>
-        <form onSubmit={(event) => event.preventDefault()}>
-          <input type="email" inputMode="email" placeholder="ایمیل شما" aria-label="ایمیل" />
-          <button type="submit">عضویت ←</button>
-        </form>
+        <p className="eyebrow">FATIKHAN · CONTACT</p>
+        <h2>در ارتباط باش.</h2>
+        <p>برای پرسش درباره محصولات، همکاری یا اطلاع از عرضه‌های جدید مستقیم با FATIKHAN در تماس باش.</p>
+        <a className="button button-dark" href="mailto:fatmhkhan121@gmail.com">تماس با FATIKHAN ←</a>
       </section>
 
-      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سبد خرید">
+      <aside className={cartOpen ? "drawer open" : "drawer"} aria-hidden={!cartOpen} role="dialog" aria-modal={cartOpen || undefined} aria-label="سبد خرید" inert={!cartOpen}>
         <div className="drawer-head">
           <h2>سبد خرید</h2>
-          <button onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
+          <button type="button" onClick={() => setCartOpen(false)} aria-label="بستن">×</button>
         </div>
         <div className="drawer-lines">
           {lines.length === 0 ? (
@@ -236,10 +216,10 @@ export default function Storefront() {
                 <div>
                   <strong>{line.product.nameFa}</strong>
                   <span>{shade?.nameFa ?? line.product.category}</span>
-                  <div className="drawer-qty"><button aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
+                  <div className="drawer-qty"><button type="button" aria-label="کم کردن" onClick={() => decrement(line.product.id, line.shadeId)}>−</button><b>{toman.format(line.qty)}</b><button type="button" aria-label="زیاد کردن" onClick={() => add(line.product, line.shadeId)}>+</button></div>
                   <small>{price(line.product.price * line.qty)}</small>
                 </div>
-                <button onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
+                <button type="button" onClick={() => remove(line.product.id, line.shadeId)}>حذف</button>
               </div>
             );
           })}
@@ -249,12 +229,12 @@ export default function Storefront() {
         </div>
         {lines.length ? <Link className="button button-dark checkout" href="/checkout/">ادامه به پرداخت</Link> : <button className="button button-dark checkout" disabled>ادامه به پرداخت</button>}
       </aside>
-      {cartOpen && <button className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
+      {cartOpen && <button type="button" className="scrim" aria-label="بستن سبد" onClick={() => setCartOpen(false)} />}
 
-      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal="true" aria-label="جستجوی محصولات">
-        <button className="search-close" onClick={() => setSearchOpen(false)}>×</button>
+      <div className={searchOpen ? "search-layer open" : "search-layer"} aria-hidden={!searchOpen} role="dialog" aria-modal={searchOpen || undefined} aria-label="جستجوی محصولات" inert={!searchOpen}>
+        <button type="button" className="search-close" aria-label="بستن جستجو" onClick={() => setSearchOpen(false)}>×</button>
         <div className="search-inner">
-          <p className="eyebrow">SEARCH VELOURA</p>
+          <p className="eyebrow">SEARCH FATIKHAN</p>
           <input
             autoFocus={searchOpen}
             value={query}
@@ -262,7 +242,7 @@ export default function Storefront() {
             placeholder="دنبال چه محصولی هستی؟"
             aria-label="جستجوی محصول"
           />
-          <div className="search-count">{toman.format(visibleProducts.length)} نتیجه</div>
+          <div className="search-count" aria-live="polite">{toman.format(visibleProducts.length)} نتیجه</div>
           <div className="search-mini-grid">
             {visibleProducts.slice(0, 4).map((product) => (
               <Link key={product.id} href={"/product/" + product.slug} onClick={() => setSearchOpen(false)}>

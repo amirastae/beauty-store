@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export default function AboutPage(){
   return <main className="info-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/shop/">فروشگاه ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/shop/">فروشگاه ←</Link></header>
     <section className="info-hero">
-      <p className="eyebrow">ABOUT VELOURA</p>
+      <p className="eyebrow">ABOUT FATIKHAN</p>
       <h1>زیبایی،<br/><em>بدون شلوغی.</em></h1>
-      <p>ولورا یک تجربه فارسی برای کشف و خرید محصولات زیبایی است؛ با تمرکز روی تصویر قوی، اطلاعات واضح و تصمیم‌گیری سریع.</p>
+      <p>FATIKHAN یک تجربه فارسی برای کشف و خرید محصولات زیبایی است؛ با تمرکز روی تصویر قوی، اطلاعات واضح و تصمیم‌گیری سریع.</p>
     </section>
     <section className="info-grid">
       <article><span>01</span><h2>انتخاب روشن</h2><p>نام، دسته، ترکیبات شاخص، روش استفاده و قیمت در مسیر خرید پنهان نمی‌شوند.</p></article>

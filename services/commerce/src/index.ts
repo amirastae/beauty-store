@@ -11,7 +11,7 @@ import { media } from './routes/media'
 import { search } from './routes/search'
 import { compat } from './routes/compat'
 import { payments } from './routes/payments'
-import { ensurePreviewDatabase } from './lib/bootstrap'
+import { orders } from './routes/orders'
 import { releaseExpiredOrders } from './lib/order-inventory'
 
 const app = new Hono<AppBindings>()
@@ -29,10 +29,6 @@ function allowedOrigin(env: AppBindings['Bindings'], origin: string) {
 }
 
 app.use('*', logger())
-app.use('/api/*', async (c, next) => {
-  await ensurePreviewDatabase(c.env)
-  await next()
-})
 app.use('/api/*', cors({
   origin: (origin, c) => allowedOrigin(c.env, origin),
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -60,6 +56,7 @@ app.route('/api/v1', media)
 app.route('/api/v1', search)
 app.route('/api/v1', compat)
 app.route('/api/v1', payments)
+app.route('/api/v1', orders)
 app.route('/api/v1/carts', carts)
 app.route('/api/v1/admin', admin)
 

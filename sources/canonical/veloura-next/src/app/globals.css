@@ -787,8 +787,10 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
   object-fit:cover;
   opacity:0;
   pointer-events:none;
-  filter:saturate(.88) contrast(1.05) brightness(.76);
-  transition:opacity .35s ease;
+  background:#090707;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  contain:paint;
 }
 .cinematic-hero.video-active .cinematic-scrub-video{opacity:1}
 .cinematic-hero.video-active .cinematic-stage{opacity:0!important;pointer-events:none}
@@ -801,6 +803,16 @@ linear-gradient(135deg,#7b394b,#3f202c 76%)}
 .cinematic-hero.video-active .cinematic-copy{z-index:9}
 .cinematic-hero.video-active .cinematic-progress,
 .cinematic-hero.video-active .cinematic-scroll-cue{z-index:10}
+.cinematic-hero.video-active .cinematic-grain,
+.cinematic-hero.video-active .cinematic-final-glow{display:none}
+.site-shell>.nav{
+  color:#f8f3ef;
+  text-shadow:0 2px 18px rgba(0,0,0,.36);
+}
+.site-shell>.nav .cart-count{
+  background:#f8f3ef;
+  color:#171311;
+}
 
 @media(max-width:767px){
   .cinematic-scrub-video{display:none}

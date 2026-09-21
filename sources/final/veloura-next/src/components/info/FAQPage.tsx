@@ -11,7 +11,7 @@ const items=[
 
 export default function FAQPage(){
   return <main className="info-page">
-    <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/shop/">فروشگاه ←</Link></header>
+    <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/shop/">فروشگاه ←</Link></header>
     <section className="info-hero compact"><p className="eyebrow">HELP · FAQ</p><h1>پاسخ‌های<br/><em>سریع.</em></h1><p>مهم‌ترین چیزهایی که برای استفاده از فروشگاه لازم است.</p></section>
     <section className="faq-list">
       {items.map(([q,a],i)=><details key={q} open={i===0}><summary><span>0{i+1}</span>{q}<b>+</b></summary><p>{a}</p></details>)}

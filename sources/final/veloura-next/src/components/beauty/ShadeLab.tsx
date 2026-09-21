@@ -38,7 +38,7 @@ export default function ShadeLab(){
       <div className="shade-stick">
         <div className="shade-cap"/>
         <div className="shade-bullet"/>
-        <div className="shade-base"><b>VELOURA</b></div>
+        <div className="shade-base"><b>FATIKHAN</b></div>
       </div>
       <div className="shade-label"><span>SHADE</span><strong>{shade.name}</strong><small>{shade.tone} UNDERTONE</small></div>
     </div>

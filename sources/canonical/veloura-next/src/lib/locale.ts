@@ -23,3 +23,16 @@ export function isIranianPostalCode(value: string) {
   const normalized = normalizeIranianDigits(value).replace(/\D/g, "");
   return /^\d{10}$/.test(normalized);
 }
+
+
+export function normalizePersianSearch(value: string) {
+  return normalizeIranianDigits(value)
+    .normalize("NFKC")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("fa");
+}

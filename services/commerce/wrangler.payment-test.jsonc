@@ -1,0 +1,25 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "veloura-commerce-payment-test",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-21",
+  "vars": {
+    "APP_ENV": "test",
+    "AUTO_BOOTSTRAP": "0",
+    "SHIPPING_FLAT_MINOR_USD": "800",
+    "SHIPPING_FREE_THRESHOLD_MINOR_USD": "7500",
+    "SHIPPING_FLAT_MINOR_IRR": "1200000",
+    "SHIPPING_FREE_THRESHOLD_MINOR_IRR": "30000000",
+    "PAYMENT_PROVIDER": "zarinpal",
+    "ZARINPAL_MERCHANT_ID": "test-merchant",
+    "PAYMENT_CALLBACK_BASE_URL": "http://127.0.0.1:8788",
+    "ZARINPAL_API_BASE": "http://127.0.0.1:8790",
+    "ZARINPAL_STARTPAY_BASE": "http://127.0.0.1:8790/start"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "migrations_dir": "db/migrations"
+    }
+  ]
+}

@@ -18,14 +18,14 @@ export default function ComparePage(){
 
   return <main className="compare-page">
     <header className="shop-nav">
-      <Link href="/" className="brand">VELOURA</Link>
+      <Link href="/" className="brand">FATIKHAN</Link>
       <nav><Link href="/shop/">فروشگاه</Link><Link href="/wishlist/">علاقه‌مندی‌ها</Link></nav>
     </header>
 
     <section className="compare-hero">
       <p className="eyebrow">COMPARE · MAX 3</p>
       <h1>کنار هم،<br/><em>واضح‌تر.</em></h1>
-      <p>تا سه محصول را بر اساس قیمت، امتیاز، رنگ و ترکیبات شاخص کنار هم ببین.</p>
+      <p>تا سه محصول را بر اساس قیمت، رنگ، دسته و ترکیبات شاخص کنار هم ببین.</p>
     </section>
 
     <section className="compare-content">
@@ -67,8 +67,8 @@ export default function ComparePage(){
 
           <div className="compare-table" role="table" aria-label="مقایسه جزئیات محصولات">
             <div className="compare-row" role="row">
-              <strong role="rowheader">امتیاز</strong>
-              {selected.map((product)=>product&&<span role="cell" key={product.id}>★ {product.rating} · {fa.format(product.reviewCount)}</span>)}
+              <strong role="rowheader">دسته</strong>
+              {selected.map((product)=>product&&<span role="cell" key={product.id}>{product.category}</span>)}
             </div>
             <div className="compare-row" role="row">
               <strong role="rowheader">رنگ‌ها</strong>
