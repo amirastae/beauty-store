@@ -11,8 +11,8 @@ npm install
 ## 2. Create local D1 state
 
 ```bash
-npx wrangler d1 migrations apply VELOURA_DB --local
-npx wrangler d1 execute VELOURA_DB --local --file=db/seed.sql
+npx wrangler d1 migrations apply DB --local
+npx wrangler d1 execute DB --local --file=db/seed.sql
 ```
 
 ## 3. Start local Worker
