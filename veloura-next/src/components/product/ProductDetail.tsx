@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 import { useCart } from "@/store/cart";
+import { useWishlist } from "@/store/wishlist";
 
 const fa = new Intl.NumberFormat("fa-IR");
 const money = (value:number) => fa.format(value) + " تومان";
@@ -13,6 +14,8 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [shadeId, setShadeId] = useState(product.shades?.[0]?.id);
   const [added, setAdded] = useState(false);
   const add = useCart((state) => state.add);
+  const wishlistIds = useWishlist((state) => state.ids);
+  const toggleWishlist = useWishlist((state) => state.toggle);
 
   const shade = useMemo(
     () => product.shades?.find((item) => item.id === shadeId),
@@ -87,9 +90,18 @@ export default function ProductDetail({ product }: { product: Product }) {
             </fieldset>
           )}
 
-          <button className="button button-dark pdp-add" onClick={addToCart}>
-            {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
-          </button>
+          <div className="pdp-actions">
+            <button className="button button-dark pdp-add" onClick={addToCart}>
+              {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
+            </button>
+            <button
+              className={wishlistIds.includes(product.id) ? "button pdp-wish active" : "button pdp-wish"}
+              onClick={() => toggleWishlist(product.id)}
+              aria-pressed={wishlistIds.includes(product.id)}
+            >
+              {wishlistIds.includes(product.id) ? "♥ ذخیره شد" : "♡ علاقه‌مندی"}
+            </button>
+          </div>
 
           <div className="pdp-trust">
             <span>ضمانت اصالت</span>
