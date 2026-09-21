@@ -6,10 +6,15 @@ import { catalog } from './routes/catalog'
 import { carts } from './routes/carts'
 import { checkout } from './routes/checkout'
 import { inventory } from './routes/inventory'
+import { ensurePreviewDatabase } from './lib/bootstrap'
 
 const app = new Hono<AppBindings>()
 
 app.use('*', logger())
+app.use('/api/*', async (c, next) => {
+  await ensurePreviewDatabase(c.env)
+  await next()
+})
 app.use('/api/*', cors({
   origin: (origin) => origin || '*',
   allowMethods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],

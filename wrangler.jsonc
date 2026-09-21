@@ -1,8 +1,28 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "beauty-store",
+  "name": "beauty-store-core-preview",
+  "main": "platform/src/index.ts",
   "compatibility_date": "2026-09-21",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "preview",
+    "AUTO_BOOTSTRAP": "1"
+  },
   "assets": {
-    "directory": "./public"
-  }
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "migrations_dir": "platform/db/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA"
+    }
+  ]
 }
