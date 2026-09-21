@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -9,18 +9,110 @@ import HeroStage from "@/components/motion/HeroStage";
 
 gsap.registerPlugin(ScrollTrigger);
 
+type NavigatorWithConnection = Navigator & {
+  connection?: { saveData?: boolean };
+};
+
 export default function CinematicBeautyHero() {
   const root = useRef<HTMLElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    const media = video.current;
+    if (!media) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const compactViewport = window.matchMedia("(max-width: 767px)").matches;
+    const saveData = (navigator as NavigatorWithConnection).connection?.saveData === true;
+
+    if (reducedMotion || compactViewport || saveData) return;
+
+    const onReady = () => {
+      if (!Number.isFinite(media.duration) || media.duration <= 0) return;
+      media.pause();
+      setVideoFailed(false);
+      setVideoReady(true);
+    };
+    const onError = () => {
+      setVideoReady(false);
+      setVideoFailed(true);
+    };
+
+    media.addEventListener("loadedmetadata", onReady);
+    media.addEventListener("error", onError);
+    media.load();
+
+    return () => {
+      media.removeEventListener("loadedmetadata", onReady);
+      media.removeEventListener("error", onError);
+    };
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
       gsap.set(".chapter-two, .chapter-three, .chapter-four", { opacity: 0, y: 34 });
       gsap.set(".cinematic-progress-fill", { scaleY: 0, transformOrigin: "50% 0%" });
 
-      const tl = gsap.timeline({
+      if (videoReady && video.current) {
+        const media = video.current;
+        let pendingFrame = 0;
+        let targetTime = 0;
+
+        gsap.set(".cinematic-scrub-video", { opacity: 1 });
+        gsap.set(".cinematic-stage", { opacity: 0 });
+
+        const seekTrigger = ScrollTrigger.create({
+          trigger: root.current,
+          start: "top top",
+          end: "bottom bottom",
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            targetTime = self.progress * Math.max(0, media.duration - 0.04);
+            if (pendingFrame) return;
+            pendingFrame = window.requestAnimationFrame(() => {
+              pendingFrame = 0;
+              if (Math.abs(media.currentTime - targetTime) > 0.016) {
+                media.currentTime = targetTime;
+              }
+            });
+          }
+        });
+
+        const copyTl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.55,
+            invalidateOnRefresh: true
+          }
+        });
+
+        copyTl
+          .to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
+          .to(".chapter-one", { opacity: 0, y: -28, duration: 0.24 }, 0.72)
+          .to(".chapter-two", { opacity: 1, y: 0, duration: 0.28 }, 0.84)
+          .to(".chapter-two", { opacity: 0, y: -28, duration: 0.24 }, 1.56)
+          .to(".chapter-three", { opacity: 1, y: 0, duration: 0.28 }, 1.68)
+          .to(".chapter-three", { opacity: 0, y: -28, duration: 0.24 }, 2.40)
+          .to(".chapter-four", { opacity: 1, y: 0, duration: 0.30 }, 2.54)
+          .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.05 }, 2.70);
+
+        return () => {
+          if (pendingFrame) window.cancelAnimationFrame(pendingFrame);
+          seekTrigger.kill();
+          copyTl.kill();
+        };
+      }
+
+      gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
+
+      const fallbackTl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: root.current,
@@ -31,18 +123,17 @@ export default function CinematicBeautyHero() {
         }
       });
 
-      tl.to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
+      fallbackTl
+        .to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
         .to(".cinematic-product-frame", { scale: 1.06, rotate: 1.5, yPercent: -3, duration: 0.9 }, 0.05)
         .to(".chapter-one", { opacity: 0, y: -28, duration: 0.28 }, 0.62)
         .to(".cinematic-stage-one", { opacity: 0.12, scale: 1.08, duration: 0.45 }, 0.64)
         .to(".cinematic-stage-two", { opacity: 1, scale: 1, duration: 0.48 }, 0.72)
         .to(".chapter-two", { opacity: 1, y: 0, duration: 0.34 }, 0.78)
-
         .to(".chapter-two", { opacity: 0, y: -28, duration: 0.28 }, 1.48)
         .to(".cinematic-stage-two", { opacity: 0.08, scale: 1.07, duration: 0.45 }, 1.50)
         .to(".cinematic-stage-three", { opacity: 1, scale: 1, duration: 0.48 }, 1.58)
         .to(".chapter-three", { opacity: 1, y: 0, duration: 0.34 }, 1.64)
-
         .to(".chapter-three", { opacity: 0, y: -28, duration: 0.28 }, 2.34)
         .to(".cinematic-stage-three", { opacity: 0.1, scale: 1.07, duration: 0.45 }, 2.36)
         .to(".cinematic-stage-four", { opacity: 1, scale: 1, duration: 0.52 }, 2.44)
@@ -52,11 +143,30 @@ export default function CinematicBeautyHero() {
     });
 
     return () => mm.revert();
-  }, { scope: root });
+  }, { scope: root, dependencies: [videoReady] });
 
   return (
-    <section className="cinematic-hero" ref={root} aria-labelledby="cinematic-title">
+    <section
+      className={videoReady ? "cinematic-hero video-active" : "cinematic-hero"}
+      ref={root}
+      aria-labelledby="cinematic-title"
+      data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
+    >
       <div className="cinematic-sticky">
+        <video
+          ref={video}
+          className="cinematic-scrub-video"
+          muted
+          playsInline
+          preload="auto"
+          poster="/editorial-hero.jpg"
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <source src="/cinematic/fatikhan-hero.webm" type="video/webm" />
+          <source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />
+        </video>
+
         <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
           <div className="cinematic-product-frame">
             <HeroStage />
@@ -64,31 +174,15 @@ export default function CinematicBeautyHero() {
         </div>
 
         <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
-          <Image
-            src="/editorial-hero.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-          />
+          <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
         </div>
 
         <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
-          <Image
-            src="/date-night-makeup-set.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-          />
+          <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
         </div>
 
         <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
-          <Image
-            src="/signature-collection-set.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-          />
+          <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
         </div>
 
         <div className="cinematic-final-glow" aria-hidden="true" />
@@ -132,7 +226,9 @@ export default function CinematicBeautyHero() {
           <span>04</span>
         </div>
 
-        <span className="cinematic-scroll-cue">SCROLL TO DISCOVER</span>
+        <span className="cinematic-scroll-cue">
+          {videoReady ? "SCROLL TO CONTROL THE FILM" : "SCROLL TO DISCOVER"}
+        </span>
       </div>
     </section>
   );
