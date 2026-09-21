@@ -16,6 +16,13 @@ type CartLine = {
   product_title: string
 }
 
+type IdemRow = {
+  request_hash: string
+  response_status: number | null
+  response_body: string | null
+  locked_until: string | null
+}
+
 function id(prefix: string) {
   return prefix + '_' + crypto.randomUUID().replaceAll('-', '')
 }
@@ -26,14 +33,28 @@ function orderNumber() {
   return 100000000 + (bytes[0] % 900000000)
 }
 
+async function sha256Hex(input: string) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 async function releaseReservations(db: D1Database, lines: CartLine[]) {
+  const now = new Date().toISOString()
   for (const line of lines) {
     await db.prepare(
       `UPDATE inventory_items
        SET reserved = MAX(reserved - ?, 0), updated_at = ?
        WHERE variant_id = ?`
-    ).bind(line.quantity, new Date().toISOString(), line.variant_id).run()
+    ).bind(line.quantity, now, line.variant_id).run()
   }
+}
+
+async function releaseIdempotencyLock(db: D1Database, key: string) {
+  await db.prepare(
+    `UPDATE idempotency_keys
+     SET locked_until = NULL, updated_at = ?
+     WHERE key = ? AND scope = 'checkout' AND response_status IS NULL`
+  ).bind(new Date().toISOString(), key).run()
 }
 
 checkout.post('/checkout/:cartId', async (c) => {
@@ -43,18 +64,6 @@ checkout.post('/checkout/:cartId', async (c) => {
   const idem = c.req.header('Idempotency-Key')?.trim()
   if (!idem || idem.length < 8 || idem.length > 120) {
     return fail('IDEMPOTENCY_KEY_REQUIRED', 'A valid Idempotency-Key header is required.', 400)
-  }
-
-  const existing = await db.prepare(
-    `SELECT response_status, response_body FROM idempotency_keys
-     WHERE key = ? AND scope = 'checkout' LIMIT 1`
-  ).bind(idem).first<{ response_status: number | null; response_body: string | null }>()
-
-  if (existing?.response_status && existing.response_body) {
-    return new Response(existing.response_body, {
-      status: existing.response_status,
-      headers: { 'content-type': 'application/json; charset=utf-8' }
-    })
   }
 
   const cartId = c.req.param('cartId')
@@ -70,7 +79,6 @@ checkout.post('/checkout/:cartId', async (c) => {
   }>()
 
   if (!cart) return fail('CART_NOT_FOUND', 'Cart not found.', 404)
-  if (cart.status !== 'open') return fail('CART_NOT_OPEN', 'Cart is not open.', 409)
 
   const body = await c.req.json<{
     email?: string
@@ -88,6 +96,63 @@ checkout.post('/checkout/:cartId', async (c) => {
     return fail('SHIPPING_ADDRESS_REQUIRED', 'Shipping address is required.', 400)
   }
 
+  const requestHash = await sha256Hex(JSON.stringify({
+    cart_id: cartId,
+    email,
+    shipping_address: body.shipping_address,
+    billing_address: body.billing_address ?? null
+  }))
+
+  const existing = await db.prepare(
+    `SELECT request_hash, response_status, response_body, locked_until
+     FROM idempotency_keys WHERE key = ? AND scope = 'checkout' LIMIT 1`
+  ).bind(idem).first<IdemRow>()
+
+  if (existing) {
+    if (existing.request_hash !== requestHash) {
+      return fail('IDEMPOTENCY_KEY_REUSED', 'This idempotency key was already used for a different request.', 409)
+    }
+
+    if (existing.response_status && existing.response_body) {
+      return new Response(existing.response_body, {
+        status: existing.response_status,
+        headers: { 'content-type': 'application/json; charset=utf-8' }
+      })
+    }
+
+    if (existing.locked_until && Date.parse(existing.locked_until) > Date.now()) {
+      return fail('IDEMPOTENCY_IN_PROGRESS', 'An identical checkout request is already in progress.', 409)
+    }
+
+    const lockUntil = new Date(Date.now() + 30_000).toISOString()
+    const lock = await db.prepare(
+      `UPDATE idempotency_keys SET locked_until = ?, updated_at = ?
+       WHERE key = ? AND scope = 'checkout'
+         AND response_status IS NULL
+         AND (locked_until IS NULL OR locked_until <= ?)`
+    ).bind(lockUntil, new Date().toISOString(), idem, new Date().toISOString()).run()
+
+    if ((lock.meta.changes ?? 0) !== 1) {
+      return fail('IDEMPOTENCY_IN_PROGRESS', 'An identical checkout request is already in progress.', 409)
+    }
+  } else {
+    try {
+      const now = new Date().toISOString()
+      await db.prepare(
+        `INSERT INTO idempotency_keys
+         (key, scope, request_hash, locked_until, created_at, updated_at)
+         VALUES (?, 'checkout', ?, ?, ?, ?)`
+      ).bind(idem, requestHash, new Date(Date.now() + 30_000).toISOString(), now, now).run()
+    } catch {
+      return fail('IDEMPOTENCY_IN_PROGRESS', 'An identical checkout request is already in progress.', 409)
+    }
+  }
+
+  if (cart.status !== 'open') {
+    await releaseIdempotencyLock(db, idem)
+    return fail('CART_NOT_OPEN', 'Cart is not open.', 409)
+  }
+
   const linesResult = await db.prepare(
     `SELECT ci.id, ci.variant_id, ci.quantity, ci.unit_price_minor, ci.line_total_minor,
             pv.sku, pv.title AS variant_title, p.id AS product_id, p.title AS product_title
@@ -98,13 +163,10 @@ checkout.post('/checkout/:cartId', async (c) => {
   ).bind(cartId).all<CartLine>()
 
   const lines = linesResult.results
-  if (!lines.length) return fail('CART_EMPTY', 'Cart is empty.', 409)
-
-  await db.prepare(
-    `INSERT OR IGNORE INTO idempotency_keys
-     (key, scope, request_hash, created_at, updated_at)
-     VALUES (?, 'checkout', ?, ?, ?)`
-  ).bind(idem, cartId, new Date().toISOString(), new Date().toISOString()).run()
+  if (!lines.length) {
+    await releaseIdempotencyLock(db, idem)
+    return fail('CART_EMPTY', 'Cart is empty.', 409)
+  }
 
   const reserved: CartLine[] = []
   for (const line of lines) {
@@ -116,6 +178,7 @@ checkout.post('/checkout/:cartId', async (c) => {
 
     if ((result.meta.changes ?? 0) !== 1) {
       await releaseReservations(db, reserved)
+      await releaseIdempotencyLock(db, idem)
       return fail('INSUFFICIENT_STOCK', `Insufficient stock for variant ${line.variant_id}.`, 409)
     }
     reserved.push(line)
@@ -131,6 +194,20 @@ checkout.post('/checkout/:cartId', async (c) => {
     const orderId = id('ord')
     const paymentId = id('pay')
     const orderNo = orderNumber()
+
+    const payload = JSON.stringify({
+      ok: true,
+      data: {
+        order_id: orderId,
+        order_number: orderNo,
+        payment_id: paymentId,
+        payment_status: 'requires_provider',
+        currency_code: cart.currency_code,
+        subtotal_minor: subtotal,
+        shipping_minor: shipping,
+        total_minor: total
+      }
+    })
 
     const statements: D1PreparedStatement[] = [
       db.prepare(
@@ -172,22 +249,20 @@ checkout.post('/checkout/:cartId', async (c) => {
       ).bind(paymentId, orderId, cartId, total, cart.currency_code, idem, now, now)
     )
 
-    statements.push(
-      db.prepare(
-        `UPDATE inventory_items
-         SET stock_on_hand = stock_on_hand - ?, reserved = MAX(reserved - ?, 0), updated_at = ?
-         WHERE variant_id = ?`
-      ).bind(lines[0].quantity, lines[0].quantity, now, lines[0].variant_id)
-    )
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i]
+    for (const line of lines) {
       statements.push(
         db.prepare(
           `UPDATE inventory_items
            SET stock_on_hand = stock_on_hand - ?, reserved = MAX(reserved - ?, 0), updated_at = ?
            WHERE variant_id = ?`
         ).bind(line.quantity, line.quantity, now, line.variant_id)
+      )
+      statements.push(
+        db.prepare(
+          `INSERT INTO inventory_events
+           (id, variant_id, event_type, quantity, reference_type, reference_id, metadata_json, created_at)
+           VALUES (?, ?, 'stock_out', ?, 'order', ?, '{}', ?)`
+        ).bind(id('inv'), line.variant_id, line.quantity, orderId, now)
       )
     }
 
@@ -196,27 +271,23 @@ checkout.post('/checkout/:cartId', async (c) => {
         .bind(email, now, cartId)
     )
 
+    statements.push(
+      db.prepare(
+        `INSERT INTO outbox_events
+         (id, event_type, aggregate_type, aggregate_id, payload_json, status, attempts, available_at, created_at)
+         VALUES (?, 'order.created', 'order', ?, ?, 'pending', 0, ?, ?)`
+      ).bind(id('evt'), orderId, payload, now, now)
+    )
+
+    statements.push(
+      db.prepare(
+        `UPDATE idempotency_keys
+         SET response_status = 201, response_body = ?, locked_until = NULL, updated_at = ?
+         WHERE key = ? AND scope = 'checkout' AND request_hash = ?`
+      ).bind(payload, now, idem, requestHash)
+    )
+
     await db.batch(statements)
-
-    const payload = JSON.stringify({
-      ok: true,
-      data: {
-        order_id: orderId,
-        order_number: orderNo,
-        payment_id: paymentId,
-        payment_status: 'requires_provider',
-        currency_code: cart.currency_code,
-        subtotal_minor: subtotal,
-        shipping_minor: shipping,
-        total_minor: total
-      }
-    })
-
-    await db.prepare(
-      `UPDATE idempotency_keys
-       SET response_status = 201, response_body = ?, updated_at = ?
-       WHERE key = ? AND scope = 'checkout'`
-    ).bind(payload, now, idem).run()
 
     return new Response(payload, {
       status: 201,
@@ -224,6 +295,7 @@ checkout.post('/checkout/:cartId', async (c) => {
     })
   } catch (error) {
     await releaseReservations(db, reserved)
+    await releaseIdempotencyLock(db, idem)
     console.error('checkout failed', error)
     return fail('CHECKOUT_FAILED', 'Checkout could not be completed.', 500)
   }
