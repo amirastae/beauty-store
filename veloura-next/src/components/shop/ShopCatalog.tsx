@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import { categories, products } from "@/data/products";
-import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
+import { discountPercent, formatFaNumber, formatToman, normalizePersianSearch } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { useCompare } from "@/store/compare";
 import { useWishlist } from "@/store/wishlist";
@@ -43,11 +43,11 @@ export default function ShopCatalog() {
   }, [category, query, saleOnly]);
 
   const visible = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("fa");
+    const q = normalizePersianSearch(query);
     const filtered = products.filter((product) => {
       const byCategory = category === "همه" || product.category === category;
       const bySale = !saleOnly || Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
-      const haystack = (product.nameFa + " " + product.nameEn + " " + product.brand + " " + product.category).toLocaleLowerCase("fa");
+      const haystack = normalizePersianSearch(product.nameFa + " " + product.nameEn + " " + product.brand + " " + product.category);
       return byCategory && bySale && (!q || haystack.includes(q));
     });
 
