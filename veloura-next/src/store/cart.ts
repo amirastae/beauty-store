@@ -57,7 +57,29 @@ export const useCart = create<CartState>()(
     {
       name: "veloura-cart-v1",
       version: 1,
-          skipHydration: true
+      skipHydration: true,
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<CartState>;
+        const lines = Array.isArray(saved.lines)
+          ? saved.lines.flatMap((line) => {
+              const fresh = products.find((product) => product.id === line?.product?.id);
+              if (!fresh) return [];
+
+              const shadeId =
+                line.shadeId && fresh.shades?.some((shade) => shade.id === line.shadeId)
+                  ? line.shadeId
+                  : fresh.shades?.[0]?.id;
+
+              return [{
+                product: fresh,
+                qty: clampQty(Number(line.qty) || 1),
+                shadeId
+              }];
+            })
+          : [];
+
+        return { ...current, lines };
+      }
     }
   )
 );
