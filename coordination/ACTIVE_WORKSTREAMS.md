@@ -53,3 +53,8 @@ It records which parallel-chat patches are already integrated so they are not re
 
 ## قاعده SHA زنده
 هیچ چت نباید SHA قدیمی را از حافظه/پیام قبلی برای write استفاده کند. درست قبل از هر patch، head همان branch دوباره از GitHub خوانده شود.
+
+
+## Auto-mirror rule
+
+Canonical source changes may exist briefly before the build bot runs. The canonical build workflow now rebuilds `public/**` and mirrors the clean Git source into `sources/final/veloura-next` in the same follow-up commit. Human/workstream source commits are allowed to report mirror pending; the build-bot follow-up commit is the strict parity checkpoint.

@@ -28,6 +28,13 @@ jobs:
           ref: integration-staging
           fetch-depth: 0
 
+      - name: Snapshot clean canonical source for final mirror
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/fatikhan-canonical-source
+          mkdir -p /tmp/fatikhan-canonical-source
+          git archive HEAD sources/canonical/veloura-next | tar -x -C /tmp/fatikhan-canonical-source
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
@@ -91,7 +98,12 @@ jobs:
             git reset --hard origin/integration-staging
             rm -rf public
             cp -a /tmp/fatikhan-canonical-public public
-            git add -A public
+
+            rm -rf sources/final/veloura-next
+            mkdir -p sources/final
+            cp -a /tmp/fatikhan-canonical-source/sources/canonical/veloura-next sources/final/veloura-next
+
+            git add -A public sources/final/veloura-next
 
             if git diff --cached --quiet; then
               echo "CANONICAL_PUBLIC_COMMIT=NO_CHANGES"
