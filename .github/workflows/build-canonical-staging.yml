@@ -37,13 +37,9 @@ jobs:
         working-directory: sources/canonical/veloura-next
         run: npm ci --ignore-scripts --no-audit --no-fund
 
-      - name: Typecheck canonical frontend
+      - name: Run canonical quality gate
         working-directory: sources/canonical/veloura-next
-        run: npm run typecheck
-
-      - name: Build canonical static export
-        working-directory: sources/canonical/veloura-next
-        run: npm run build
+        run: npm run quality
 
       - name: Replace staging public atomically
         run: |
