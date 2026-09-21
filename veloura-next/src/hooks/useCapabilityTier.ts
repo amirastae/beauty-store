@@ -10,7 +10,7 @@ type NavigatorHints = Navigator & {
 };
 
 export function useCapabilityTier() {
-  const [tier, setTier] = useState<CapabilityTier>("B");
+  const [tier, setTier] = useState<CapabilityTier>("C");
 
   useEffect(() => {
     const nav = navigator as NavigatorHints;
