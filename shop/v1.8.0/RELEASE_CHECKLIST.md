@@ -1,12 +1,14 @@
-# VELOURA v1.7 Release Checklist
+# VELOURA v1.8 Release Checklist
 
-این فایل gate انتشار نسخه `shop/v1.7.0` است.
+این فایل gate انتشار نسخه `shop/v1.8.0` است.
 
 ## قبل از merge
 - [ ] `npm ci` فقط با lockfile موفق شود.
 - [ ] ESLint بدون error/warning بحرانی پاس شود.
 - [ ] `tsc --noEmit` پاس شود.
+- [ ] `audit:source` پاس شود.
 - [ ] `next build` پاس شود.
+- [ ] `audit:static` پاس شود.
 - [ ] `out/index.html`, `robots.txt`, `sitemap.xml` و `_headers` وجود داشته باشند.
 - [ ] هیچ secret، token یا credential داخل snapshot نباشد.
 - [ ] checkout/auth نمایشی به‌عنوان backend واقعی معرفی نشوند.
