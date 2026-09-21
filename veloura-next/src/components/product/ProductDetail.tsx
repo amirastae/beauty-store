@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import IranianTrustRail from "@/components/commerce/IranianTrustRail";
-import type { Product } from "@/data/products";
+import { products, type Product } from "@/data/products";
 import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
 import { useCompare } from "@/store/compare";
 import { useWishlist } from "@/store/wishlist";
+import { useRecent } from "@/store/recent";
 
 export default function ProductDetail({ product }: { product: Product }) {
   const [shadeId, setShadeId] = useState(product.shades?.[0]?.id);
@@ -20,6 +21,18 @@ export default function ProductDetail({ product }: { product: Product }) {
   const toggleWishlist = useWishlist((state) => state.toggle);
   const compareIds = useCompare((state) => state.ids);
   const toggleCompare = useCompare((state) => state.toggle);
+  const recentIds = useRecent((state) => state.ids);
+  const visitRecent = useRecent((state) => state.visit);
+
+  useEffect(() => {
+    visitRecent(product.id);
+  }, [product.id, visitRecent]);
+
+  const recentProducts = recentIds
+    .filter((id) => id !== product.id)
+    .map((id) => products.find((item) => item.id === id))
+    .filter((item): item is Product => Boolean(item))
+    .slice(0, 4);
 
   const shade = useMemo(
     () => product.shades?.find((item) => item.id === shadeId),
@@ -153,6 +166,29 @@ export default function ProductDetail({ product }: { product: Product }) {
         <article><span>02</span><h2>روش استفاده</h2><p>محصول را به‌صورت لایه‌ای استفاده کن و شدت نتیجه را متناسب با استایل خودت تنظیم کن.</p></article>
         <article><span>03</span><h2>جزئیات فرمول</h2><p>اطلاعات کامل ترکیبات، سازگاری و نکات محصول در نسخه داده واقعی از کاتالوگ نمایش داده می‌شود.</p></article>
       </section>
+
+      {recentProducts.length > 0 && (
+        <section className="recent-section" aria-labelledby="recent-title">
+          <div className="recent-head">
+            <div>
+              <p className="eyebrow">RECENTLY VIEWED</p>
+              <h2 id="recent-title">اخیراً دیدی</h2>
+            </div>
+            <Link href="/shop/">همه محصولات ←</Link>
+          </div>
+          <div className="recent-grid">
+            {recentProducts.map((item) => (
+              <Link className="recent-card" href={"/product/" + item.slug} key={item.id}>
+                <span className="recent-image">
+                  <Image src={item.image} alt={item.imageAlt} fill sizes="(max-width:600px) 45vw, 22vw" />
+                </span>
+                <strong>{item.nameFa}</strong>
+                <small>{formatToman(item.price)}</small>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="pdp-editorial">
         <div><p className="eyebrow">VELOURA OBJECTS</p><h2>محصول، بخشی از تجربه است؛ نه فقط یک کارت در فروشگاه.</h2></div>
