@@ -33,7 +33,7 @@ if(!fs.existsSync(root)){
 
 for(const required of [
   "index.html","shop/index.html","cart/index.html","checkout/index.html",
-  "wishlist/index.html","robots.txt","sitemap.xml","manifest.webmanifest","_headers",
+  "wishlist/index.html","robots.txt","sitemap.xml","manifest.webmanifest","sw.js","_headers",
   "cinematic/fatikhan-hero.mp4","cinematic/fatikhan-hero.webm","cinematic/fatikhan-poster.jpg"
 ]){
   if(!exists(required)) failures.push(`missing required output: ${required}`);
@@ -45,6 +45,8 @@ for(const file of htmlFiles){
   const html=fs.readFileSync(file,"utf8");
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
   const route=rel==="index.html"?"/":"/"+rel.replace(/\/index\.html$/,"/").replace(/\.html$/,"/");
+
+  if(/>\s*(?:VELOURA|ولورا)\s*</i.test(html)) failures.push(`legacy visible brand detected on ${route}`);
 
   for(const m of html.matchAll(/href="([^"]+)"/g)){
     const p=internalPath(m[1]);
@@ -79,7 +81,40 @@ for(const file of htmlFiles){
 
 const home=fs.readFileSync(path.join(root,"index.html"),"utf8");
 if(!home.includes("FATIKHAN")) failures.push("visible FATIKHAN brand missing from rendered home");
-if(/>\s*(?:VELOURA|REHHA|LUXORA)\s*</i.test(home)) failures.push("legacy visible brand detected on rendered home");
+
+for(const claim of [
+  "امتیاز جامعه",
+  "بدون تست حیوانی",
+  "ارسال رایگان برای سفارش‌های منتخب",
+  "★ 4.",
+  "★ 5.",
+  "پرفروش"
+]){
+  if(home.includes(claim)) failures.push(`rendered homepage contains unsupported claim: ${claim}`);
+}
+
+function canonicalHref(html){
+  return html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] || "";
+}
+function hasNoIndex(html){
+  return /<meta name="robots" content="[^"]*noindex/i.test(html);
+}
+
+const homeCanonical=canonicalHref(home);
+let homeCanonicalPath="";
+try{homeCanonicalPath=new URL(homeCanonical,"https://fatikhan.invalid").pathname;}catch{}
+if(homeCanonicalPath!=="/") failures.push("home canonical missing or does not point to /");
+
+const shopHtml=fs.readFileSync(path.join(root,"shop/index.html"),"utf8");
+const shopCanonical=canonicalHref(shopHtml);
+let shopCanonicalPath="";
+try{shopCanonicalPath=new URL(shopCanonical,"https://fatikhan.invalid").pathname;}catch{}
+if(shopCanonicalPath!=="/shop/") failures.push("shop canonical missing or does not point to /shop/");
+
+for(const route of ["cart","checkout","wishlist","compare","recent","search","offline"]){
+  const html=fs.readFileSync(path.join(root,route,"index.html"),"utf8");
+  if(!hasNoIndex(html)) failures.push(`stateful route missing noindex: /${route}/`);
+}
 
 const robots=fs.readFileSync(path.join(root,"robots.txt"),"utf8");
 for(const p of ["/cart/","/checkout/","/wishlist/","/compare/","/recent/","/search/","/offline/"]){
@@ -91,8 +126,36 @@ const sitemapUrls=(sitemap.match(/<url>/g)||[]).length;
 if(sitemapUrls<10) failures.push(`sitemap unexpectedly small: ${sitemapUrls}`);
 
 const headers=fs.readFileSync(path.join(root,"_headers"),"utf8");
-for(const name of ["X-Content-Type-Options","Referrer-Policy","X-Frame-Options","Permissions-Policy","Cross-Origin-Opener-Policy"]){
-  if(!headers.includes(name)) failures.push(`_headers missing ${name}`);
+for(const requiredHeader of [
+  "X-Content-Type-Options: nosniff",
+  "Referrer-Policy: strict-origin-when-cross-origin",
+  "X-Frame-Options: SAMEORIGIN",
+  "Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()",
+  "Cross-Origin-Opener-Policy: same-origin",
+  "Cache-Control: public, max-age=31536000, immutable"
+]){
+  if(!headers.includes(requiredHeader)) failures.push(`_headers missing expected policy: ${requiredHeader}`);
+}
+
+
+const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.webmanifest"),"utf8"));
+if(manifest.name?.includes("FATIKHAN")!==true) failures.push("manifest visible name is not FATIKHAN");
+if(manifest.start_url!=="/") failures.push("manifest start_url must be /");
+if(manifest.display!=="standalone") failures.push("manifest display must be standalone");
+for(const icon of manifest.icons||[]){
+  if(icon.src?.startsWith("/")&&!exists(icon.src)) failures.push(`manifest icon missing: ${icon.src}`);
+}
+
+const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");
+if(!sw.includes('const CACHE="veloura-v2.6.0"')) failures.push("PWA service worker cache version is stale");
+if(!sw.includes("/cinematic/fatikhan-poster.jpg")) failures.push("PWA core cache missing cinematic poster");
+if(!sw.includes("/offline/")) failures.push("PWA core cache missing offline route");
+
+if(!headers.includes("/sw.js")||!headers.includes("no-cache, no-store, must-revalidate")){
+  failures.push("_headers does not force service-worker revalidation");
+}
+if(!headers.includes("/manifest.webmanifest")||!headers.includes("Cache-Control: no-cache")){
+  failures.push("_headers does not prevent stale manifest caching");
 }
 
 console.log(JSON.stringify({

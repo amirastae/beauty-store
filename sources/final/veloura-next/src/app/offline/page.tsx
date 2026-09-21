@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "آفلاین — FATIKHAN", robots: { index: false, follow: false } };
 
 export default function OfflinePage(){
   return <main className="offline-page">

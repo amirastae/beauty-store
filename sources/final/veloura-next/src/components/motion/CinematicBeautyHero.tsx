@@ -29,12 +29,11 @@ export default function CinematicBeautyHero() {
     if (!VIDEO_SCRUB_ENABLED) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const compactViewport = window.matchMedia("(max-width: 767px)").matches;
     const connection = (navigator as NavigatorWithConnection).connection;
     const saveData = connection?.saveData === true;
     const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
 
-    setVideoEligible(!(reducedMotion || compactViewport || saveData || slowNetwork));
+    setVideoEligible(!(reducedMotion || saveData || slowNetwork));
   }, []);
 
   useEffect(() => {
@@ -62,22 +61,31 @@ export default function CinematicBeautyHero() {
     media.addEventListener("error", onError);
 
     const loadScrubMaster = async () => {
-      try {
-        const response = await fetch("/cinematic/fatikhan-hero.mp4", {
-          cache: "force-cache",
-          signal: controller.signal
-        });
-        if (!response.ok) throw new Error("cinematic master fetch failed");
+      const sources = media.canPlayType("video/webm")
+        ? ["/cinematic/fatikhan-hero.webm", "/cinematic/fatikhan-hero.mp4"]
+        : ["/cinematic/fatikhan-hero.mp4"];
 
-        const blob = await response.blob();
-        if (controller.signal.aborted) return;
+      for (const source of sources) {
+        try {
+          const response = await fetch(source, {
+            cache: "force-cache",
+            signal: controller.signal
+          });
+          if (!response.ok) continue;
 
-        objectUrl = URL.createObjectURL(blob);
-        media.src = objectUrl;
-        media.load();
-      } catch {
-        if (!controller.signal.aborted) onError();
+          const blob = await response.blob();
+          if (controller.signal.aborted) return;
+
+          objectUrl = URL.createObjectURL(blob);
+          media.src = objectUrl;
+          media.load();
+          return;
+        } catch {
+          if (controller.signal.aborted) return;
+        }
       }
+
+      onError();
     };
 
     void loadScrubMaster();
@@ -128,16 +136,25 @@ export default function CinematicBeautyHero() {
           trailingSeek = window.setTimeout(applySeek, seekIntervalMs - elapsed);
         };
 
+        const syncFromProgress = (self: ScrollTrigger) => {
+          targetTime = self.progress * Math.max(0, media.duration - 0.04);
+          scheduleSeek();
+        };
+
         const seekTrigger = ScrollTrigger.create({
           trigger: root.current,
           start: "top top",
           end: "bottom bottom",
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            targetTime = self.progress * Math.max(0, media.duration - 0.04);
-            scheduleSeek();
-          }
+          onUpdate: syncFromProgress,
+          onRefresh: syncFromProgress
         });
+
+        // If the scrub master finishes loading after the user has already
+        // entered the hero, align it immediately instead of flashing frame 0
+        // until the next wheel/touch event.
+        targetTime = seekTrigger.progress * Math.max(0, media.duration - 0.04);
+        applySeek();
 
         const copyTl = gsap.timeline({
           defaults: { ease: "none" },
@@ -208,6 +225,7 @@ export default function CinematicBeautyHero() {
       ref={root}
       aria-labelledby="cinematic-title"
       data-video-state={videoReady ? "ready" : videoFailed || !videoEligible ? "fallback" : "loading"}
+      data-cinematic-runtime="blob-throttle-v3"
     >
       <div className="cinematic-sticky">
         {VIDEO_SCRUB_ENABLED && videoEligible && <video

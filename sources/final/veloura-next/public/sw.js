@@ -1,5 +1,5 @@
-const CACHE="veloura-v2.5.0";
-const CORE=["/","/shop/","/search/","/about/","/faq/","/offline/","/manifest.webmanifest","/icon.svg"];
+const CACHE="veloura-v2.6.0";
+const CORE=["/","/shop/","/search/","/about/","/faq/","/offline/","/manifest.webmanifest","/icon.svg","/maskable-icon.svg","/cinematic/fatikhan-poster.jpg"];
 
 self.addEventListener("install",(event)=>{
   event.waitUntil(caches.open(CACHE).then((cache)=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
