@@ -57,8 +57,7 @@ export default async function ProductPage({ params }: Props) {
       "@type": "Offer",
       url: productUrl,
       priceCurrency: "IRR",
-      price: product.price * 10,
-      availability: "https://schema.org/InStock"
+      price: product.price * 10
     },
     aggregateRating: {
       "@type": "AggregateRating",
