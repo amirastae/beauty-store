@@ -1,6 +1,6 @@
 "use client";
 
-import { ContactShadows, Environment, Float } from "@react-three/drei";
+import { ContactShadows, Environment, Float, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import type { Group } from "three";
@@ -65,7 +65,10 @@ export default function HeroProductScene() {
       <pointLight position={[3, -2, 2]} intensity={18} color="#f3d0bd" />
       <SerumBottle />
       <ContactShadows position={[0, -1.17, 0]} opacity={0.32} scale={5} blur={2.6} far={3.2} />
-      <Environment preset="studio" />
+      <Environment resolution={64} frames={1}>
+        <Lightformer form="ring" intensity={3} color="#fff0e7" scale={5} position={[0, 2, -3]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={2} color="#d88f7a" scale={[3, 5, 1]} position={[-4, 0, 1]} target={[0, 0, 0]} />
+      </Environment>
     </Canvas>
   );
 }
