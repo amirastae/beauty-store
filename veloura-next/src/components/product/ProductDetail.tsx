@@ -7,6 +7,7 @@ import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import type { Product } from "@/data/products";
 import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
+import { useCompare } from "@/store/compare";
 import { useWishlist } from "@/store/wishlist";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -15,12 +16,16 @@ export default function ProductDetail({ product }: { product: Product }) {
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
+  const compareIds = useCompare((state) => state.ids);
+  const toggleCompare = useCompare((state) => state.toggle);
 
   const shade = useMemo(
     () => product.shades?.find((item) => item.id === shadeId),
     [product.shades, shadeId]
   );
   const discount = discountPercent(product.price, product.compareAtPrice);
+  const compared = compareIds.includes(product.id);
+  const compareDisabled = !compared && compareIds.length >= 4;
 
   const addToCart = () => {
     add(product, shadeId);
@@ -32,7 +37,10 @@ export default function ProductDetail({ product }: { product: Product }) {
     <main className="pdp">
       <header className="pdp-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <Link href="/shop/">بازگشت به فروشگاه ←</Link>
+        <nav className="pdp-nav-links">
+          <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
+          <Link href="/shop/">بازگشت به فروشگاه ←</Link>
+        </nav>
       </header>
 
       <section className="pdp-hero">
@@ -90,7 +98,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             </fieldset>
           )}
 
-          <div className="pdp-actions">
+          <div className="pdp-actions pdp-actions-commerce">
             <button className="button button-dark pdp-add" onClick={addToCart}>
               {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
             </button>
@@ -100,6 +108,15 @@ export default function ProductDetail({ product }: { product: Product }) {
               aria-pressed={wishlistIds.includes(product.id)}
             >
               {wishlistIds.includes(product.id) ? "♥ ذخیره شد" : "♡ علاقه‌مندی"}
+            </button>
+            <button
+              className={compared ? "button compare-toggle active" : "button compare-toggle"}
+              onClick={() => toggleCompare(product.id)}
+              aria-pressed={compared}
+              disabled={compareDisabled}
+              title={compareDisabled ? "حداکثر ۴ محصول قابل مقایسه است" : "مقایسه محصول"}
+            >
+              {compared ? "✓ در مقایسه" : "مقایسه محصول"}
             </button>
           </div>
 
