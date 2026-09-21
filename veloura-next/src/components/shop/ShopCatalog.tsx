@@ -7,6 +7,7 @@ import IranianTrustRail from "@/components/commerce/IranianTrustRail";
 import { categories, products } from "@/data/products";
 import { discountPercent, formatFaNumber, formatToman } from "@/lib/locale";
 import { useCart } from "@/store/cart";
+import { useCompare } from "@/store/compare";
 import { useWishlist } from "@/store/wishlist";
 
 export default function ShopCatalog() {
@@ -17,6 +18,8 @@ export default function ShopCatalog() {
   const add = useCart((state) => state.add);
   const wishlistIds = useWishlist((state) => state.ids);
   const toggleWishlist = useWishlist((state) => state.toggle);
+  const compareIds = useCompare((state) => state.ids);
+  const toggleCompare = useCompare((state) => state.toggle);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -68,7 +71,11 @@ export default function ShopCatalog() {
     <main className="shop-page">
       <header className="shop-nav">
         <Link href="/" className="brand">VELOURA</Link>
-        <nav><Link href="/wishlist/">علاقه‌مندی‌ها</Link><Link href="/cart/">سبد خرید</Link></nav>
+        <nav>
+          <Link href="/wishlist/">علاقه‌مندی‌ها</Link>
+          <Link href="/compare/">مقایسه ({formatFaNumber(compareIds.length)})</Link>
+          <Link href="/cart/">سبد خرید</Link>
+        </nav>
       </header>
 
       <section className="shop-hero">
@@ -119,6 +126,8 @@ export default function ShopCatalog() {
         <div className="product-grid light-grid">
           {visible.map((product)=>{
             const discount = discountPercent(product.price, product.compareAtPrice);
+            const compared = compareIds.includes(product.id);
+            const compareDisabled = !compared && compareIds.length >= 4;
             return (
               <article className="product-card" key={product.id}>
                 <Link className="product-media" href={"/product/" + product.slug}>
@@ -135,9 +144,18 @@ export default function ShopCatalog() {
                     </div>
                   </div>
                   <div className="rating">★ {product.rating} <span>({formatFaNumber(product.reviewCount)})</span></div>
-                  <div className="card-actions">
+                  <div className="card-actions commerce-card-actions">
                     <button onClick={()=>add(product, product.shades?.[0]?.id)}>+ سبد</button>
                     <button className={wishlistIds.includes(product.id)?"wish active":"wish"} aria-label="علاقه‌مندی" onClick={()=>toggleWishlist(product.id)}>♡</button>
+                    <button
+                      className={compared ? "compare-toggle active" : "compare-toggle"}
+                      aria-pressed={compared}
+                      disabled={compareDisabled}
+                      title={compareDisabled ? "حداکثر ۴ محصول قابل مقایسه است" : "مقایسه محصول"}
+                      onClick={()=>toggleCompare(product.id)}
+                    >
+                      {compared ? "✓ مقایسه" : "مقایسه"}
+                    </button>
                   </div>
                 </div>
               </article>
