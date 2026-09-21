@@ -68,7 +68,7 @@ jobs:
           products=db.execute("select count(*) from products").fetchone()[0]
           variants=db.execute("select count(*) from product_variants").fetchone()[0]
           assert not fk, fk
-          assert products >= 68, products
-          assert variants >= 72, variants
+          assert products >= 120, products
+          assert variants >= 129, variants
           print(f"COMMERCE_DB_SMOKE=PASS products={products} variants={variants}")
           PY
