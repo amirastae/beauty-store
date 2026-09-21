@@ -17,7 +17,7 @@ export default function WishlistPage() {
 
   return (
     <main className="utility-page">
-      <header className="shop-nav"><Link href="/" className="brand">VELOURA</Link><Link href="/shop/">فروشگاه ←</Link></header>
+      <header className="shop-nav"><Link href="/" className="brand">FATIKHAN</Link><Link href="/shop/">فروشگاه ←</Link></header>
       <section className="utility-head"><p className="eyebrow">YOUR EDIT</p><h1>علاقه‌مندی‌ها</h1><p>محصولاتی که برای بعد نگه داشته‌ای.</p></section>
       <section className="utility-content">
         {!items.length ? (
