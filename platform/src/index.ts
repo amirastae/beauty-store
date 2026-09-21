@@ -4,6 +4,8 @@ import { logger } from 'hono/logger'
 import type { AppBindings } from './env'
 import { catalog } from './routes/catalog'
 import { carts } from './routes/carts'
+import { checkout } from './routes/checkout'
+import { inventory } from './routes/inventory'
 
 const app = new Hono<AppBindings>()
 
@@ -27,7 +29,9 @@ app.get('/api/v1/health', (c) => c.json({
 }))
 
 app.route('/api/v1', catalog)
+app.route('/api/v1', inventory)
 app.route('/api/v1/carts', carts)
+app.route('/api/v1', checkout)
 
 app.notFound((c) => c.json({ ok: false, error: { code: 'NOT_FOUND', message: 'Route not found.' } }, 404))
 app.onError((err, c) => {
