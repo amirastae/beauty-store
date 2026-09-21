@@ -1,4 +1,4 @@
-# VELOURA Next — v2.5.0
+# FATIKHAN Next — v2.5.0
 
 Premium Persian RTL cosmetics storefront.
 
