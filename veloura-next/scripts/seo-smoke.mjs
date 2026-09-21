@@ -20,6 +20,11 @@ const home = read("index.html");
 check(home.includes('lang="fa"'), "home must declare lang=fa");
 check(home.includes('dir="rtl"'), "home must declare dir=rtl");
 
+const contact = read("contact/index.html");
+check(contact.includes('rel="canonical"'), "contact canonical missing");
+check(contact.includes("fatmhkhan121@gmail.com"), "support email missing from contact page");
+check(contact.toLowerCase().includes('name="description"'), "contact meta description missing");
+
 const routine = read("routine/index.html");
 check(routine.includes('rel="canonical"'), "routine canonical missing");
 check(routine.toLowerCase().includes('name="description"'), "routine meta description missing");
@@ -49,7 +54,7 @@ for (const entry of productDirs) {
 }
 
 const sitemap = read("sitemap.xml");
-check(sitemap.includes("/shop/"), "sitemap must include shop");
+check(sitemap.includes("/shop/"), "sitemap must include shop");\ncheck(sitemap.includes("/contact/"), "sitemap must include contact");
 for (const blocked of ["/cart/", "/checkout/", "/wishlist/", "/compare/"]) {
   check(!sitemap.includes(blocked), `sitemap must exclude ${blocked}`);
 }

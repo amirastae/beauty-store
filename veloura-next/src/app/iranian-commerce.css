@@ -57,3 +57,11 @@
 @media(max-width:560px){.routine-hero{padding:62px 20px 50px}.routine-hero h1{font-size:58px}.routine-shell{padding:38px 18px 80px}.routine-grid{grid-template-columns:1fr}.routine-step{min-height:210px}.routine-note{grid-template-columns:1fr}}
 
 .checkout-error{margin-top:18px;border:1px solid #b46d78;background:#f8e8eb;color:#7a2638;border-radius:14px;padding:14px;font-size:11px;line-height:1.8}
+
+.checkout-support{margin-top:18px;font-size:10px;color:var(--muted)}.checkout-support a{color:inherit;text-underline-offset:4px}
+.contact-page{min-height:100vh;background:#f5eee8}.contact-hero{padding:90px 6vw 70px;background:linear-gradient(135deg,#f5eee8,#e6d4ca)}
+.contact-hero h1{margin:0;font-size:clamp(54px,8vw,112px);line-height:.9;letter-spacing:-.055em;font-weight:500}.contact-hero p{max-width:650px;color:var(--muted);line-height:1.9}
+.contact-card{margin:50px 6vw 110px;max-width:760px;border:1px solid var(--line);border-radius:22px;padding:34px;background:#f7f1ec}
+.contact-card>span{font:600 9px Arial,sans-serif;color:var(--muted);letter-spacing:.12em}.contact-card h2{margin:26px 0 14px;font-size:30px;font-weight:500}
+.contact-card a{font-size:clamp(18px,3vw,34px);color:var(--ink);word-break:break-all;text-underline-offset:6px}.contact-card p{margin:18px 0 0;color:var(--muted);font-size:10px;line-height:1.9}
+@media(max-width:560px){.contact-hero{padding:62px 20px 50px}.contact-card{margin:32px 18px 80px;padding:24px}}

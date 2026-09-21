@@ -10,7 +10,7 @@ import {
   verifyCommerceCart
 } from "@/lib/commerce-verify";
 import { formatFaNumber, formatToman, isIranianMobile, isIranianPostalCode } from "@/lib/locale";
-import { useCart } from "@/store/cart";
+import { useCart } from "@/store/cart";\nimport { STORE_SUPPORT_EMAIL, STORE_SUPPORT_MAILTO } from "@/config/store";
 
 const provinces = [
   "آذربایجان شرقی","آذربایجان غربی","اردبیل","اصفهان","البرز","ایلام","بوشهر","تهران",
@@ -100,7 +100,7 @@ export default function CheckoutShell(){
             <input name="mobile" required inputMode="tel" autoComplete="tel" placeholder="۰۹۱۲۱۲۳۴۵۶۷" aria-invalid={Boolean(mobileError)} aria-describedby={mobileError?"mobile-error":undefined}/>
             {mobileError && <span id="mobile-error" className="checkout-field-error">{mobileError}</span>}
           </label>
-          <label>ایمیل اختیاری<input name="email" type="email" autoComplete="email"/></label>
+          <label>ایمیل خریدار — اختیاری<input name="email" type="email" autoComplete="email"/></label>
           <label>
             استان
             <select name="province" required defaultValue="">
@@ -139,7 +139,7 @@ export default function CheckoutShell(){
           اطلاعات فرم معتبر است، اما Commerce API در این build تنظیم نشده؛ سفارش و پرداختی ساخته نشده است.
         </div>}
 
-        {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}
+        {!lines.length && <div className="checkout-note">سبد خرید خالی است؛ برای ادامه ابتدا محصولی به سبد اضافه کن.</div>}\n        <p className="checkout-support">پشتیبانی فروشگاه: <a href={STORE_SUPPORT_MAILTO}>{STORE_SUPPORT_EMAIL}</a></p>
       </section>
 
       <aside className="order-summary">
