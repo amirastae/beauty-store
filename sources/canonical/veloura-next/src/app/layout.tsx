@@ -6,14 +6,14 @@ import PWARegister from "@/components/pwa/PWARegister";
 import CompareTray from "@/components/compare/CompareTray";
 
 export const metadata: Metadata = {
-  title: "VELOURA — زیبایی، در دقیق‌ترین حالتش",
-  description: "فروشگاه پریمیوم فارسی لوازم آرایشی، مراقبت پوست و عطر ولورا.",
+  title: "FATIKHAN — زیبایی، در دقیق‌ترین حالتش",
+  description: "فروشگاه پریمیوم فارسی لوازم آرایشی، مراقبت پوست و عطر FATIKHAN.",
   metadataBase: new URL("https://beauty-store.nayererohalamini.workers.dev"),
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   openGraph: {
-    title: "VELOURA",
+    title: "FATIKHAN",
     description: "زیبایی، در دقیق‌ترین حالتش",
     type: "website",
     locale: "fa_IR",
@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 const organization = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "VELOURA",
+  name: "FATIKHAN",
   url: "https://beauty-store.nayererohalamini.workers.dev/",
   description: "فروشگاه پریمیوم فارسی زیبایی و لوازم آرایشی."
 };
