@@ -5,7 +5,7 @@ This is the production media contract for the homepage hero. It adapts the six-s
 ## Locked visual identity
 
 - Brand: **FATIKHAN**
-- Desktop master: 16:9, 1920x1080
+- Primary master: 16:9, 1920x1080; the same scrub master is used on eligible desktop and mobile devices
 - Background: deep black -> oxblood / dark crimson
 - Light: warm champagne-gold rim light + controlled rose highlights
 - Product: the same signature serum bottle in all six scenes
@@ -63,9 +63,9 @@ Current public scrub media:
 - 1-second GOP for practical scroll seeking
 - six scenes connected with 0.30s cross dissolves
 
-This is the deterministic staging preview. The final production-media upgrade is still the five Kling 3.0 Start+End Frame transitions described below.
+This is the deterministic staging preview. The final production-media upgrade is five high-quality Start+End Frame transitions generated in **Google Flow** from the six locked source frames described below.
 
-## Kling 3.0 motion prompts
+## Google Flow Start+End motion prompts
 
 Use Start + End Frame mode. Each transition should be 3-5 seconds, 30fps feel, muted, locked camera unless explicitly noted.
 
@@ -115,7 +115,7 @@ public/cinematic/fatikhan-hero.webm
 public/cinematic/fatikhan-poster.jpg
 ```
 
-The homepage already checks these exact paths. When valid desktop media loads, the hero automatically switches from the current image/3D fallback to true video `currentTime` scroll scrubbing.
+The homepage already checks these exact paths. When eligible media loads, the hero automatically switches from the image/3D fallback to true video `currentTime` scroll scrubbing on desktop and mobile.
 
 ## Encoding policy
 
@@ -132,7 +132,20 @@ That creates all-I-frame H.264/VP9 output and should only be promoted if the fin
 - Desktop hero video target: ideally under 25 MB.
 - Mobile below 768px: keep the current lightweight cinematic fallback rather than forcing the desktop video.
 - `prefers-reduced-motion: reduce`: no video scrub.
-- Save-Data users: no video scrub.
+- Save-Data users: no video scrub.\n- 2G / very slow network users: fallback is allowed.
 - Video is muted + playsInline.
 - Poster prevents a blank first paint.
 - Real mobile testing is mandatory; DevTools-only validation is not enough.
+
+
+## Google Flow acceptance gate
+
+Before replacing the current master, verify all five returned clips against the locked scene frames:
+- exact bottle identity and proportions remain visually continuous;
+- no cap/label/glass morphing or duplicate bottle;
+- no fake readable packaging text or unrelated logo;
+- hands appear only in the Formula -> Ritual transition;
+- camera stays locked/controlled and there are no hard cuts or random zooms;
+- first/last frames remain faithful enough for seamless assembly;
+- assembled MP4/WebM pass the existing cinematic asset and runtime lock checks;
+- scroll seeking is tested on both desktop and a real phone before production promotion.
