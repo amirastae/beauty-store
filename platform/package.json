@@ -8,7 +8,9 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
-    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "dev:preview": "wrangler dev --config wrangler.preview.jsonc --local --ip 127.0.0.1 --port 8787",
+    "deploy:preview": "wrangler deploy --config wrangler.preview.jsonc"
   },
   "dependencies": {
     "hono": "^4.9.8"
