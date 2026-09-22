@@ -1,0 +1,86 @@
+name: Export Jules Handoff Package
+
+on:
+  push:
+    branches:
+      - handoff-export-jules-20260922
+    paths:
+      - ".github/workflows/export-jules-handoff.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact handoff branch
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install and verify canonical FATIKHAN frontend
+        working-directory: sources/canonical/veloura-next
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run quality
+
+      - name: Build clean handoff folder
+        run: |
+          set -euo pipefail
+          rm -rf handoff
+          mkdir -p handoff/FATIKHAN-site
+          rsync -a             --exclude node_modules             --exclude .next             sources/canonical/veloura-next/ handoff/FATIKHAN-site/
+
+          cat > handoff/VERSION.txt <<'EOF'
+          FATIKHAN Jules/Cloudflare handoff
+          Source branch: golestan-scroll-cinematic-fidelity-v1
+          Source commit: 7eb5c50cdfc38c1665496351ea2ad68ff1cebc1a
+          Export branch: handoff-export-jules-20260922
+          Verified by: npm run quality
+          Runtime: Next.js static export + Cloudflare Wrangler assets
+          EOF
+
+          cat > handoff/JULES_START_HERE.md <<'EOF'
+          # FATIKHAN - START HERE
+
+          This package is a clean, verified handoff of the latest Golestan-aligned FATIKHAN frontend candidate.
+
+          ## Important
+          - Do not redesign or remove the Scroll Cinematic hero.
+          - Preserve GSAP ScrollTrigger -> video.currentTime behavior.
+          - Preserve the cinematic media files under public/cinematic/.
+          - Keep checkout/payment disabled unless a real commerce API is explicitly configured and verified.
+          - Do not commit secrets.
+
+          ## Local verification
+          cd FATIKHAN-site
+          npm ci
+          npm run quality
+
+          ## Local preview
+          npm run dev
+
+          ## Cloudflare deployment
+          npm run deploy
+
+          The project uses static Next.js export (out/) and wrangler.jsonc.
+          EOF
+
+          cd handoff
+          zip -qr ../FATIKHAN_JULES_HANDOFF_20260922.zip .
+          cd ..
+          test -s FATIKHAN_JULES_HANDOFF_20260922.zip
+          ls -lh FATIKHAN_JULES_HANDOFF_20260922.zip
+
+      - name: Upload handoff artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FATIKHAN_JULES_HANDOFF_20260922
+          path: FATIKHAN_JULES_HANDOFF_20260922.zip
+          if-no-files-found: error
+          retention-days: 7
