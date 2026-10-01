@@ -5,7 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import HeroStage from "@/components/motion/HeroStage";
+import scene01Descent from "../../../cinematic/frames/scene-01-descent.webp";
+import scene02Reveal from "../../../cinematic/frames/scene-02-reveal.webp";
+import scene03Burst from "../../../cinematic/frames/scene-03-burst.webp";
+import scene04Impact from "../../../cinematic/frames/scene-04-impact.webp";
+import scene05Formula from "../../../cinematic/frames/scene-05-formula.webp";
+import scene06Ritual from "../../../cinematic/frames/scene-06-ritual.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,8 +124,13 @@ export default function CinematicBeautyHero() {
         };
       }
 
-      gsap.set(".chapter-one", { opacity: 1, y: 0 });
-            gsap.set(".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four", { opacity: 0 });
+      // Figma cinematic master fallback: six canonical keyframes, in the same A→F order
+      // as the approved storyboard. The real video scrub path above remains untouched.
+      gsap.set(".cinematic-stage-one", { opacity: 1, scale: 1.025 });
+      gsap.set(
+        ".cinematic-stage-two, .cinematic-stage-three, .cinematic-stage-four, .cinematic-stage-five, .cinematic-stage-six",
+        { opacity: 0, scale: 1.025 }
+      );
 
       const fallbackTl = gsap.timeline({
         defaults: { ease: "none" },
@@ -134,22 +144,28 @@ export default function CinematicBeautyHero() {
       });
 
       fallbackTl
-        .to(".cinematic-progress-fill", { scaleY: 1, duration: 4 }, 0)
-        .to(".cinematic-product-frame", { scale: 1.06, rotate: 1.5, yPercent: -3, duration: 0.9 }, 0.05)
-        .to(".chapter-one", { opacity: 0, y: -28, duration: 0.28 }, 0.62)
-        .to(".cinematic-stage-one", { opacity: 0.12, scale: 1.08, duration: 0.45 }, 0.64)
-        .to(".cinematic-stage-two", { opacity: 1, scale: 1, duration: 0.48 }, 0.72)
-        .to(".chapter-two", { opacity: 1, y: 0, duration: 0.34 }, 0.78)
-        .to(".chapter-two", { opacity: 0, y: -28, duration: 0.28 }, 1.48)
-        .to(".cinematic-stage-two", { opacity: 0.08, scale: 1.07, duration: 0.45 }, 1.50)
-        .to(".cinematic-stage-three", { opacity: 1, scale: 1, duration: 0.48 }, 1.58)
-        .to(".chapter-three", { opacity: 1, y: 0, duration: 0.34 }, 1.64)
-        .to(".chapter-three", { opacity: 0, y: -28, duration: 0.28 }, 2.34)
-        .to(".cinematic-stage-three", { opacity: 0.1, scale: 1.07, duration: 0.45 }, 2.36)
-        .to(".cinematic-stage-four", { opacity: 1, scale: 1, duration: 0.52 }, 2.44)
-        .to(".chapter-four", { opacity: 1, y: 0, duration: 0.36 }, 2.50)
-        .to(".cinematic-stage-four img", { scale: 1.035, duration: 1.18 }, 2.64)
-        .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 1.0 }, 2.70);
+        .to(".cinematic-progress-fill", { scaleY: 1, duration: 1 }, 0)
+        // Six Figma/reference scenes: Descent → Reveal → Burst → Impact → Formula → Ritual.
+        .to(".cinematic-stage-one", { opacity: 0.08, scale: 1.055, duration: 0.06 }, 0.12)
+        .to(".cinematic-stage-two", { opacity: 1, scale: 1.025, duration: 0.06 }, 0.12)
+        .to(".cinematic-stage-two", { opacity: 0.08, scale: 1.055, duration: 0.06 }, 0.32)
+        .to(".cinematic-stage-three", { opacity: 1, scale: 1.025, duration: 0.06 }, 0.32)
+        .to(".cinematic-stage-three", { opacity: 0.08, scale: 1.055, duration: 0.06 }, 0.52)
+        .to(".cinematic-stage-four", { opacity: 1, scale: 1.025, duration: 0.06 }, 0.52)
+        .to(".cinematic-stage-four", { opacity: 0.08, scale: 1.055, duration: 0.06 }, 0.67)
+        .to(".cinematic-stage-five", { opacity: 1, scale: 1.025, duration: 0.06 }, 0.67)
+        .to(".cinematic-stage-five", { opacity: 0.08, scale: 1.055, duration: 0.06 }, 0.82)
+        .to(".cinematic-stage-six", { opacity: 1, scale: 1.025, duration: 0.06 }, 0.82)
+        // Keep the approved four copy windows aligned even when the video falls back.
+        .to(".chapter-one", { opacity: 1, y: 0, duration: 0.035 }, 0.115)
+        .to(".chapter-one", { opacity: 0, y: -24, duration: 0.035 }, 0.25)
+        .to(".chapter-two", { opacity: 1, y: 0, duration: 0.035 }, 0.315)
+        .to(".chapter-two", { opacity: 0, y: -24, duration: 0.035 }, 0.45)
+        .to(".chapter-three", { opacity: 1, y: 0, duration: 0.035 }, 0.565)
+        .to(".chapter-three", { opacity: 0, y: -24, duration: 0.035 }, 0.70)
+        .to(".chapter-four", { opacity: 1, y: 0, duration: 0.05 }, 0.80)
+        .to(".cinematic-stage-six img", { scale: 1.035, duration: 0.15 }, 0.85)
+        .to(".cinematic-final-glow", { opacity: 0.72, scale: 1.12, duration: 0.15 }, 0.85);
     });
 
     return () => mm.revert();
@@ -162,6 +178,7 @@ export default function CinematicBeautyHero() {
       aria-labelledby="cinematic-title"
       data-video-state={videoReady ? "ready" : videoFailed ? "fallback" : "loading"}
       data-cinematic-runtime="golestan-scroll-cinematic-v2"
+      data-cinematic-fallback="figma-six-frame-v1"
     >
       <div className="cinematic-sticky">
         {VIDEO_SCRUB_ENABLED && <video
@@ -179,21 +196,27 @@ export default function CinematicBeautyHero() {
         </video>}
 
         <div className="cinematic-stage cinematic-stage-one" aria-hidden="true">
-          <div className="cinematic-product-frame">
-            <HeroStage />
-          </div>
+          <Image src={scene01Descent} alt="" fill priority sizes="100vw" />
         </div>
 
-        <div className="cinematic-stage cinematic-stage-two" aria-hidden="true">
-          <Image src="/editorial-hero.jpg" alt="" fill priority sizes="100vw" />
+        <div className="cinematic-stage cinematic-stage-two" aria-hidden="true" style={{ opacity: 0 }}>
+          <Image src={scene02Reveal} alt="" fill sizes="100vw" />
         </div>
 
-        <div className="cinematic-stage cinematic-stage-three" aria-hidden="true">
-          <Image src="/date-night-makeup-set.jpg" alt="" fill sizes="100vw" />
+        <div className="cinematic-stage cinematic-stage-three" aria-hidden="true" style={{ opacity: 0 }}>
+          <Image src={scene03Burst} alt="" fill sizes="100vw" />
         </div>
 
-        <div className="cinematic-stage cinematic-stage-four" aria-hidden="true">
-          <Image src="/signature-collection-set.jpg" alt="" fill sizes="100vw" />
+        <div className="cinematic-stage cinematic-stage-four" aria-hidden="true" style={{ opacity: 0 }}>
+          <Image src={scene04Impact} alt="" fill sizes="100vw" />
+        </div>
+
+        <div className="cinematic-stage cinematic-stage-five" aria-hidden="true" style={{ opacity: 0 }}>
+          <Image src={scene05Formula} alt="" fill sizes="100vw" />
+        </div>
+
+        <div className="cinematic-stage cinematic-stage-six" aria-hidden="true" style={{ opacity: 0 }}>
+          <Image src={scene06Ritual} alt="" fill sizes="100vw" />
         </div>
 
         <div className="cinematic-frame" aria-hidden="true"><i/><i/><i/><i/></div>
