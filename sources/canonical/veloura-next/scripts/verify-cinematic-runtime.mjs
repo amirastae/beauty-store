@@ -19,10 +19,30 @@ const required = [
   ['<source src="/cinematic/fatikhan-hero.mp4" type="video/mp4" />', "MP4 scrub fallback source"],
   ["if (reducedMotion || saveData) return;", "accessibility/data-saver fallback"],
   ['data-cinematic-runtime="golestan-scroll-cinematic-v2"', "healthy runtime release marker"],
+  ['data-cinematic-fallback="figma-six-frame-v1"', "Figma six-frame fallback marker"],
+  ['scene-01-descent.webp', "canonical fallback frame 01"],
+  ['scene-02-reveal.webp', "canonical fallback frame 02"],
+  ['scene-03-burst.webp', "canonical fallback frame 03"],
+  ['scene-04-impact.webp', "canonical fallback frame 04"],
+  ['scene-05-formula.webp', "canonical fallback frame 05"],
+  ['scene-06-ritual.webp', "canonical fallback frame 06"],
+  ['cinematic-stage-five', "fifth fallback stage"],
+  ['cinematic-stage-six', "sixth fallback stage"],
 ];
 
 for (const [needle, label] of required) {
   if (!hero.includes(needle)) throw new Error(`Locked cinematic invariant missing: ${label}`);
+}
+
+const forbiddenFallbackAssets = [
+  "/editorial-hero.jpg",
+  "/date-night-makeup-set.jpg",
+  "/signature-collection-set.jpg",
+];
+for (const asset of forbiddenFallbackAssets) {
+  if (hero.includes(asset)) {
+    throw new Error(`Locked cinematic invariant violated: legacy fallback asset returned: ${asset}`);
+  }
 }
 
 if (hero.includes("compactViewport") || /max-width:\s*767px/.test(hero)) {
