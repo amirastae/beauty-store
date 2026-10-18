@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { products } from "@/data/products";
 
 type CompareState = {
   ids: string[];
@@ -10,6 +11,8 @@ type CompareState = {
   clear: () => void;
   has: (id: string) => boolean;
 };
+
+const catalogIds = new Set(products.map((product) => product.id));
 
 export const useCompare = create<CompareState>()(
   persist(
@@ -27,6 +30,16 @@ export const useCompare = create<CompareState>()(
       clear: () => set({ ids: [] }),
       has: (id) => get().ids.includes(id)
     }),
-    { name: "veloura-compare-v1", version: 1 }
+    {
+      name: "veloura-compare-v1",
+      version: 2,
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<CompareState>;
+        const ids = Array.isArray(saved.ids)
+          ? [...new Set(saved.ids.filter((id) => typeof id === "string" && catalogIds.has(id)))].slice(-3)
+          : [];
+        return { ...current, ids };
+      }
+    }
   )
 );
